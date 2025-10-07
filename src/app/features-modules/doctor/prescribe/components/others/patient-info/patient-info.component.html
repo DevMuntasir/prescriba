@@ -1,27 +1,57 @@
-<div [formGroup]="patient" class="flex bg-white justify-between rounded-lg px-4 border-[1px] py-2 mb-6 shadow-lg">
-    <div class="text-[14px] flex items-center">Name:
-        <input formControlName="patientName" autocomplete="off" type="text" placeholder="Name"
-            class="w-4/5 h-8 rounded-md bg-white py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]" />
-    </div>
-    <div class="text-[14px] flex items-center">Age:
-        <input formControlName="patientAge" autocomplete="off" type="text" placeholder="Age"
-            class="w-4/5 h-8 rounded-md bg-white py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]" />
-   
-        </div>
-    <div class="text-[14px] flex items-center">Blood:
-        <input formControlName="patientBloodGroup" autocomplete="off" type="text" placeholder="Blood Group"
-            class="w-4/5 h-8 rounded-md bg-white py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]" />
-    </div>
-    <div class="text-[14px] flex items-center">Mobile:
-        <input formControlName="patientPhoneNo" autocomplete="off" type="text" placeholder="Mobile No"
-            class="w-4/5 h-8 rounded-md bg-white py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]" />
-    </div>
-    <!-- <div class="text-[14px] flex items-center">Gender:
-        <input formControlName="patientBloodGroup" autocomplete="off" type="text" placeholder="Blood Group"
-            class="w-4/5 h-8 rounded-md bg-white py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]" />
-    </div> -->
-    <!-- <div class="flex items-center">Date:
-        <input formControlName="date" autocomplete="off" required type="date"
-            class="rounded-md w-4/5 py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
-    </div> -->
+<div
+  [formGroup]="patient"
+  class="mb-6 flex justify-between rounded-lg border-[1px] bg-white px-4 py-2 shadow-lg"
+>
+  <div class="flex items-center text-[14px]">
+    Name:
+    <input
+      formControlName="patientName"
+      autocomplete="off"
+      type="text"
+      placeholder="Name"
+      class="h-8 w-4/5 rounded-md bg-white px-3 py-1.5 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]"
+    />
+  </div>
+  <div class="flex items-center text-[14px]">
+    Age:
+    <input
+      formControlName="patientAge"
+      autocomplete="off"
+      type="text"
+      placeholder="Age"
+      class="h-8 w-4/5 rounded-md bg-white px-3 py-1.5 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]"
+    />
+  </div>
+  <div class="flex items-center text-[14px]">
+    Gender:
+    <select
+      formControlName="patientGender"
+      class="h-8 w-4/5 rounded-md bg-white px-3 py-1.5 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]"
+    >
+      <option value="">Select</option>
+      <option *ngFor="let gender of genderOptions" [value]="gender">
+        {{ gender }}
+      </option>
+    </select>
+  </div>
+  <div class="flex items-center text-[14px]">
+    Blood:
+    <input
+      formControlName="patientBloodGroup"
+      autocomplete="off"
+      type="text"
+      placeholder="Blood Group"
+      class="h-8 w-4/5 rounded-md bg-white px-3 py-1.5 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]"
+    />
+  </div>
+  <div class="flex items-center text-[14px]">
+    Mobile:
+    <input
+      formControlName="patientPhoneNo"
+      autocomplete="off"
+      type="text"
+      placeholder="Mobile No"
+      class="h-8 w-4/5 rounded-md bg-white px-3 py-1.5 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1]"
+    />
+  </div>
 </div>

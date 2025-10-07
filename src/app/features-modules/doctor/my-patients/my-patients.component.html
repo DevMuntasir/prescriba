@@ -1,4 +1,134 @@
-<div class="overflow-hidden"  class="doctor-dashboard_midcontent_container p-4">
-<app-public-patients></app-public-patients>
-</div>
+<div class="space-y-6">
+  <div class="rounded-lg bg-white p-6 shadow">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Patients</h1>
+        <p class="text-sm text-gray-500">
+          Search, browse, and manage prescriptions for your patients.
+        </p>
+      </div>
+      <div class="flex w-full max-w-md items-center gap-2">
+        <input type="text" [formControl]="searchControl"
+          class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          placeholder="Search by name, email, or phone" />
+        <button type="button" *ngIf="searchControl.value" (click)="clearSearch()"
+          class="rounded border border-gray-300 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
 
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <ng-container *ngIf="isLoading; else contentTemplate">
+      <div class="p-6 text-center text-sm text-gray-500">
+        Loading patients...
+      </div>
+    </ng-container>
+
+    <ng-template #contentTemplate>
+      <ng-container *ngIf="!error; else errorTemplate">
+        <ng-container *ngIf="patients.length; else emptyTemplate">
+          <div class="overflow-x-auto">
+            <table class="min-w-full table-auto divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50">
+                <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  <th class="px-4 py-3">#</th>
+                  <th class="px-4 py-3">Patient</th>
+                  <th class="px-4 py-3">Contact</th>
+                  <th class="px-4 py-3">Gender</th>
+                  <th class="px-4 py-3">Age</th>
+                  <th class="px-4 py-3">Date of Birth</th>
+                  <th class="px-4 py-3">Reference ID</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr *ngFor="let patient of patients; trackBy: trackByPatient; let i = index" class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-gray-500">
+                    {{ (pageNumber - 1) * pageSize + i + 1 }}
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="font-medium text-gray-900">
+                      {{ patient.firstName }} {{ patient.lastName }}
+                    </div>
+                    <div class="text-xs text-gray-500">ID: {{ patient.patientID || 'N/A' }}</div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <div>{{ patient.phoneNumber || 'Not provided' }}</div>
+                    <div class="text-xs text-gray-500">
+                      {{ patient.email || 'Not provided' }}
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 capitalize">
+                    {{ patient.gender || 'N/A' }}
+                  </td>
+                  <td class="px-4 py-3">
+                    {{ patient.patientAge || 'N/A' }}
+                  </td>
+                  <td class="px-4 py-3">
+                    {{ patient.dateOfBirth | date: 'mediumDate' }}
+                  </td>
+                  <td class="px-4 py-3">
+                    {{ patient.patientReferenceID || 'N/A' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            class="flex flex-col gap-4 border-t border-gray-200 p-4 text-sm text-gray-600 md:flex-row md:items-center md:justify-between">
+            <div>
+              Showing
+              <span class="font-medium">{{ pageRangeStart }}</span>
+              -
+              <span class="font-medium">{{ pageRangeEnd }}</span>
+              of
+              <span class="font-medium">
+                {{ hasKnownTotal ? displayedTotal : '~' + displayedTotal }}
+              </span>
+              patients
+            </div>
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+              <label class="flex items-center gap-2">
+                <span>Rows per page</span>
+                <select [value]="pageSize" (change)="onPageSizeChange($any($event.target).value)"
+                  class="rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-100">
+                  <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+                </select>
+              </label>
+              <div class="flex items-center gap-2">
+                <button type="button" (click)="goToPage(pageNumber - 1)" [disabled]="!canGoPrevious"
+                  class="rounded border border-gray-300 px-3 py-2 font-medium text-gray-600 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50">
+                  Previous
+                </button>
+                <span *ngIf="hasKnownTotal">Page {{ pageNumber }} of {{ totalPages }}</span>
+                <span *ngIf="!hasKnownTotal">
+                  Page {{ pageNumber }}<ng-container *ngIf="hasMore">
+                    of {{ totalPages }}
+                  </ng-container>
+                </span>
+                <button type="button" (click)="goToPage(pageNumber + 1)" [disabled]="!canGoNext"
+                  class="rounded border border-gray-300 px-3 py-2 font-medium text-gray-600 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50">
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #emptyTemplate>
+          <div class="p-6 text-center text-sm text-gray-500">
+            No patients found. Try adjusting your search.
+          </div>
+        </ng-template>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #errorTemplate>
+      <div class="p-6 text-center text-sm text-red-500">
+        {{ error }}
+      </div>
+    </ng-template>
+  </div>
+</div>

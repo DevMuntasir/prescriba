@@ -27,17 +27,18 @@ export class PrescriptionService {
   private createPrescribeForm(): FormGroup {
     return this.fb.group({
       isPreHand: [false],
-      appointmentId: [null],
-      appointmentCode: [null],
-      isHeader: true,
       patient: this.fb.group({
         patientName: ['', Validators.required],
         patientAge: [''],
+        patientGender: [''],
         patientBloodGroup: [''],
         patientProfileId: [0, Validators.required],
         patientCode: ['', Validators.required],
         patientPhoneNo: [''],
       }),
+      appointmentId: [null],
+      appointmentCode: [null],
+      isHeader: true,
       doctor: this.fb.group({
         doctorName: [''],
         doctorProfileId: [''],
@@ -195,6 +196,7 @@ export class PrescriptionService {
   setPatientInfo(patient: {
     patientName: string;
     patientAge: string;
+    patientGender: string | null;
     patientProfileId: number | null;
     patientCode: string | null;
     patientPhoneNo: string | null;
@@ -317,6 +319,7 @@ export class PrescriptionService {
       form.get('patient')?.patchValue({
         patientName: '',
         patientAge: '',
+        patientGender: '',
         patientProfileId: 0,
         patientCode: '',
         patientPhoneNo: '',

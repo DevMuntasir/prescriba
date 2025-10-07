@@ -7,6 +7,7 @@ import { DoctorComponent } from './doctor.component';
 import { DoctorsPrescriptionsComponent } from './doctors-prescriptions/doctors-prescriptions.component';
 import { PrescribeComponent } from './prescribe/prescribe.component';
 import { isAuth } from 'src/app/auth-gurd/auth.service';
+import { MyPatientsComponent } from './my-patients/my-patients.component';
 
 const routes: Route[] = [
   {
@@ -29,13 +30,10 @@ const routes: Route[] = [
           import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
 
-      // {
-      //   path: 'patients',
-      //   loadChildren: () =>
-      //     import('./my-patients/my-patients.module').then(
-      //       (m) => m.MyPatientsModule
-      //     ),
-      // },
+      {
+        path: 'patients',
+        component: MyPatientsComponent,
+      },
       // {
       //   path: 'hospital-schedule',
       //   loadChildren: () =>

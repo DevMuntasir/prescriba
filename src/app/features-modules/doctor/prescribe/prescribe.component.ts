@@ -443,6 +443,9 @@ export class PrescribeComponent implements OnInit, OnDestroy {
           patientAge: this.appointmentInfo.patientAge
             ? String(this.appointmentInfo.patientAge)
             : '',
+          patientGender:
+            ((this.appointmentInfo as any)?.patientGender as string) ??
+            ((this.appointmentInfo as any)?.gender as string) ?? '',
           patientCode: this.appointmentInfo.patientCode || null,
           patientProfileId: this.appointmentInfo.patientProfileId || null,
           patientPhoneNo: this.appointmentInfo.patientMobileNo || null,
@@ -595,3 +598,4 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     return Array(morning + noon + night).fill(0);
   }
 }
+
