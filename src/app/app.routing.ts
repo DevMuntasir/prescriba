@@ -9,6 +9,8 @@ import { isAuth } from './auth-gurd/auth.service';
 export const appRoutes: Route[] = [
   {
     path: '',
+    canActivate: [isAuth],
+    data: { roles: ['doctor'] },
     loadChildren: () =>
       import('../app/features-modules/doctor/doctor.module').then(
         (m) => m.DoctorModule
@@ -25,10 +27,13 @@ export const appRoutes: Route[] = [
     children: [
       {
         path: '',
+        canActivate: [routerGuard],
         component: AdminLoginComponent,
       },
       {
         path: 'dashboard',
+        canActivate: [isAuth],
+        data: { roles: ['admin'] },
         loadChildren: () =>
           import('./features-modules/admin/admin-dashboard/admin-dashboard.module').then(
             (m) => m.AdminDashboardModule
@@ -49,7 +54,7 @@ export const appRoutes: Route[] = [
   {
     path: 'doctor',
     canActivate: [isAuth],
-    data: { breadcrumb: 'Doctor' },
+    data: { breadcrumb: 'Doctor', roles: ['doctor'] },
     component: DoctorLayoutComponent,
     children: [
       {

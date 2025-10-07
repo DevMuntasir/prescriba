@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
+type TrendDirection = 'up' | 'down' | 'steady';
+
 interface SummaryStat {
   readonly label: string;
   readonly value: string;
@@ -9,6 +11,22 @@ interface SummaryStat {
   readonly badgeClass: string;
   readonly icon: 'approvals' | 'clinicians' | 'tickets' | 'compliance';
   readonly iconBgClass: string;
+}
+
+interface DemographicMetric {
+  readonly label: string;
+  readonly total: string;
+  readonly share: string;
+  readonly change: string;
+  readonly icon: 'female' | 'male' | 'family';
+  readonly accentClass: string;
+}
+
+interface AgeDistribution {
+  readonly range: string;
+  readonly patients: number;
+  readonly percent: number;
+  readonly accentClass: string;
 }
 
 interface QuickLink {
@@ -24,6 +42,54 @@ interface RecentUpdate {
   readonly highlight?: string;
   readonly time: string;
   readonly indicatorClass: string;
+}
+
+type PeriodKey = 'day' | 'week' | 'month';
+
+interface MedicinePerformance {
+  readonly name: string;
+  readonly category: string;
+  readonly prescriptions: number;
+  readonly share: string;
+  readonly growth: string;
+  readonly trend: TrendDirection;
+}
+
+interface DoctorSummary {
+  readonly id: number;
+  readonly name: string;
+  readonly speciality: string;
+  readonly region: string;
+  readonly avatarInitials: string;
+  readonly avatarBgClass: string;
+  readonly totalPrescriptions: number;
+  readonly newPatients: number;
+  readonly repeatRate: string;
+}
+
+interface DoctorDetail {
+  readonly utilisation: string;
+  readonly utilisationChange: string;
+  readonly utilisationTrend: TrendDirection;
+  readonly digitalShare: string;
+  readonly followUpRate: string;
+  readonly followUpChange: string;
+  readonly followUpTrend: TrendDirection;
+  readonly topMedicines: {
+    readonly name: string;
+    readonly prescriptions: number;
+    readonly share: string;
+  }[];
+  readonly upcomingClinics: {
+    readonly date: string;
+    readonly window: string;
+    readonly location: string;
+  }[];
+  readonly patientFeedback: {
+    readonly score: string;
+    readonly change: string;
+    readonly positive: boolean;
+  };
 }
 
 @Component({
@@ -71,6 +137,63 @@ export class AdminDashboardComponent {
       badgeClass: 'bg-violet-100 text-violet-600',
       icon: 'compliance',
       iconBgClass: 'bg-[linear-gradient(135deg,#a855f7_0%,#c084fc_100%)] shadow-[0_12px_24px_rgba(168,85,247,0.25)]',
+    },
+  ];
+
+  readonly demographicBreakdown: DemographicMetric[] = [
+    {
+      label: 'Female patients',
+      total: '1,140',
+      share: '53%',
+      change: '+4.2% vs last month',
+      icon: 'female',
+      accentClass:
+        'bg-[linear-gradient(135deg,#ec4899_0%,#f472b6_100%)] shadow-[0_12px_28px_rgba(236,72,153,0.25)]',
+    },
+    {
+      label: 'Male patients',
+      total: '920',
+      share: '43%',
+      change: '+2.8% vs last month',
+      icon: 'male',
+      accentClass:
+        'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] shadow-[0_12px_28px_rgba(6,180,139,0.25)]',
+    },
+    {
+      label: 'Paediatric & senior',
+      total: '80',
+      share: '4%',
+      change: '+1.1% vs last month',
+      icon: 'family',
+      accentClass:
+        'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_28px_rgba(59,130,246,0.25)]',
+    },
+  ];
+
+  readonly ageDistribution: AgeDistribution[] = [
+    {
+      range: '18–25 years',
+      patients: 468,
+      percent: 22,
+      accentClass: 'from-sky-400 to-brand-primary-accent',
+    },
+    {
+      range: '26–40 years',
+      patients: 812,
+      percent: 38,
+      accentClass: 'from-brand-primary to-emerald-400',
+    },
+    {
+      range: '41–55 years',
+      patients: 512,
+      percent: 24,
+      accentClass: 'from-violet-500 to-fuchsia-400',
+    },
+    {
+      range: '56+ years',
+      patients: 268,
+      percent: 12,
+      accentClass: 'from-amber-500 to-orange-400',
     },
   ];
 
@@ -126,4 +249,310 @@ export class AdminDashboardComponent {
       indicatorClass: 'bg-orange-400',
     },
   ];
+
+  readonly medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
+    day: [
+      {
+        name: 'Azithromycin 500mg',
+        category: 'Antibiotic',
+        prescriptions: 124,
+        share: '18%',
+        growth: '+6.1%',
+        trend: 'up',
+      },
+      {
+        name: 'Omeprazole 20mg',
+        category: 'Gastrointestinal',
+        prescriptions: 98,
+        share: '14%',
+        growth: '+3.4%',
+        trend: 'up',
+      },
+      {
+        name: 'Montelukast 10mg',
+        category: 'Respiratory',
+        prescriptions: 86,
+        share: '12%',
+        growth: '+1.2%',
+        trend: 'steady',
+      },
+      {
+        name: 'Amlodipine 5mg',
+        category: 'Cardiac',
+        prescriptions: 79,
+        share: '11%',
+        growth: '-0.8%',
+        trend: 'down',
+      },
+      {
+        name: 'Paracetamol 500mg',
+        category: 'Analgesic',
+        prescriptions: 72,
+        share: '10%',
+        growth: '+4.3%',
+        trend: 'up',
+      },
+    ],
+    week: [
+      {
+        name: 'Azithromycin 500mg',
+        category: 'Antibiotic',
+        prescriptions: 612,
+        share: '16%',
+        growth: '+8.4%',
+        trend: 'up',
+      },
+      {
+        name: 'Amlodipine 5mg',
+        category: 'Cardiac',
+        prescriptions: 538,
+        share: '14%',
+        growth: '+2.6%',
+        trend: 'up',
+      },
+      {
+        name: 'Metformin 500mg',
+        category: 'Endocrine',
+        prescriptions: 504,
+        share: '13%',
+        growth: '+5.9%',
+        trend: 'up',
+      },
+      {
+        name: 'Montelukast 10mg',
+        category: 'Respiratory',
+        prescriptions: 452,
+        share: '12%',
+        growth: '+1.7%',
+        trend: 'steady',
+      },
+      {
+        name: 'Paracetamol 500mg',
+        category: 'Analgesic',
+        prescriptions: 436,
+        share: '11%',
+        growth: '-0.9%',
+        trend: 'down',
+      },
+    ],
+    month: [
+      {
+        name: 'Metformin 500mg',
+        category: 'Endocrine',
+        prescriptions: 2214,
+        share: '17%',
+        growth: '+10.2%',
+        trend: 'up',
+      },
+      {
+        name: 'Amlodipine 5mg',
+        category: 'Cardiac',
+        prescriptions: 1986,
+        share: '15%',
+        growth: '+4.4%',
+        trend: 'up',
+      },
+      {
+        name: 'Atorvastatin 20mg',
+        category: 'Cardiac',
+        prescriptions: 1820,
+        share: '14%',
+        growth: '+2.1%',
+        trend: 'up',
+      },
+      {
+        name: 'Losartan 50mg',
+        category: 'Cardiac',
+        prescriptions: 1742,
+        share: '13%',
+        growth: '+1.6%',
+        trend: 'steady',
+      },
+      {
+        name: 'Omeprazole 20mg',
+        category: 'Gastrointestinal',
+        prescriptions: 1655,
+        share: '12%',
+        growth: '-1.9%',
+        trend: 'down',
+      },
+    ],
+  };
+
+  readonly doctorSummaries: DoctorSummary[] = [
+    {
+      id: 1,
+      name: 'Dr. Farhana Rahman',
+      speciality: 'Endocrinology',
+      region: 'Dhaka North',
+      avatarInitials: 'FR',
+      avatarBgClass:
+        'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] text-white shadow-[0_10px_24px_rgba(6,180,139,0.28)]',
+      totalPrescriptions: 486,
+      newPatients: 64,
+      repeatRate: '82%',
+    },
+    {
+      id: 2,
+      name: 'Dr. Mahid Hasan',
+      speciality: 'Cardiology',
+      region: 'Chattogram',
+      avatarInitials: 'MH',
+      avatarBgClass:
+        'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] text-white shadow-[0_10px_24px_rgba(59,130,246,0.25)]',
+      totalPrescriptions: 432,
+      newPatients: 52,
+      repeatRate: '76%',
+    },
+    {
+      id: 3,
+      name: 'Dr. Nusrat Alam',
+      speciality: 'Pulmonology',
+      region: 'Sylhet',
+      avatarInitials: 'NA',
+      avatarBgClass:
+        'bg-[linear-gradient(135deg,#a855f7_0%,#d8b4fe_100%)] text-white shadow-[0_10px_24px_rgba(168,85,247,0.25)]',
+      totalPrescriptions: 384,
+      newPatients: 47,
+      repeatRate: '74%',
+    },
+    {
+      id: 4,
+      name: 'Dr. Reza Karim',
+      speciality: 'General Medicine',
+      region: 'Khulna',
+      avatarInitials: 'RK',
+      avatarBgClass:
+        'bg-[linear-gradient(135deg,#f97316_0%,#fb923c_100%)] text-white shadow-[0_10px_24px_rgba(249,115,22,0.25)]',
+      totalPrescriptions: 358,
+      newPatients: 41,
+      repeatRate: '71%',
+    },
+  ];
+
+  readonly doctorDetails: Record<number, DoctorDetail> = {
+    1: {
+      utilisation: '94%',
+      utilisationChange: '+3.6% vs last month',
+      utilisationTrend: 'up',
+      digitalShare: '68%',
+      followUpRate: '74%',
+      followUpChange: '+2.1%',
+      followUpTrend: 'up',
+      topMedicines: [
+        { name: 'Metformin 500mg', prescriptions: 182, share: '37%' },
+        { name: 'Empagliflozin 10mg', prescriptions: 128, share: '26%' },
+        { name: 'Sitagliptin 50mg', prescriptions: 94, share: '19%' },
+      ],
+      upcomingClinics: [
+        { date: 'Wed, 12 Jun', window: '15:00 – 18:00', location: 'Banani Digital Clinic' },
+        { date: 'Fri, 14 Jun', window: '10:00 – 13:00', location: 'Telehealth sessions' },
+      ],
+      patientFeedback: {
+        score: '4.8/5',
+        change: '+0.3',
+        positive: true,
+      },
+    },
+    2: {
+      utilisation: '89%',
+      utilisationChange: '+1.8% vs last month',
+      utilisationTrend: 'up',
+      digitalShare: '62%',
+      followUpRate: '69%',
+      followUpChange: '-0.8%',
+      followUpTrend: 'down',
+      topMedicines: [
+        { name: 'Amlodipine 5mg', prescriptions: 174, share: '33%' },
+        { name: 'Losartan 50mg', prescriptions: 152, share: '29%' },
+        { name: 'Atorvastatin 20mg', prescriptions: 128, share: '24%' },
+      ],
+      upcomingClinics: [
+        { date: 'Thu, 13 Jun', window: '09:00 – 12:00', location: 'Chattogram Heart Centre' },
+        { date: 'Sat, 15 Jun', window: '16:00 – 18:00', location: 'Tele-consultation block' },
+      ],
+      patientFeedback: {
+        score: '4.6/5',
+        change: '+0.1',
+        positive: true,
+      },
+    },
+    3: {
+      utilisation: '87%',
+      utilisationChange: '-1.4% vs last month',
+      utilisationTrend: 'down',
+      digitalShare: '71%',
+      followUpRate: '72%',
+      followUpChange: '+1.2%',
+      followUpTrend: 'up',
+      topMedicines: [
+        { name: 'Montelukast 10mg', prescriptions: 146, share: '31%' },
+        { name: 'Budesonide inhaler', prescriptions: 122, share: '26%' },
+        { name: 'Salbutamol inhaler', prescriptions: 108, share: '23%' },
+      ],
+      upcomingClinics: [
+        { date: 'Tue, 11 Jun', window: '17:00 – 20:00', location: 'Sylhet Respiratory Centre' },
+        { date: 'Sat, 15 Jun', window: '11:00 – 13:00', location: 'Telehealth follow-ups' },
+      ],
+      patientFeedback: {
+        score: '4.7/5',
+        change: '-0.1',
+        positive: false,
+      },
+    },
+    4: {
+      utilisation: '82%',
+      utilisationChange: '+0.9% vs last month',
+      utilisationTrend: 'up',
+      digitalShare: '58%',
+      followUpRate: '66%',
+      followUpChange: '+0.6%',
+      followUpTrend: 'up',
+      topMedicines: [
+        { name: 'Paracetamol 500mg', prescriptions: 134, share: '29%' },
+        { name: 'Cefixime 200mg', prescriptions: 112, share: '24%' },
+        { name: 'Pantoprazole 40mg', prescriptions: 96, share: '21%' },
+      ],
+      upcomingClinics: [
+        { date: 'Mon, 10 Jun', window: '14:00 – 17:00', location: 'Khulna City Clinic' },
+        { date: 'Thu, 13 Jun', window: '18:00 – 20:00', location: 'Virtual quick consults' },
+      ],
+      patientFeedback: {
+        score: '4.5/5',
+        change: '+0.2',
+        positive: true,
+      },
+    },
+  };
+
+  readonly periodLabels: Record<PeriodKey, string> = {
+    day: 'Today',
+    week: 'This week',
+    month: 'This month',
+  };
+
+  readonly periodKeys: PeriodKey[] = ['day', 'week', 'month'];
+
+  selectedMedicinePeriod: PeriodKey = 'day';
+  selectedDoctorId: number = this.doctorSummaries[0]?.id ?? 0;
+
+  get medicineLeaderboard(): MedicinePerformance[] {
+    return this.medicinePerformance[this.selectedMedicinePeriod];
+  }
+
+  get activeDoctorSummary(): DoctorSummary | undefined {
+    return this.doctorSummaries.find((doc) => doc.id === this.selectedDoctorId);
+  }
+
+  get activeDoctorDetail(): DoctorDetail | undefined {
+    return this.doctorDetails[this.selectedDoctorId];
+  }
+
+  setMedicinePeriod(period: PeriodKey): void {
+    this.selectedMedicinePeriod = period;
+  }
+
+  selectDoctor(id: number): void {
+    this.selectedDoctorId = id;
+  }
 }
