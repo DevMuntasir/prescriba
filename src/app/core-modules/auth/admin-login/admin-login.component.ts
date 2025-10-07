@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { ApiResponse } from 'src/app/proxy/core/generic-models';
@@ -35,7 +35,8 @@ export class AdminLoginComponent implements OnDestroy {
     private readonly fb: FormBuilder,
     private readonly authApi: AuthApiService,
     private readonly sessionAuth: SessionAuthService,
-    private readonly toaster: TosterService
+    private readonly toaster: TosterService,
+    private readonly router: Router
   ) {}
 
   togglePasswordVisibility(): void {
@@ -70,6 +71,7 @@ export class AdminLoginComponent implements OnDestroy {
             this.persistAdminSession(response.results);
             this.toaster.customToast('Signed in successfully.', 'success');
             this.statusMessage.set('Admin access granted.');
+            this.router.navigate(['/ps-admin/dashboard']);
             return;
           }
 
