@@ -143,12 +143,12 @@ export class AdminDashboardComponent {
       icon: 'settings',
       description: 'Security & configuration',
     },
-    // {
-    //   label: 'Analytics report',
-    //   icon: 'analytics',
-    //   description: 'Deep dive into insights',
-    //   badge: 'Coming soon',
-    // },
+    {
+      label: 'Analytics report',
+      icon: 'analytics',
+      description: 'Deep dive into insights',
+      badge: 'Coming soon',
+    },
   ];
 
   readonly summaryStats: SummaryStat[] = [
@@ -605,5 +605,159 @@ export class AdminDashboardComponent {
 
   selectDoctor(id: number): void {
     this.selectedDoctorId = id;
+  }
+
+  downloadReports(): void {
+    const tables: string[] = [];
+
+    tables.push(
+      this.buildTable('Summary metrics', ['Metric', 'Value', 'Insight', 'Badge'], this.summaryStats.map((stat) => [stat.label, stat.value, stat.hint, stat.badge]))
+    );
+
+    tables.push(
+      this.buildTable(
+        'Demographic breakdown',
+        ['Segment', 'Patients', 'Share', 'Change'],
+        this.demographicBreakdown.map((demo) => [demo.label, demo.total, demo.share, demo.change])
+      )
+    );
+
+    tables.push(
+      this.buildTable(
+        'Age distribution',
+        ['Age range', 'Patients', 'Percent'],
+        this.ageDistribution.map((age) => [age.range, age.patients, `${age.percent}%`])
+      )
+    );
+
+    tables.push(
+      this.buildTable(
+        'Top medicines',
+        ['Period', 'Medicine', 'Category', 'Prescriptions', 'Share', 'Growth', 'Trend'],
+        this.periodKeys.flatMap((period) =>
+          this.medicinePerformance[period].map((medicine) => [
+            this.periodLabels[period],
+            medicine.name,
+            medicine.category,
+            medicine.prescriptions,
+            medicine.share,
+            medicine.growth,
+            medicine.trend,
+          ])
+        )
+      )
+    );
+
+    tables.push(
+      this.buildTable(
+        'Doctor performance',
+        [
+          'Doctor',
+          'Speciality',
+          'Region',
+          'Total Prescriptions',
+          'New Patients',
+          'Repeat Rate',
+          'Utilisation',
+          'Utilisation Change',
+          'Digital Share',
+          'Follow-up Rate',
+          'Follow-up Change',
+          'Top Medicines',
+          'Upcoming Clinics',
+          'Patient Feedback',
+        ],
+        this.doctorSummaries.map((summary) => {
+          const detail = this.doctorDetails[summary.id];
+          const topMedicines = detail?.topMedicines
+            .map((item) => `${item.name} (${item.prescriptions}, ${item.share})`)
+            .join(' | ');
+          const upcomingClinics = detail?.upcomingClinics
+            .map((clinic) => `${clinic.date} ${clinic.window} @ ${clinic.location}`)
+            .join(' | ');
+          const feedback = detail
+            ? `${detail.patientFeedback.score} (${detail.patientFeedback.change})`
+            : undefined;
+
+          return [
+            summary.name,
+            summary.speciality,
+            summary.region,
+            summary.totalPrescriptions,
+            summary.newPatients,
+            summary.repeatRate,
+            detail?.utilisation ?? '—',
+            detail?.utilisationChange ?? '—',
+            detail?.digitalShare ?? '—',
+            detail?.followUpRate ?? '—',
+            detail?.followUpChange ?? '—',
+            topMedicines ?? '—',
+            upcomingClinics ?? '—',
+            feedback ?? '—',
+          ];
+        })
+      )
+    );
+
+    tables.push(
+      this.buildTable(
+        'Recent updates',
+        ['Message', 'Highlight', 'Time'],
+        this.recentUpdates.map((update) => [update.message.trim(), update.highlight ?? '—', update.time])
+      )
+    );
+
+    const workbook = this.buildWorkbook(tables.join(''));
+    const blob = new Blob([workbook], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'prescriba-admin-analytics.xls';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private buildWorkbook(tableMarkup: string): string {
+    return `<!DOCTYPE html><html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8" /><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Prescriba Report</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>${tableMarkup}</body></html>`;
+  }
+
+  private buildTable(title: string, headers: string[], rows: (string | number)[][]): string {
+    const headerHtml = headers
+      .map((header) => `<th style="background:#0f766e;color:#ffffff;padding:8px 12px;border:1px solid #0f766e;text-align:left;">${this.escapeCell(header)}</th>`)
+      .join('');
+    const bodyHtml = rows.length
+      ? rows
+          .map(
+            (row) =>
+              `<tr>${row
+                .map(
+                  (cell) =>
+                    `<td style="padding:6px 10px;border:1px solid #d1d5db;vertical-align:top;">${this.escapeCell(cell)}</td>`
+                )
+                .join('')}</tr>`
+          )
+          .join('')
+      : `<tr><td style="padding:6px 10px;border:1px solid #d1d5db;" colspan="${headers.length}">No data available</td></tr>`;
+
+    return `
+      <table style="border-collapse:collapse;margin:0 0 24px 0;font-family:'Segoe UI',sans-serif;font-size:12px;width:100%;">
+        <caption style="caption-side:top;text-align:left;font-weight:600;font-size:14px;margin:0 0 8px 0;color:#0f172a;">${this.escapeCell(
+          title
+        )}</caption>
+        <thead>
+          <tr>${headerHtml}</tr>
+        </thead>
+        <tbody>${bodyHtml}</tbody>
+      </table>
+    `;
+  }
+
+  private escapeCell(value: string | number): string {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }
