@@ -1,0 +1,686 @@
+<div class="admin-shell min-h-screen bg-brand-surface">
+  <div class="admin-shell__inner mx-auto flex max-w-[1400px] gap-6 px-4 py-6 sm:px-6 lg:px-8">
+    <aside class="admin-sidebar hidden h-[calc(100vh-3rem)] w-72 flex-shrink-0 flex-col rounded-3xl border border-brand-primary/15 bg-white/95 p-6 shadow-[0_28px_70px_rgba(6,180,139,0.12)] backdrop-blur lg:flex">
+      <div class="flex h-full flex-col gap-8">
+        <div class="space-y-1">
+          <p class="text-xs font-semibold uppercase tracking-[0.45em] text-brand-primary/60">Prescriba</p>
+          <h1 class="text-xl font-semibold text-brand-neutral">Admin Console</h1>
+          <p class="text-xs text-brand-neutral/50">Manage prescriptions, people, and policy with confidence.</p>
+        </div>
+        <nav class="flex-1">
+          <ul class="space-y-2">
+            <li *ngFor="let link of sidebarLinks">
+              <ng-container *ngIf="link.path; else disabledLink">
+                <a
+                  [routerLink]="link.path"
+                  routerLinkActive="sidebar-link--active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  class="sidebar-link"
+                >
+                  <span class="sidebar-link__icon">
+                    <ng-container [ngSwitch]="link.icon">
+                      <svg
+                        *ngSwitchCase="'dashboard'"
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 21h8V11h-8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 3h8M13 7h8M3 17h8M3 21h8"></path>
+                      </svg>
+                      <svg
+                        *ngSwitchCase="'prescriptions'"
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h9l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 3v7h7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19h3"></path>
+                      </svg>
+                      <svg
+                        *ngSwitchCase="'doctors'"
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="8" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 21a6 6 0 0 1 12 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 3v8"></path>
+                      </svg>
+                      <svg
+                        *ngSwitchCase="'patients'"
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 21a8 8 0 0 1 16 0"></path>
+                      </svg>
+                      <svg
+                        *ngSwitchCase="'settings'"
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8.94-2.06a1 1 0 0 1 0 2.12l-1.42.33a7 7 0 0 1-.74 1.78l.8 1.3a1 1 0 0 1-1.7 1.06l-1.1-1a6.94 6.94 0 0 1-1.86.76l-.28 1.44a1 1 0 0 1-2-.02l-.28-1.42a7.06 7.06 0 0 1-1.84-.74l-1.12 1a1 1 0 0 1-1.7-1.06l.82-1.32a7 7 0 0 1-.72-1.78l-1.44-.34a1 1 0 0 1 0-2.12l1.44-.34c.16-.62.4-1.21.72-1.78l-.82-1.32a1 1 0 0 1 1.7-1.06l1.12 1c.58-.33 1.2-.58 1.84-.74l.28-1.42a1 1 0 0 1 2-.02l.28 1.44c.66.16 1.28.42 1.86.76l1.1-1a1 1 0 0 1 1.7 1.06l-.8 1.3c.32.57.56 1.16.74 1.78l1.42.33Z"
+                        ></path>
+                      </svg>
+                      <svg
+                        *ngSwitchCase="'analytics'"
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m7 13 4-4 4 3 6-7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17h4"></path>
+                      </svg>
+                    </ng-container>
+                  </span>
+                  <span class="sidebar-link__content">
+                    <span class="sidebar-link__label">{{ link.label }}</span>
+                    <span class="sidebar-link__description">{{ link.description }}</span>
+                  </span>
+                  <span *ngIf="link.badge" class="sidebar-link__badge">{{ link.badge }}</span>
+                </a>
+              </ng-container>
+              <ng-template #disabledLink>
+                <button type="button" class="sidebar-link sidebar-link--disabled" disabled>
+                  <span class="sidebar-link__icon">
+                    <ng-container [ngSwitch]="link.icon">
+                      <svg *ngSwitchCase="'dashboard'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 21h8V11h-8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 3h8M13 7h8M3 17h8M3 21h8"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'prescriptions'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h9l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 3v7h7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19h3"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'doctors'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="8" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 21a6 6 0 0 1 12 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 3v8"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'patients'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 21a8 8 0 0 1 16 0"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'settings'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8.94-2.06a1 1 0 0 1 0 2.12l-1.42.33a7 7 0 0 1-.74 1.78l.8 1.3a1 1 0 0 1-1.7 1.06l-1.1-1a6.94 6.94 0 0 1-1.86.76l-.28 1.44a1 1 0 0 1-2-.02l-.28-1.42a7.06 7.06 0 0 1-1.84-.74l-1.12 1a1 1 0 0 1-1.7-1.06l.82-1.32a7 7 0 0 1-.72-1.78l-1.44-.34a1 1 0 0 1 0-2.12l1.44-.34c.16-.62.4-1.21.72-1.78l-.82-1.32a1 1 0 0 1 1.7-1.06l1.12 1c.58-.33 1.2-.58 1.84-.74l.28-1.42a1 1 0 0 1 2-.02l.28 1.44c.66.16 1.28.42 1.86.76l1.1-1a1 1 0 0 1 1.7 1.06l-.8 1.3c.32.57.56 1.16.74 1.78l1.42.33Z"
+                        ></path>
+                      </svg>
+                      <svg *ngSwitchCase="'analytics'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m7 13 4-4 4 3 6-7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17h4"></path>
+                      </svg>
+                    </ng-container>
+                  </span>
+                  <span class="sidebar-link__content">
+                    <span class="sidebar-link__label">{{ link.label }}</span>
+                    <span class="sidebar-link__description">{{ link.description }}</span>
+                  </span>
+                  <span *ngIf="link.badge" class="sidebar-link__badge">{{ link.badge }}</span>
+                </button>
+              </ng-template>
+            </li>
+          </ul>
+        </nav>
+        <div class="rounded-2xl bg-brand-primary/10 p-4 text-xs text-brand-neutral/70">
+          <p class="mb-2 font-semibold text-brand-primary">Need quick metrics?</p>
+          <p>Export the daily analytics report to share with regional leadership teams.</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1">
+      <div class="flex flex-col gap-8">
+        <section class="admin-hero relative overflow-hidden rounded-3xl border border-brand-primary/15 bg-white px-6 py-10 sm:px-8 shadow-[0_32px_80px_rgba(6,180,139,0.18)]">
+      <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div class="max-w-xl space-y-4">
+          <span class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-brand-primary">
+            Admin Portal
+          </span>
+          <div class="space-y-3">
+            <h1 class="text-3xl font-semibold text-brand-neutral sm:text-[2.35rem]">Central Operations Hub</h1>
+            <p class="text-base text-brand-neutral/70 sm:text-lg">
+              Monitor organisational health, approve new prescribers and keep your teams aligned with policy updates—all from a single, streamlined dashboard.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 text-sm text-brand-neutral/70">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] text-white shadow-[0_12px_24px_rgba(6,180,139,0.25)]">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+                </svg>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-brand-neutral">248 clinicians</p>
+                <p class="text-xs text-brand-neutral/60">Active in the last 30 days</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-primary/10 text-brand-primary">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+                </svg>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-brand-neutral">SLA 99.9%</p>
+                <p class="text-xs text-brand-neutral/60">System uptime this quarter</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col items-start gap-3">
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-2xl bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(6,180,139,0.38)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_26px_52px_rgba(6,180,139,0.32)]"
+            >
+              Review access requests
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            <button
+              type="button"
+              (click)="downloadReports()"
+              class="inline-flex items-center gap-2 rounded-2xl border border-brand-primary/30 bg-white px-5 py-3 text-sm font-semibold text-brand-primary shadow-[0_14px_32px_rgba(6,180,139,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary hover:text-brand-primary hover:shadow-[0_22px_45px_rgba(6,180,139,0.18)]"
+            >
+              Download Excel report
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5 5 5-5"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12"></path>
+              </svg>
+            </button>
+          </div>
+          <p class="text-xs text-brand-neutral/60">Last login: 15 minutes ago from Dhaka HQ</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article
+        *ngFor="let stat of summaryStats"
+        class="rounded-3xl border border-brand-primary/15 bg-white p-5 shadow-[0_24px_55px_rgba(6,180,139,0.08)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_35px_75px_rgba(6,180,139,0.12)]"
+      >
+        <div class="mb-4 flex items-center justify-between">
+          <span
+            class="grid h-11 w-11 place-items-center rounded-2xl text-white"
+            [ngClass]="stat.iconBgClass"
+          >
+            <ng-container [ngSwitch]="stat.icon">
+              <svg *ngSwitchCase="'approvals'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"></path>
+                <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round"></circle>
+              </svg>
+              <svg *ngSwitchCase="'clinicians'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 11l2 2 4-4"></path>
+              </svg>
+              <svg *ngSwitchCase="'tickets'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 11h4"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 15h12"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 11h.01"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 15h.01"></path>
+              </svg>
+              <svg *ngSwitchCase="'compliance'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+              </svg>
+            </ng-container>
+          </span>
+          <span class="rounded-full px-3 py-1 text-xs font-semibold" [ngClass]="stat.badgeClass">{{ stat.badge }}</span>
+        </div>
+        <p class="text-3xl font-semibold text-brand-neutral">{{ stat.value }}</p>
+        <p class="text-sm text-brand-neutral/60">{{ stat.label }}</p>
+        <p class="mt-2 text-xs font-medium text-brand-neutral/50">{{ stat.hint }}</p>
+      </article>
+    </section>
+
+    <section class="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_28px_60px_rgba(6,180,139,0.08)]">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">Patient demographics</h2>
+            <p class="text-xs text-brand-neutral/50">Gender mix across the active prescription base.</p>
+          </div>
+          <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">Updated 5 mins ago</span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <article
+            *ngFor="let segment of demographicBreakdown"
+            class="flex h-full flex-col gap-4 rounded-3xl border border-brand-primary/15 bg-brand-primary/5 p-5"
+          >
+            <div class="flex items-center justify-between gap-4">
+              <span class="grid h-12 w-12 place-items-center rounded-2xl text-white" [ngClass]="segment.accentClass">
+                <ng-container [ngSwitch]="segment.icon">
+                  <svg *ngSwitchCase="'female'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="7" r="4"></circle>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.5 21h13"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 15h8"></path>
+                  </svg>
+                  <svg *ngSwitchCase="'male'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="10" cy="14" r="4"></circle>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 6l3-3"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 8.5 21 1"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 6h5v5"></path>
+                  </svg>
+                  <svg *ngSwitchCase="'family'" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="8" cy="7" r="3"></circle>
+                    <circle cx="16" cy="9" r="3"></circle>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2 21a6 6 0 0 1 12 0"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a6 6 0 0 1 12 0"></path>
+                  </svg>
+                </ng-container>
+              </span>
+              <span class="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-brand-primary">{{ segment.share }} of total</span>
+            </div>
+            <div class="space-y-1">
+              <p class="text-2xl font-semibold text-brand-neutral">{{ segment.total }}</p>
+              <p class="text-sm text-brand-neutral/70">{{ segment.label }}</p>
+            </div>
+            <span class="text-xs font-semibold" [ngClass]="segment.change.startsWith('+') ? 'text-emerald-600' : 'text-rose-500'">
+              {{ segment.change }}
+            </span>
+          </article>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_50px_rgba(6,180,139,0.08)]">
+          <div class="mb-6 flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-brand-neutral">Age distribution</h2>
+              <p class="text-xs text-brand-neutral/50">Share of active patients across cohorts.</p>
+            </div>
+            <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">2,188 active</span>
+          </div>
+          <ul class="space-y-4">
+            <li *ngFor="let group of ageDistribution" class="space-y-2">
+              <div class="flex items-center justify-between text-sm text-brand-neutral/70">
+                <span class="font-semibold text-brand-neutral">{{ group.range }}</span>
+                <span>{{ group.patients }} patients • {{ group.percent }}%</span>
+              </div>
+              <div class="h-2.5 w-full overflow-hidden rounded-full bg-brand-primary/10">
+                <div
+                  class="h-full rounded-full bg-gradient-to-r"
+                  [ngClass]="group.accentClass"
+                  [style.width.%]="group.percent"
+                ></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_50px_rgba(6,180,139,0.08)]">
+          <div class="mb-4">
+            <h2 class="text-lg font-semibold text-brand-neutral">Daily throughput</h2>
+            <p class="text-xs text-brand-neutral/50">Digital vs in-person prescription generation.</p>
+          </div>
+          <div class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 text-sm font-semibold text-brand-neutral">
+            <span>Digital submissions</span>
+            <span class="text-brand-primary">68%</span>
+          </div>
+          <div class="mt-3 flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 text-sm font-semibold text-brand-neutral">
+            <span>In-person issuance</span>
+            <span class="text-brand-neutral/70">32%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-6 xl:grid-cols-[1.45fr_1fr]">
+      <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_28px_60px_rgba(6,180,139,0.08)]">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">Top prescribed medicines</h2>
+            <p class="text-xs text-brand-neutral/50">Trending molecules across {{ periodLabels[selectedMedicinePeriod].toLowerCase() }}.</p>
+          </div>
+          <div class="flex items-center gap-2 rounded-full bg-brand-primary/5 p-1 text-xs font-semibold text-brand-neutral">
+            <button
+              type="button"
+              *ngFor="let period of periodKeys"
+              class="rounded-full px-3 py-1 transition-all duration-150"
+              [ngClass]="
+                period === selectedMedicinePeriod
+                  ? 'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] text-white shadow-[0_12px_24px_rgba(6,180,139,0.24)]'
+                  : 'text-brand-neutral/60'
+              "
+              (click)="setMedicinePeriod(period)"
+            >
+              {{ periodLabels[period] }}
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          <article
+            *ngFor="let medicine of medicineLeaderboard; let idx = index"
+            class="flex flex-col gap-3 rounded-3xl border border-brand-primary/15 bg-brand-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div class="flex items-center gap-4">
+              <span class="text-lg font-semibold text-brand-primary">#{{ idx + 1 }}</span>
+              <div>
+                <p class="text-sm font-semibold text-brand-neutral">{{ medicine.name }}</p>
+                <p class="text-xs text-brand-neutral/60">{{ medicine.category }}</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 text-xs font-semibold">
+              <span class="rounded-full bg-white/70 px-3 py-1 text-brand-primary">{{ medicine.prescriptions }} scripts</span>
+              <span class="rounded-full bg-white/70 px-3 py-1 text-brand-neutral/70">{{ medicine.share }} share</span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full px-3 py-1"
+                [ngClass]="{
+                  'bg-emerald-100 text-emerald-600': medicine.trend === 'up',
+                  'bg-amber-100 text-amber-600': medicine.trend === 'steady',
+                  'bg-rose-100 text-rose-600': medicine.trend === 'down'
+                }"
+              >
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path *ngIf="medicine.trend === 'up'" stroke-linecap="round" stroke-linejoin="round" d="M5 12l5-5 4 4 5-5"></path>
+                  <path *ngIf="medicine.trend === 'down'" stroke-linecap="round" stroke-linejoin="round" d="M5 12l5 5 4-4 5 5"></path>
+                  <path *ngIf="medicine.trend === 'steady'" stroke-linecap="round" stroke-linejoin="round" d="M4 12h16"></path>
+                </svg>
+                {{ medicine.growth }}
+              </span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_50px_rgba(6,180,139,0.08)]">
+          <div class="mb-5 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-brand-neutral">Regional performance</h2>
+            <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">13 districts</span>
+          </div>
+          <div class="space-y-4 text-sm text-brand-neutral/70">
+            <div class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 font-semibold text-brand-neutral">
+              <span>Dhaka division</span>
+              <span class="text-brand-primary">34% of volume</span>
+            </div>
+            <div class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 font-semibold text-brand-neutral">
+              <span>Chattogram</span>
+              <span class="text-brand-neutral/70">21% of volume</span>
+            </div>
+            <div class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 font-semibold text-brand-neutral">
+              <span>Rajshahi</span>
+              <span class="text-brand-neutral/70">14% of volume</span>
+            </div>
+            <div class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 font-semibold text-brand-neutral">
+              <span>Sylhet</span>
+              <span class="text-brand-neutral/70">11% of volume</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_50px_rgba(6,180,139,0.08)]">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-brand-neutral">Automations</h2>
+            <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">Active</span>
+          </div>
+          <ul class="space-y-3 text-sm text-brand-neutral/70">
+            <li class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3">
+              <span>Refill reminders</span>
+              <span class="font-semibold text-brand-neutral">12.4k sent</span>
+            </li>
+            <li class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3">
+              <span>Critical interaction alerts</span>
+              <span class="font-semibold text-brand-neutral">98 escalated</span>
+            </li>
+            <li class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3">
+              <span>Chronic care journeys</span>
+              <span class="font-semibold text-brand-neutral">2.3k active</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-6 lg:grid-cols-[1fr_1.25fr]">
+      <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_28px_60px_rgba(6,180,139,0.08)]">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">Doctor network</h2>
+            <p class="text-xs text-brand-neutral/50">Identify high-performing prescribers and support needs.</p>
+          </div>
+          <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">{{ doctorSummaries.length }} key partners</span>
+        </div>
+        <div class="grid gap-4">
+          <button
+            type="button"
+            *ngFor="let doctor of doctorSummaries"
+            class="flex flex-col gap-4 rounded-3xl border border-brand-primary/15 p-4 text-left transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            [ngClass]="doctor.id === selectedDoctorId ? 'bg-brand-primary/10 border-brand-primary/40' : 'bg-white'"
+            (click)="selectDoctor(doctor.id)"
+            [attr.aria-pressed]="doctor.id === selectedDoctorId"
+          >
+            <div class="flex items-center gap-3">
+              <span class="grid h-12 w-12 place-items-center rounded-2xl text-sm font-semibold" [ngClass]="doctor.avatarBgClass">{{ doctor.avatarInitials }}</span>
+              <div class="flex flex-1 flex-col">
+                <span class="text-sm font-semibold text-brand-neutral">{{ doctor.name }}</span>
+                <span class="text-xs text-brand-neutral/60">{{ doctor.speciality }} • {{ doctor.region }}</span>
+              </div>
+              <span class="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-brand-primary">{{ doctor.repeatRate }} repeat</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 text-xs text-brand-neutral/70">
+              <span class="inline-flex items-center gap-2 rounded-full bg-brand-primary/5 px-3 py-1 font-semibold text-brand-neutral">
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12l5-5 4 4 5-5"></path>
+                </svg>
+                {{ doctor.totalPrescriptions }} prescriptions
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full bg-brand-primary/5 px-3 py-1 font-semibold text-brand-neutral">
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"></path>
+                  <circle cx="12" cy="12" r="9"></circle>
+                </svg>
+                {{ doctor.newPatients }} new patients
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_28px_60px_rgba(6,180,139,0.08)]" *ngIf="activeDoctorDetail as doctorDetail">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">{{ activeDoctorSummary?.name }}</h2>
+            <p class="text-xs text-brand-neutral/50">Deep dive into utilisation, patient mix and top therapies.</p>
+          </div>
+          <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">Real-time sync</span>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl bg-brand-primary/5 p-4">
+            <p class="text-xs text-brand-neutral/60">Utilisation</p>
+            <p class="text-2xl font-semibold text-brand-neutral">{{ doctorDetail.utilisation }}</p>
+            <span class="text-xs font-semibold" [ngClass]="doctorDetail.utilisationTrend === 'up' ? 'text-emerald-600' : doctorDetail.utilisationTrend === 'down' ? 'text-rose-500' : 'text-amber-500'">
+              {{ doctorDetail.utilisationChange }}
+            </span>
+          </div>
+          <div class="rounded-2xl bg-brand-primary/5 p-4">
+            <p class="text-xs text-brand-neutral/60">Digital share</p>
+            <p class="text-2xl font-semibold text-brand-neutral">{{ doctorDetail.digitalShare }}</p>
+            <span class="text-xs font-semibold text-brand-neutral/60">Prescriptions issued via portal</span>
+          </div>
+          <div class="rounded-2xl bg-brand-primary/5 p-4">
+            <p class="text-xs text-brand-neutral/60">Follow-up adherence</p>
+            <p class="text-2xl font-semibold text-brand-neutral">{{ doctorDetail.followUpRate }}</p>
+            <span class="text-xs font-semibold" [ngClass]="doctorDetail.followUpTrend === 'up' ? 'text-emerald-600' : doctorDetail.followUpTrend === 'down' ? 'text-rose-500' : 'text-amber-500'">
+              {{ doctorDetail.followUpChange }}
+            </span>
+          </div>
+          <div class="rounded-2xl bg-brand-primary/5 p-4">
+            <p class="text-xs text-brand-neutral/60">Patient satisfaction</p>
+            <p class="text-2xl font-semibold text-brand-neutral">{{ doctorDetail.patientFeedback.score }}</p>
+            <span class="text-xs font-semibold" [ngClass]="doctorDetail.patientFeedback.positive ? 'text-emerald-600' : 'text-rose-500'">
+              {{ doctorDetail.patientFeedback.change }} vs last month
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+          <div>
+            <h3 class="mb-3 text-sm font-semibold text-brand-neutral">Top therapies</h3>
+            <ul class="space-y-3">
+              <li *ngFor="let therapy of doctorDetail.topMedicines" class="flex items-center justify-between rounded-2xl bg-brand-primary/5 px-4 py-3 text-sm text-brand-neutral">
+                <span>{{ therapy.name }}</span>
+                <span class="text-xs text-brand-neutral/60">{{ therapy.prescriptions }} scripts • {{ therapy.share }}</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="mb-3 text-sm font-semibold text-brand-neutral">Upcoming clinics</h3>
+            <ul class="space-y-3 text-sm text-brand-neutral">
+              <li *ngFor="let clinic of doctorDetail.upcomingClinics" class="rounded-2xl bg-brand-primary/5 px-4 py-3">
+                <p class="font-semibold">{{ clinic.date }}</p>
+                <p class="text-xs text-brand-neutral/60">{{ clinic.window }} • {{ clinic.location }}</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_28px_60px_rgba(6,180,139,0.08)]">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">Quick actions</h2>
+            <p class="text-xs text-brand-neutral/50">Tackle high-priority workflows and maintenance tasks.</p>
+          </div>
+          <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-brand-primary">Live</span>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          <button
+            type="button"
+            *ngFor="let link of quickLinks"
+            class="group flex h-full flex-col justify-between rounded-3xl border border-brand-primary/15 bg-brand-primary/5 p-5 text-left transition-all duration-200 hover:-translate-y-1 hover:border-brand-primary/30 hover:bg-brand-primary/10"
+          >
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 place-items-center rounded-xl text-white" [ngClass]="link.iconBgClass">
+                <ng-container [ngSwitch]="link.icon">
+                  <svg *ngSwitchCase="'users'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                  <svg *ngSwitchCase="'approvals'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+                  </svg>
+                  <svg *ngSwitchCase="'insights'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 13l3 3 7-7"></path>
+                  </svg>
+                  <svg *ngSwitchCase="'broadcast'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 0 1 0 12.728"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 0 1 0 7.072"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6.343 6.343 11.314 11.314"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12a7 7 0 0 1 7-7"></path>
+                  </svg>
+                </ng-container>
+              </span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-brand-neutral">{{ link.label }}</p>
+                <p class="text-xs text-brand-neutral/60">{{ link.description }}</p>
+              </div>
+            </div>
+            <span class="mt-6 flex items-center gap-2 text-xs font-semibold text-brand-primary">
+              {{ link.cta }}
+              <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_50px_rgba(6,180,139,0.08)]">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-brand-neutral">Recent activity</h2>
+            <button type="button" class="text-xs font-semibold text-brand-primary hover:underline">View all</button>
+          </div>
+          <ul class="space-y-4">
+            <li *ngFor="let update of recentUpdates" class="flex items-start gap-3">
+              <span class="mt-1 h-2.5 w-2.5 rounded-full" [ngClass]="update.indicatorClass"></span>
+              <div>
+                <p class="text-sm text-brand-neutral">
+                  {{ update.message }}
+                  <span class="font-semibold" *ngIf="update.highlight">{{ update.highlight }}</span>
+                </p>
+                <span class="text-xs text-brand-neutral/60">{{ update.time }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_50px_rgba(6,180,139,0.08)]">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-brand-neutral">System health</h2>
+            <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">Optimal</span>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between text-sm text-brand-neutral/70">
+              <span>Authentication services</span>
+              <span class="font-semibold text-brand-neutral">Operational</span>
+            </div>
+            <div class="flex items-center justify-between text-sm text-brand-neutral/70">
+              <span>Prescription syncing</span>
+              <span class="font-semibold text-brand-neutral">Queue cleared 4 mins ago</span>
+            </div>
+            <div class="flex items-center justify-between text-sm text-brand-neutral/70">
+              <span>Audit events</span>
+              <span class="font-semibold text-brand-neutral">12 new logs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+      </div>
+    </main>
+  </div>
+</div>
