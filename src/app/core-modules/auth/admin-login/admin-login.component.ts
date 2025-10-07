@@ -20,7 +20,7 @@ import { AuthService as AuthApiService } from '../../../proxy/services/auth.serv
 })
 export class AdminLoginComponent implements OnDestroy {
   readonly form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     remember: [true],
   });
