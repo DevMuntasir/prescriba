@@ -1,0 +1,115 @@
+<app-appointment-stats />
+
+<div class="w-full bg-white h-fit mt-4 sticky top-0 rounded-lg border-[1px] shadow-lg">
+    <div class="h-full w-full p-4 bg-transparent rounded-lg shadow-sm relative box-border">
+        <form [formGroup]="filterForm">
+            <div class="mb-4 flex items-center space-x-4">
+                <label class="flex items-center cursor-pointer"
+                    [class.font-bold]="filterForm.get('day')?.value === 'today'">
+                    <input type="radio" formControlName="day" value="today" class="mr-2 leading-tight" />
+                    <span>Today</span>
+                </label>
+
+                <label class="flex items-center cursor-pointer"
+                    [class.font-bold]="filterForm.get('day')?.value === 'upcoming'">
+                    <input type="radio" formControlName="day" value="upcoming" class="mr-2 leading-tight" />
+                    <span>Upcoming</span>
+                </label>
+
+                <label class="flex items-center cursor-pointer"
+                    [class.font-bold]="filterForm.get('day')?.value === 'completed'">
+                    <input type="radio" formControlName="day" value="completed" class="mr-2 leading-tight" />
+                    <span>Completed</span>
+                </label>
+                <!-- <mat-radio-group formControlName="day" aria-labelledby="example-radio-group-label"
+                    class="example-radio-group">
+                    <mat-radio-button class="example-radio-button" value="today">Today</mat-radio-button>
+                    <mat-radio-button class="example-radio-button" value="upcomming">Upcomming</mat-radio-button>
+                    <mat-radio-button class="example-radio-button" value="completed">Completed</mat-radio-button>
+                </mat-radio-group> -->
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input type="text" formControlName="search"
+                    class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Search by name, code, etc." />
+            </div>
+
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Consultancy Type</label>
+                <select formControlName="consultancyType"
+                    class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Types</option>
+                    <option value="1">Chamber</option>
+                    <option value="2">Online</option>
+                    <option value="5">Instant</option>
+                </select>
+            </div>
+
+
+            @if(filterForm.get('consultancyType')?.value == 1 && userType == 'doctor') {
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Chamber/Hospital</label>
+                <select #scheduleId formControlName="scheduleId"
+                    class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Select </option>
+                    @for (item of ScheduleList; track $index) {
+                    <option value="{{item.id}}">{{item.chamber}}</option>
+                    }
+                </select>
+            </div>
+            }
+
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Appointment Type</label>
+                <select formControlName="appointmentType"
+                    class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Type</option>
+                    <option value="1">New</option>
+                    <option value="2">Follow-up</option>
+                </select>
+            </div>
+
+
+            <div class=" ">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                <div class="flex space-x-2">
+                    <input type="date" formControlName="startDate"
+                        class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="From" />
+                    <input type="date" formControlName="endDate"
+                        class="w-full p-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="To" />
+                </div>
+            </div>
+            <div class="mt-3 flex justify-end">
+                <button class="btn-primary w-full text-center justify-center" (click)="resetFilters()">Reset</button>
+            </div>
+
+            <!-- <div class="bg-secondary/10 text-center text-slate-900 py-1 absolute left-0 bottom-0 w-full">
+                Show more
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
+                </svg>
+            </div> -->
+        </form>
+
+
+        <!-- Action Buttons -->
+        <!-- <div class="flex space-x-2 absolute bottom-4">
+            <button
+                class="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Clear
+            </button>
+            <button
+                class="flex-1 py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Apply
+            </button>
+        </div> -->
+    </div>
+</div>

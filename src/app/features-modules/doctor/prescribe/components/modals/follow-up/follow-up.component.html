@@ -1,0 +1,87 @@
+<div class="follow-up-dialog">
+  <div class="flex bg-gray-200 items-center pl-4 py-4">
+    <h2 class="h-fit font-Roboto text-[20px] !mb-0 whitespace-nowrap">
+      Advice
+    </h2>
+    <div
+      class="search-section flex-1 w-full flex items-center space-x-2 rounded-lg overflow-hidden bg-white border-[1px] shadow-lg mx-10">
+      <div class="w-full h-fit">
+        <input autofocus="off" class="text-[16px] px-3 py-3 w-full outline-none border-none" type="text" matInput
+          [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Search complaints...">
+        <mat-autocomplete [displayWith]="displayWith" #auto="matAutocomplete">
+          @for (item of filteredFollowup | async; track item.label) {
+          <mat-option (click)="addFollowUp(item)" [value]="item.label">
+            {{ item.label }}
+          </mat-option>
+          }
+        </mat-autocomplete>
+
+      </div>
+      <button class="bg-secondary text-white p-4" (click)="addFollowUp({label:searchControl.value || '',value: 0})">
+        Add
+      </button>
+    </div>
+  </div>
+
+  <mat-dialog-content>
+    <!-- Search Bar -->
+    <!-- <div class="search-section py-4 flex items-center space-x-2">
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-icon matPrefix>search</mat-icon>
+        <input type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
+          placeholder="Search follow-ups...">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addFollowUp($event.option.value)">
+          <mat-option *ngFor="let followUp of filteredFollowup| async" [value]="followUp">
+            {{ followUp }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="addFollowUp(searchControl.value || '')">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div> -->
+
+    <!-- Quick Selection Chips -->
+    @if (loading.isSkelton) {
+    <app-skelton />
+    }@else {
+    <div class="follow-up-chips flex flex-wrap gap-2 mb-4">
+      <mat-chip-listbox multiple>
+        <mat-chip-option *ngFor="let followUp of bookmarkedFollowup" [selected]="isFollowUpSelected(followUp.label)"
+          (selectionChange)="toggleFollowUp($event, followUp)">
+          {{ followUp.label }}
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+    }
+
+    <!-- Selected Follow Ups with Details -->
+    <div *ngIf="selectedFollowUps.length > 0" class="selected-section mb-4 p-4 bg-gray-100 rounded">
+      <h3 class="text-lg">Selected Follow Ups:</h3>
+      <div *ngFor="let followUp of selectedFollowUps; let i = index" class="flex flex-wrap items-center gap-1 mb-3">
+        <!-- Notes Input -->
+        <mat-form-field class="w-[45%]">
+          <mat-label>Duration</mat-label>
+          <input matInput [(ngModel)]="followUp.notes" placeholder="Add Durations">
+        </mat-form-field>
+        <!-- Follow Up Input -->
+        <mat-form-field class="w-[45%]">
+          <mat-label>Follow Up</mat-label>
+          <input matInput [(ngModel)]="followUp.name">
+        </mat-form-field>
+
+
+
+        <!-- Delete Button -->
+        <button mat-icon-button color="warn" (click)="removeFollowUp(followUp)">
+          <app-bin />
+        </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="gap-2">
+    <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
+    <button class="btn-secondary" (click)="save()">Save</button>
+  </mat-dialog-actions>
+</div>

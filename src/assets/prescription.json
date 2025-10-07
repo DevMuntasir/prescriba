@@ -1,0 +1,145 @@
+{
+    "isPreHand": false,
+    "appointmentId": 34830,
+    "appointmentCode": "SGAP250424ONLINEbe203fc9-31c1-4ed1-9e64-0e647a3d33c7SL002",
+    "isHeader": true,
+    "patient": {
+        "patientName": "Jahangir",
+        "patientAge": "65",
+        "patientBloodGroup": "B+",
+        "patientProfileId": 42687,
+        "patientCode": "SGP202504172705",
+        "patientPhoneNo": "01985858888"
+    },
+    "doctor": {
+        "doctorName": "Dr. Muntasir",
+        "doctorProfileId": 50343,
+        "specializationName": "",
+        "doctorCode": "SGD20250411201",
+        "degree": [
+            {
+                "degreeName": "MBBS",
+                "instituteName": "Dhaka medical college",
+                "instituteCity": "dhaka",
+                "instituteCountry": "Bangladesh"
+            }
+        ],
+        "areaOfExperties": "Brain / Neurology",
+        "qualification": "MBBS",
+        "chamber": [],
+        "schedule": [
+            {
+                "start": "Monday",
+                "end": "Monday",
+                "startTime": "06:05",
+                "endTime": "09:08"
+            },
+            {
+                "start": "Thursday",
+                "end": "Thursday",
+                "startTime": "10:09",
+                "endTime": "14:10"
+            }
+        ],
+        "bmdc": null,
+        "signature": "https://qa.soowgoodbeta.com/\\uploads\\IdentityDoc\\50343\\logo.png"
+    },
+    "chiefComplaints": [
+        {
+            "name": "Influenza (Flu)",
+            "duration": "3 days",
+            "days": "3 days",
+            "notes": "nothing",
+            "id": 9
+        },
+        {
+            "name": "new complients",
+            "duration": "14 days",
+            "days": "14 days",
+            "notes": "something",
+            "id": 74
+        }
+    ],
+    "history": [
+        {
+            "name": "Heart Disease",
+            "notes": "",
+            "id": 6
+        },
+        {
+            "name": "Thyroid Disorders",
+            "notes": "1 year",
+            "id": 13
+        }
+    ],
+    "examination": [
+        {
+            "systolic": "80",
+            "diastolic": "52",
+            "pulse": "55",
+            "temperature": "55",
+            "weight": "5",
+            "heightFeet": "5",
+            "heightInches": "5"
+        }
+    ],
+    "diagnosis": [
+        {
+            "name": "Complete Blood Count (CBC)",
+            "notes": "",
+            "id": 1
+        },
+        {
+            "name": "Diabetes Mellitus",
+            "notes": "",
+            "id": 5
+        }
+    ],
+    "medications": [
+        {
+            "name": ". new Medicine2 ",
+            "notes": "no",
+            "id": 134,
+            "duration": "1 days",
+            "timming": "1+0+1",
+            "mealTime": "After Meal"
+        },
+        {
+            "name": "Tab. Napa Extend5 500 mg",
+            "notes": "",
+            "id": 9,
+            "duration": "25 days",
+            "timming": "1+0+1",
+            "mealTime": "Before Meal"
+        },
+        {
+            "name": "Tab. Napa Extend2 500 mg",
+            "notes": "",
+            "id": 6,
+            "duration": "1 year",
+            "timming": "0+1+1",
+            "mealTime": "Before Meal"
+        }
+    ],
+    "test": [
+        {
+            "name": "new test",
+            "notes": "",
+            "id": 31
+        },
+        {
+            "name": "MRI Scan",
+            "notes": "",
+            "id": 3
+        }
+    ],
+    "advice": [
+        {
+            "name": "Wash hands frequently to prevent infections.",
+            "notes": "",
+            "id": 11
+        }
+    ],
+    "followUp": "",
+    "uploadImage": ""
+}

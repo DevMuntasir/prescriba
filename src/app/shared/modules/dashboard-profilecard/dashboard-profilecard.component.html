@@ -1,0 +1,24 @@
+<div class="flex gap-3 !border-b-orange-400  px-4">
+  <div class="relative">
+    <div class="relative overflow-hidden h-14 w-14 rounded-full !border-2 border-cyan-100 bg-cyan-50 flex 
+      items-center justify-center text-cyan-700 text-xl font-semibold">
+      <img [src]="url || '../../../../assets/patients/patient.png'" alt="pp">
+    </div>
+    <div class="absolute right-2 top-1" *ngIf="status && authInfo.userType =='doctor'">
+      <span class="relative flex h-2.5 w-2.5">
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-300 opacity-75"></span>
+        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-400"></span>
+      </span>
+    </div>
+    <div class="absolute right-2 top-1" *ngIf="!status && authInfo.userType=='doctor'">
+      <span class="relative flex h-2.5 w-2.5">
+        <span class="absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-yellow-500"></span>
+      </span>
+    </div>
+  </div>
+
+
+  <div class=" font-semibold"> {{ userInfo?.fullName ?? userInfo.patientName }}</div>
+
+</div>

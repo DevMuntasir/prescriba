@@ -1,0 +1,10 @@
+@if (availableDaysAndTime.length) {
+<div class="flex gap-2">
+    @for (days of availableDaysAndTime; track $index) {
+    <span
+        class="py-1 px-2 rounded-md font-Roboto text-[12px] bg-secondary/5 border-[1px] border-secondary/50 text-slate-900">{{days.day
+        | slice: 0:3}}</span>
+    }
+</div>
+
+}

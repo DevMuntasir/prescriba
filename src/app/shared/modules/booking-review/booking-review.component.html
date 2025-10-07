@@ -1,0 +1,69 @@
+<!-- <span class="inline-flex items-center justify-center px-2 py-0.5 ml-3 text-xs font-medium text-gray-500 bg-gray-200 rounded">Popular</span> -->
+
+<div
+  class="w-full max-w-full m-auto custom-scrollbar max-h-[490px] overflow-y-scroll box-border lg:px-6"
+>
+  <h5 class="text-[22px] md:text-[26px] font-semibold text-slate-900 text-center">
+    Dr. {{ bookingInfo?.doctorName }}
+  </h5>
+  <h2 class="text-[14px] md:text-[18px] text-slate-900 text-center">
+    <span> Patient name: </span>{{ bookingInfo?.patientName }}
+  </h2>
+  <div class="grid grid-cols-1 gap-6 mt-5">
+    <div class="col-span-1">
+      <div
+        class="mt-6 relative grid grid-cols-3 gap-6 text-center place-items-center justify-center lg:text-left bg-slate-100 pt-8 pb-4 box-border px-4 border-[1px] border-secondary-dark/50"
+      >
+        <span
+          class="absolute text-[15px] md:text-[16px] left-1/2 font-Roboto font-semibold text-slate-900 bg-white rounded-full -top-4 -translate-x-1/2 py-1 px-3 border-[1px] border-secondary-dark/50"
+          >Appointment</span
+        >
+        <div class="text-center min-w-[100px]">
+          <p
+            class="font-bold text-[12px] sm:text-[14px] md:text-[16px] text-slate-900"
+          >
+            {{ bookingInfo?.appointmentDate | date }}
+          </p>
+          <p class="text-[12px] sm:text-sm text-slate-900">Date</p>
+        </div>
+
+        <div class="text-center">
+          <p
+            class="font-bold text-slate-900 text-[12px] sm:text-[14px] md:text-[16px]"
+          >
+            @if (bookingInfo?.doctorChamberName) {
+            {{ bookingInfo?.doctorChamberName }}
+            }@else{ Prescriba Online Platform }
+          </p>
+
+          <p class="text-[12px] sm:text-sm text-slate-900">Place</p>
+        </div>
+
+        <div class="text-center">
+          <p
+            class="font-bold text-slate-900 text-[12px] sm:text-[14px] md:text-[16px]"
+          >
+            {{ getDayOfWeek(bookingInfo?.appointmentDate) }}
+          </p>
+          <p class="text-[12px] sm:text-sm text-slate-900">Day</p>
+        </div>
+      </div>
+      <app-coupon-card [bookingInfo]="bookingInfo" />
+      <div class="grid grid-cols-[1fr,2fr] sm:grid-cols-2 gap-4">
+        <button
+          class="btn-secondary bg-primary mt-6 text-[14px] md:text-[15px] tracking-[1px] py-1 w-full"
+          (click)="gotToBack.emit(1)"
+        >
+          Back
+        </button>
+        <button
+          class="btn-secondary mt-6 text-[16px] tracking-[1px] py-2 w-full"
+          (click)="createAppointmentAndPayment()"
+        >
+          {{ loading ? "Loading..." : "Confirm & Pay" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

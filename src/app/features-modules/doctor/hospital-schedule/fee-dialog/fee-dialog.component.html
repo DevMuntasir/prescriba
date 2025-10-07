@@ -1,0 +1,118 @@
+<div class="max-w-[600px]">
+  <div class="flex justify-between p-4 border-b-[1px] items-center">
+    <h1 class="dashbord-heading-text text-[15px] md:text-[18px]">
+      <i class="fa-solid fa-plus"></i> {{ editData ? "Update" : "Add" }} Fees
+      Options
+    </h1>
+    <button class="btn-secondary-light" (click)="dialogRef.close(true)">
+      Close
+    </button>
+  </div>
+
+  <div class="md:px-6 px-3 md:py-6 py-4">
+    <form [formGroup]="form">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4">
+        <div class="w-full px-3 sm:w-full">
+          <label for="appointmentType" class="mb-2"> AppointmentType </label>
+          <select [ngClass]="{'readonly-select': isEditing }" id="appointmentType" class="form_input mt-1"
+            formControlName="appointmentType">
+            <option value="0">--Select--</option>
+            <option *ngFor="let item of appointmentType" [value]="item.id">
+              {{ item.name }}
+            </option>
+          </select>
+          <p class="text-red-500 text-sm" *ngIf="
+            formSubmitted &&
+            form.get('appointmentType')?.invalid &&
+            form.get('appointmentType')?.value == 0
+          ">
+            Appointment type is required!
+          </p>
+        </div>
+        <div class="w-full px-3 sm:w-full">
+          <label for="doctorSchedule" class="mb-2"> Doctor Schedule </label>
+          <select [ngClass]="{'readonly-select': isEditing }" id="doctorScheduleId" class="form_input mt-1"
+            formControlName="doctorScheduleId">
+            <option value="0">--Select--</option>
+            <option *ngFor="let item of doctorSchedule" [value]="item.id">
+              {{ item.name }}
+            </option>
+          </select>
+          <p class="text-red-500 text-sm" *ngIf="
+            formSubmitted && form.get('doctorScheduleId')?.hasError('pattern')
+          ">
+            Doctor scheduleId is required!
+          </p>
+        </div>
+        <div class="w-full px-3 sm:w-full">
+          <label for="currrentFee" class="mb-2"> Currrent Fee </label>
+          <input autocomplete="off" formControlName="currentFee" type="number" inputmode="numeric"
+            placeholder="Currrent Fee" class="form_input mt-1" />
+          <p class="text-red-500 text-sm" *ngIf="formSubmitted && form.get('currentFee')?.hasError('pattern')">
+            Current fee is required!
+          </p>
+        </div>
+        <!-- <div class="w-full px-3 sm:w-full">
+        <label for="previousFee" class="mb-2"> Previous Fee </label>
+        <input autocomplete="off" formControlName="previousFee" type="number" inputmode="numeric"
+          placeholder="Previous Fee" class="form_input mt-1" />
+        <p class="text-red-500 text-sm" *ngIf="formSubmitted && form.get('previousFee')?.hasError('pattern')">
+          Previous fee fee is required!
+        </p>
+      </div> -->
+        <!-- <div class="w-full px-3 sm:w-full">
+        <label for="feeAppliedFrom" class="mb-2">Fee Applied From</label>
+        <input autocomplete="off" formControlName="feeAppliedFrom" type="date" placeholder="Fee Applied From"
+          class="form_input mt-1" />
+        <p class="text-red-500 text-sm" *ngIf="
+            formSubmitted && form.get('feeAppliedFrom')?.hasError('pattern')
+          ">
+          Fee Applied from is required!
+        </p>
+      </div>
+      <div class="w-full px-3 sm:w-full" *ngIf="showFollowUpPeriod">
+        <label for="followUpPeriod" class="mb-2">FollowUp Period</label>
+        <input autocomplete="off" formControlName="followUpPeriod" type="number" placeholder="FollowUp Period"
+          class="form_input mt-1" />
+        <p class="text-red-500 text-sm" *ngIf="
+            formSubmitted && form.get('followUpPeriod')?.hasError('pattern')
+          ">
+          Follow up period from is required!
+        </p>
+      </div>
+      <div class="w-full px-3 sm:w-full" *ngIf="showReportShowPeriod">
+        <label for="reportShowPeriod" class="mb-2">Report Show Period</label>
+        <input autocomplete="off" formControlName="reportShowPeriod" type="number" placeholder="Report Show Period"
+          class="form_input mt-1" />
+        <p class="text-red-500 text-sm" *ngIf="
+            formSubmitted && form.get('reportShowPeriod')?.hasError('pattern')
+          ">
+          Follow up period from is required!
+        </p>
+      </div> -->
+        <div class="w-full px-3 sm:w-full">
+          <label for="discount" class="mb-2">Discount (Taka)</label>
+          <input autocomplete="off" formControlName="discount" type="number" placeholder="example: 50"
+            class="form_input mt-1" />
+        </div>
+        <!-- <div class="w-full px-3 sm:w-full">
+        <label for="discountAppliedFrom" class="mb-2">Discount Applied From</label>
+        <input autocomplete="off" formControlName="discountAppliedFrom" type="date" placeholder="Discount Applied From"
+          class="form_input mt-1" />
+      </div>
+      <div class="w-full px-3 sm:w-full">
+        <label for="discountPeriod" class="mb-2">Discount Period (Day)</label>
+        <input autocomplete="off" formControlName="discountPeriod" type="number" placeholder="example: 30 days"
+          class="form_input" />
+      </div> -->
+        <!-- <div class="w-full px-3 sm:w-full">
+        <label for="totalFee" class="mb-2">Total Fee</label>
+        <input autocomplete="off" formControlName="totalFee" placeholder="Total Fee" class="form_input mt-1" />
+      </div> -->
+      </div>
+    </form>
+    <button class="btn-secondary mt-5 w-full sm:w-fit" (click)="submit()">
+      {{isEditing ? 'Update': 'Save'}}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<form [formGroup]="vitalsForm" class="max-w-2xl mx-auto p-6">
+  <h2 mat-dialog-title class="border-b pb-2">
+    On Examination
+
+  </h2>
+  <!-- Blood Pressure -->
+  <div class="flex items-center space-x-4 mt-3">
+    <label class="w-32 text-gray-700">Blood Pressure:</label>
+    <mat-form-field class="w-24">
+      <input matInput formControlName="systolic" placeholder="120" type="string">
+    </mat-form-field>
+    <span class="text-xl">/</span>
+    <mat-form-field class="w-24">
+      <input matInput formControlName="diastolic" placeholder="80" type="string">
+    </mat-form-field>
+    <span class="text-gray-600">mm Hg</span>
+  </div>
+
+  <!-- Pulse -->
+  <div class="flex items-center space-x-4">
+    <label class="w-32 text-gray-700">Pulse:</label>
+    <mat-form-field class="w-60">
+      <input matInput formControlName="pulse" type="string">
+    </mat-form-field>
+    <span class="text-gray-600">BPM</span>
+
+  </div>
+
+  <!-- Temperature -->
+  <div class="flex items-center space-x-4">
+    <label class="w-32 text-gray-700">Temperature:</label>
+    <mat-form-field class="w-60">
+      <input matInput formControlName="temperature" type="string">
+    </mat-form-field>
+    <span class="text-gray-600">°F</span>
+
+    <!-- <mat-select formControlName="tempUnit" class="w-20">
+        <mat-option value="F">°F</mat-option>
+        <mat-option value="C">°C</mat-option>
+      </mat-select>
+      <mat-checkbox formControlName="tempNormal" class="ml-4">
+        Normal
+      </mat-checkbox> -->
+  </div>
+
+  <!-- Weight -->
+  <div class="flex items-center space-x-4">
+    <label class="w-32 text-gray-700">Weight:</label>
+    <mat-form-field class="w-60">
+      <input matInput formControlName="weight" type="string">
+    </mat-form-field>
+    <mat-label class="text-gray-700">kg</mat-label>
+
+    <!-- <mat-select formControlName="weightUnit" class="w-20">
+        <mat-option value="kg">kg</mat-option>
+        <mat-option value="lbs">lbs</mat-option>
+      </mat-select>
+      <mat-checkbox formControlName="showWeightInPrescription" class="ml-4">
+        Show in prescription
+      </mat-checkbox> -->
+  </div>
+
+  <!-- Height -->
+  <div class="flex items-center space-x-4">
+    <label class="w-32 text-gray-700">Height:</label>
+    <mat-form-field class="w-24">
+      <input matInput formControlName="heightFeet" type="string">
+    </mat-form-field>
+    <span class="text-gray-600">ft</span>
+    <mat-form-field class="w-24">
+      <input matInput formControlName="heightInches" type="string">
+    </mat-form-field>
+    <span class="text-gray-600">inch</span>
+    <!-- <mat-checkbox formControlName="showHeightInPrescription" class="ml-4">
+        Show in prescription
+      </mat-checkbox> -->
+  </div>
+
+  <div class="flex gap-2 justify-end">
+    <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
+    <button class="btn-secondary" (click)="saveOnExamination()">Save</button>
+  </div>
+</form>

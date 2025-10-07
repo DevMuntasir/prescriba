@@ -1,0 +1,11 @@
+.hideWarning{
+    transition: 0.4s;
+    height: 0px;
+    opacity: 0;
+    transform: translateY(-100px);
+}
+.showWarning{
+    transition: 0.4s;
+    opacity: 1;
+    transform: translateY(0);
+}

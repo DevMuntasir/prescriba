@@ -1,0 +1,19 @@
+.app-loader {
+    position: absolute; /* or 'fixed', depending on your layout */
+    z-index: 1000; /* A higher value to ensure it's on top */
+    width: 100%;
+    background: #0202024b;
+    backdrop-filter: blur(2px);
+  }
+  #ngx-facebook-messenger {
+    .wrapper {
+      bottom: 36px;
+      right: 0;
+      left: 0;
+    }
+  
+    .wrapper-icon-text {
+      left: 12px;
+      background: #8278ff;
+    }
+  }

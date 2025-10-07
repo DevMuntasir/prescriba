@@ -1,0 +1,39 @@
+@if (title !=='Examination') {
+<div class="mb-4 pr-2">
+    <button
+        class="flex bg-gray-200 max-w-[70%] py-2 px-4 text-slate-900 justify-between rounded-md items-center gap-3 font-poppins"
+        (click)="buttonClick.emit()">
+        {{ title }} <app-modal-icon />
+    </button>
+    <ul class="list-disc pl-5 py-2">
+        <li class="font-poppinsLight" *ngFor="let item of items">
+            {{ formatItem(item) }}
+        </li>
+    </ul>
+</div>
+}
+@if (title ==='Examination') {
+<div class="mb-4 pr-2">
+    <button
+        class="flex bg-gray-200 max-w-[70%] py-2 px-4 text-slate-900 justify-between rounded-md items-center gap-3 font-poppins"
+        (click)="buttonClick.emit()">
+        {{ title }} <app-modal-icon />
+    </button>
+
+    <div class="grid grid-cols-2 gap-x-4 px-4 py-2 box-border">
+        @if (items.length > 0) {
+        @for (item of items; track $index) {
+        <span class="capitalize"> <b>systolic </b> : {{item.systolic}}</span>
+        <span class="capitalize"> <b>diastolic </b> : {{item.diastolic}}</span>
+        <span class="capitalize"> <b>pulse </b> : {{item.pulse}}</span>
+        <span class="capitalize"> <b>temperature </b> : {{item.temperature}}</span>
+        <span class="capitalize"> <b>weight</b> : {{item.weight}}</span>
+        <span class="capitalize"> <b>height </b> : {{item.heightFeet}}.{{item.heightInches}} </span>
+        }
+        }
+    </div>
+
+
+
+</div>
+}

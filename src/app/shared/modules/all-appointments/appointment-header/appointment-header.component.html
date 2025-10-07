@@ -1,0 +1,92 @@
+<!-- <header class="mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                <span class="bg-cyan-500 text-white p-1.5 rounded-md">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </span>
+                Appointments
+            </h1>
+            <p class="text-gray-500 mt-1">Manage your patient appointments</p>
+        </div>
+
+        <button
+            class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow-sm transition-all duration-200 flex items-center gap-2 font-medium self-start md:self-center">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                </path>
+            </svg>
+            Create Appointment
+        </button>
+    </div>
+</header> -->
+
+
+
+
+<div
+    class="flex w-full shadow-lg rounded-lg border-[1px] bg-white gap-4 items-center justify-between flex-wrap px-4 py-3">
+    <h1 class="font-Roboto text-[16px] sm:text-[18px] flex gap-2 items-center">
+        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+            </path>
+        </svg>
+        Appointments
+        <span
+            class="w-10 h-10 bg-secondary/10 flex justify-center items-center rounded-full p-2 font-poppinsBold">{{totalCount}}</span>
+    </h1>
+
+    @if (userType === 'doctor') {
+    <div class="flex gap-3 items-center">
+        <button [disabled]="exportLoader" (click)="exportToCSV.emit()"
+            class="flex gap-1 items-center bg-white-50 border-gray-200 border-[1px] shadow-md p-2 rounded-lg">
+            @if (exportLoader) {
+            'Exporting...'
+            }@else {
+            <svg width="24px" height="24px" viewBox="-4 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path
+                        d="M5.106 0c-2.802 0-5.073 2.272-5.073 5.074v53.841c0 2.803 2.271 5.074 5.073 5.074h45.774c2.801 0 5.074-2.271 5.074-5.074v-38.605l-18.903-20.31h-31.945z"
+                        fill-rule="evenodd" clip-rule="evenodd" fill="#45B058"></path>
+                    <path
+                        d="M20.306 43.197c.126.144.198.324.198.522 0 .378-.306.72-.703.72-.18 0-.378-.072-.504-.234-.702-.846-1.891-1.387-3.007-1.387-2.629 0-4.627 2.017-4.627 4.88 0 2.845 1.999 4.879 4.627 4.879 1.134 0 2.25-.486 3.007-1.369.125-.144.324-.233.504-.233.415 0 .703.359.703.738 0 .18-.072.36-.198.504-.937.972-2.215 1.693-4.015 1.693-3.457 0-6.176-2.521-6.176-6.212s2.719-6.212 6.176-6.212c1.8.001 3.096.721 4.015 1.711zm6.802 10.714c-1.782 0-3.187-.594-4.213-1.495-.162-.144-.234-.342-.234-.54 0-.361.27-.757.702-.757.144 0 .306.036.432.144.828.739 1.98 1.314 3.367 1.314 2.143 0 2.827-1.152 2.827-2.071 0-3.097-7.112-1.386-7.112-5.672 0-1.98 1.764-3.331 4.123-3.331 1.548 0 2.881.467 3.853 1.278.162.144.252.342.252.54 0 .36-.306.72-.703.72-.144 0-.306-.054-.432-.162-.882-.72-1.98-1.044-3.079-1.044-1.44 0-2.467.774-2.467 1.909 0 2.701 7.112 1.152 7.112 5.636.001 1.748-1.187 3.531-4.428 3.531zm16.994-11.254l-4.159 10.335c-.198.486-.685.81-1.188.81h-.036c-.522 0-1.008-.324-1.207-.81l-4.142-10.335c-.036-.09-.054-.18-.054-.288 0-.36.323-.793.81-.793.306 0 .594.18.72.486l3.889 9.992 3.889-9.992c.108-.288.396-.486.72-.486.468 0 .81.378.81.793.001.09-.017.198-.052.288z"
+                        fill="#ffffff"></path>
+                    <g fill-rule="evenodd" clip-rule="evenodd">
+                        <path d="M56.001 20.357v1h-12.8s-6.312-1.26-6.128-6.707c0 0 .208 5.707 6.003 5.707h12.925z"
+                            fill="#349C42"></path>
+                        <path d="M37.098.006v14.561c0 1.656 1.104 5.791 6.104 5.791h12.8l-18.904-20.352z" opacity=".5"
+                            fill="#ffffff"></path>
+                    </g>
+                </g>
+            </svg>
+            }
+        </button>
+
+        <button [disabled]="!isScheduleList" (click)="createAppointmentByAssistant.emit()"
+            class="btn-secondary group text-[14px]">
+            <svg fill="#ffffff" width="18px" height="18px" viewBox="0 0 32 32" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"
+                class="mr-2 group-hover:fill-secondary-dark w-[16px] h-[16px] md:w-[18px] md:h-[18px]">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <title>calendar</title>
+                    <path
+                        d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-1.952-1.12-3.488t-2.88-2.144v2.624q0 1.248-0.864 2.144t-2.144 0.864-2.112-0.864-0.864-2.144v-3.008h-12v3.008q0 1.248-0.896 2.144t-2.112 0.864-2.144-0.864-0.864-2.144v-2.624q-1.76 0.64-2.88 2.144t-1.12 3.488v20zM4 26.016v-16h24v16q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM6.016 3.008q0 0.416 0.288 0.704t0.704 0.288 0.704-0.288 0.288-0.704v-3.008h-1.984v3.008zM8 24h4v-4h-4v4zM8 18.016h4v-4h-4v4zM14.016 24h4v-4h-4v4zM14.016 18.016h4v-4h-4v4zM20 24h4v-4h-4v4zM20 18.016h4v-4h-4v4zM24 3.008q0 0.416 0.288 0.704t0.704 0.288 0.704-0.288 0.32-0.704v-3.008h-2.016v3.008z">
+                    </path>
+                </g>
+            </svg>
+            Create Appointment
+        </button>
+    </div>
+    }
+</div>

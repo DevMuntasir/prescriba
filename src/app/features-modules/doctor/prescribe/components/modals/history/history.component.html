@@ -1,0 +1,95 @@
+<div class="chief-complaint-dialog">
+    <div class="flex bg-gray-200 items-center pl-4 py-4">
+        <h2 class="h-fit font-Roboto text-[20px] !mb-0 whitespace-nowrap">
+            History
+        </h2>
+        <form (ngSubmit)="addHistory({label:searchControl.value || '',value: 0}) "
+            class="search-section flex-1 w-full flex items-center space-x-2 rounded-lg overflow-hidden bg-white border-[1px] shadow-lg mx-10">
+            <div class="w-full h-fit">
+                <input class="text-[16px] px-3 py-3 w-full outline-none border-none" type="text" matInput
+                    [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Search history...">
+                <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith"
+                    #auto="matAutocomplete">
+                    @for (history of filteredHistory | async; track history) {
+                    <mat-option (click)="addHistory(history)" [value]="history">
+                        {{ history.label }}
+                    </mat-option>
+                    }
+                </mat-autocomplete>
+
+            </div>
+            <button class="bg-secondary text-white p-4" type="submit">
+                Add
+            </button>
+        </form>
+    </div>
+    <mat-dialog-content>
+        @if (loading.noDataFound && selectedHistory.length==0) {
+
+        No bookmark found for history!
+
+        }
+        @if (loading.isSkelton && !loading.noDataFound ) {
+        <app-skelton />
+        }@else {
+        <div class="history-chips flex flex-wrap gap-2 mb-4">
+            <mat-chip-listbox multiple>
+                @for (history of bookmarkedHistory; track history.value) {
+                <mat-chip-option [selected]="isHistorySelected(history.label)"
+                    (selectionChange)="toggleComplaint($event, history)">
+                    {{ history.label }}
+                </mat-chip-option>
+                }
+            </mat-chip-listbox>
+        </div>
+
+        }
+
+        @if (selectedHistory.length > 0) {
+        <div class="selected-section w-full max-h-[280px] bg-white">
+            <table class="w-full text-left border border-gray-300">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-2 border-b text-sm font-semibold text-gray-700">History</th>
+                        <th class="p-2 border-b text-sm font-semibold text-gray-700">Past History</th>
+                        <th class="p-2 border-b text-sm font-semibold text-gray-700">Present History</th>
+                        <th class="p-2 border-b text-sm font-semibold text-gray-700 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (history of selectedHistory; track history.id; let i = $index) {
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 border-b">
+                            <input type="text" [(ngModel)]="history.name" readonly
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </td>
+                        <td class="p-2 border-b">
+                            <input #past type="text" [(ngModel)]="history.pastHistory" placeholder="Add past history"
+                                (keydown.enter)="$event.preventDefault(); present.focus()"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </td>
+                        <td class="p-2 border-b">
+                            <input #present type="text" placeholder="Add present history"
+                                [(ngModel)]="history.presentHistory"
+                                (keydown.enter)="$event.preventDefault(); save.click()"
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        </td>
+                        <td class="p-2 border-b text-center">
+                            <button type="button" (click)="removeHistory(i)" class="text-red-600 hover:text-red-800">
+                                <app-bin></app-bin>
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="gap-2">
+        <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
+        <button class="btn-secondary" #save (click)="saveHistory()">Save</button>
+    </mat-dialog-actions>
+</div>

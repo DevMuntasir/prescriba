@@ -1,0 +1,210 @@
+<div [ngClass]="appointment.consultancyTypeName =='Chamber'? 'border-yellow-300 ' : appointment.consultancyTypeName =='Online'? 'border-green-300' :'border-blue-300'"
+    class="bg-white rounded-xl shadow-md overflow-hidden mb-4 border-[1px]">
+    <div class="md:flex">
+
+        <div [ngClass]="appointment.consultancyTypeName =='Chamber'?
+         ' bg-yellow-50 border-yellow-300' : 
+         appointment.consultancyTypeName =='Online'? 
+        
+        'bg-green-50 border-green-300':'bg-blue-50 border-blue-300'"
+            class="p-4 md:w-48 flex md:flex-col justify-between md:border-r relative">
+            <div class="flex flex-col items-center justify-center h-full gap-2">
+                <span class="text-sm text-center font-poppins">
+                    {{appointment.appointmentTypeName}}</span>
+                <div [ngClass]="appointment.consultancyTypeName =='Chamber'? 
+                 ' text-yellow-800' : 
+                 appointment.consultancyTypeName =='Online'? 
+                'text-green-800' : 'text-blue-800'" class="font-bold">
+                    {{appointment.appointmentDate | date: 'dd MMM yyyy'}}
+                </div>
+                <div [ngClass]="appointment.consultancyTypeName =='Chamber'? ' text-yellow-600' :  appointment.consultancyTypeName =='Online'? 
+                'text-green-600' : 'text-blue-600'" class="text-xl font-bold">
+                    {{appointment.appointmentTime}}</div>
+
+
+
+                <div [ngClass]="appointment.consultancyTypeName =='Chamber'? '  text-yellow-800 font-poppins' : appointment.consultancyTypeName =='Online'? ' text-green-800' :' text-blue-800' "
+                    class="my-2 inline-flex font-poppins items-center px-2.5 py-0.5 rounded-full text-md font-medium">
+                    Serial: {{appointment.appointmentSerial}}
+                </div>
+                <div [ngClass]="appointment.consultancyTypeName =='Chamber'? ' text-yellow-700 bg-yellow-200' :  appointment.consultancyTypeName =='Online'? 
+                'text-green-700 bg-green-200' : 'text-blue-700 bg-blue-200'"
+                    class="absolute bottom-0 rounded-t-xl mx-auto">
+                    <span class="inline-flex items-center font-poppins px-4 py-0.5 rounded-full text-xs">
+                        {{appointment.appointmentStatusName}}
+                    </span>
+                </div>
+            </div>
+            <!-- <div class="mt-4 md:mt-0 text-center">
+                <div>
+                    @switch (appointment.consultancyTypeName) {
+                    @case ('Online') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full font-poppins text-xs font-medium bg-green-100 text-green-800 mr-2">
+                        {{appointment.consultancyTypeName}}
+                    </span>
+                    }
+                    @case ('Chamber') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full font-poppins text-xs font-medium bg-yellow-100 text-yellow-800 mr-2">
+                        {{appointment.consultancyTypeName}}
+                    </span>
+                    }
+                    @default {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full font-poppins text-xs font-medium bg-blue-100 text-blue-800 mr-2">
+                        {{appointment.consultancyTypeName}}
+                    </span>
+                    }
+                    }
+                </div>
+            </div> -->
+        </div>
+
+        <!-- Main content -->
+        <div class="p-4 md:p-6 flex-1">
+            <div class="md:flex md:justify-between md:items-start">
+                <!-- Doctor info -->
+                <div class="flex items-center mb-4 md:mb-0">
+
+                    <div>
+                        @if (user=='doctor') {
+                        <h2 class="text-[20px] font-Roboto capitalize text-gray-900">{{ appointment.patientName}}
+
+
+                        </h2>
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins mt-2">Patient Age: <strong>
+                                {{appointment.patientAge}}
+                            </strong>
+                        </p>
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins">Patient Blood: <strong>{{
+                                appointment.bloodGroup}}</strong>
+                        </p>
+                        }@else if (user=='agent') {
+                        <h2 class="text-lg font-bold text-gray-900 font-poppins capitalize">{{
+                            appointment.doctorName}}</h2>
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins mt-2">Patient: <strong>{{
+                                appointment.patientName}}</strong>
+                        </p>
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins">Mobile No: <strong>{{
+                                appointment.patientMobileNo}}</strong>
+                        </p>
+                        } @else {
+                        <h2 class="text-lg font-bold text-gray-900 capitalize">{{ appointment.doctorName}}</h2>
+                        @if(appointment.patientName){
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins mt-2">Patient: <strong>{{
+                                appointment.patientName}}</strong> </p>
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins mt-2">Patient Age: <strong>
+                                {{appointment.patientAge}}
+                            </strong>
+                        </p>
+                        <p class="text-[14px] capitalize text-gray-500 font-poppins">Patient Blood: <strong>{{
+                                appointment.bloodGroup}}</strong>
+                        </p>
+
+                        }
+                        }
+
+                    </div>
+                </div>
+
+                <button (click)="joinCall(appointment,user)"
+                    *ngIf="(appointment.consultancyTypeName == 'Online' || appointment.consultancyTypeName == 'Instant') && appointment.appointmentStatus == 2"
+                    class="inline-flex items-center px-4 py-2 border border-green-500 text-sm font-semibold rounded-lg text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <svg class="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M15 10.5V6a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-4.5l4 4v-11l-4 4z" />
+                    </svg>
+                    Join Video Call
+                </button>
+                <!-- Location and code -->
+                @if (appointment.consultancyTypeName==='Chamber') {
+                <div class="space-y-3 text-right">
+                    <div class="flex items-start gap-2">
+
+                        <div>
+                            <div class="text-gray-700 text-lg font-Roboto capitalize">{{appointment.doctorChamberName}}
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">
+                                Address : {{appointment.doctorChamberAddress}}
+                            </div>
+                        </div>
+                        <!-- <svg class="h-5 w-5 text-cyan-500 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg> -->
+                    </div>
+                </div>
+                }
+
+            </div>
+
+
+
+            <!-- Action buttons -->
+            <div class="mt-6 flex flex-wrap gap-3">
+                <button *ngIf="
+                 appointment.appointmentStatus !== 4 &&
+                  appointment.appointmentStatus == 2 && !btnDisable
+                " (click)="cancelAppointment.emit(appointment.id)"
+                    class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-lg text-red-700 bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Cancel
+                </button>
+                <button *ngIf="
+                    appointment.appointmentStatus == 2 &&
+                       appointment.consultancyType == 1 && user =='doctor'
+                   " (click)="completeAppointment.emit(appointment.appointmentCode)"
+                    class="inline-flex items-center px-4 py-2 border border-green-300 text-sm font-medium rounded-lg text-green-700 bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Complete
+                </button>
+                <button *ngIf="user === 'doctor'" (click)="createPrescription(appointment.id)"
+                    class="inline-flex items-center px-4 py-2 border border-cyan-300 text-sm font-medium rounded-lg text-cyan-700 bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Create Prescription
+                </button>
+                <button *ngIf="appointment.appointmentStatus == 4" (click)="showPrescription(appointment.id)"
+                    class="inline-flex items-center px-4 py-2 border border-rose-300 text-sm font-medium rounded-md text-rose-600 bg-rose-50 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-pink-300">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                    </svg>
+                    {{prescriptionLoader ? 'Loading...' :' Show Prescription'}}
+                </button>
+
+                @if (user !== 'doctor') {
+                <button *ngIf="appointment.appointmentStatus == 2 && uploadPrescriptiion"
+                    (click)="uploadDocuments(appointment)"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-600 bg-gray-100 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-300">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                    </svg>
+                    Upload Documents
+                </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

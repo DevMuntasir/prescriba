@@ -1,0 +1,54 @@
+<app-section-header (openForm)="openForm()" [headingText]="'Your Schedule'" [iconClass]="'fa-solid fa-calendar-days'"
+  [buttonText]="'Add Schedule'"></app-section-header>
+<app-schedule-form (rerenderDoctorSchedule)="getScheduleList(doctorId)"
+  [openFormComponent]="openFormComponent"></app-schedule-form>
+
+<div class="flex flex-col mt-3">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div class="border rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="th">Id</th>
+              <th scope="col" class="th">Hospital Name</th>
+              <!-- <th scope="col" class="th">Schedule Type</th> -->
+              <th scope="col" class="th">Consultancy Type</th>
+              <th scope="col" class="th">Status</th>
+              <!-- <th scope="col" class="th">Remarks</th> -->
+              <th scope="col" class="text-righ th">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let item of scheduleList; let i = index"
+              [class]="item.id == clickView ? 'bg-secondary-light' : ''">
+              <td class="td">{{ i + 1 }}</td>
+              <td class="td">{{ item.chamber }}</td>
+              <!-- <td class="td">{{ item.scheduleTypeName }}</td> -->
+              <td class="td">{{ item.consultancyTypeName }}</td>
+              <td class="td">
+                <span [class]="
+                    item.status == 'Open'
+                      ? 'bg-green-100 text-green-800 py-1 rounded-md px-4'
+                      : 'bg-red-50 text-red-800 p-2'
+                  ">
+                  {{ item.status }}
+                </span>
+              </td>
+              <!-- <td class="td">{{ item.remarks }}</td> -->
+              <td class="td">
+                <a [class]="
+                    item.id == clickView
+                      ? 'text-white bg-primary rounded-sm'
+                      : 'text-white bg-secondary-light rounded-sm'
+                  " class="border border-secondary-light p-2 mr-2 cursor-pointer" (click)="onViewDetails(item)">View
+                  Details</a>
+                <!-- <a class="bg-red-50 p-2 text-red-800 rounded-sm cursor-pointer">Delete</a> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

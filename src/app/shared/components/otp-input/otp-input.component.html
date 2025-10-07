@@ -1,0 +1,12 @@
+<input
+  #inputEl
+  *ngFor="let input of inputs.controls; let i = index"
+  (focus)="handleFocus($event)"
+  (blur)="onTouched?.()"
+  (keypress)="handleKeyPress($event, i)"
+  (input)="handleInput()"
+  (keydown)="handleKeyDown($event, i)"
+  [formControl]="$any(input)"
+  type="text"
+  inputmode="numeric"
+/>

@@ -1,0 +1,118 @@
+<div class="login-shell">
+    <div class="login-shell__glow"></div>
+    <div class="login-shell__panel">
+        <section class="login-intro">
+            <div class="login-intro__brand">
+                <span class="login-intro__badge">P</span>
+                <div>
+                    <p class="login-intro__eyebrow">Prescription Suite</p>
+                    <h1 class="login-intro__title">Prescriba Portal</h1>
+                </div>
+            </div>
+
+            <p class="login-intro__subtitle">
+                Deliver faster, safer prescriptions with a workspace designed for busy
+                care teams.
+            </p>
+
+            <ul class="login-intro__highlights">
+                <li><span class="dot"></span>Unified patient timeline & smart visit reminders</li>
+                <li><span class="dot"></span>Reusable treatment templates and e-prescriptions</li>
+                <li><span class="dot"></span>HIPAA inspired security & OTP backed sign-on</li>
+            </ul>
+
+            <div class="login-intro__card">
+                <div class="avatar">
+                    <img src="assets/illustrations/doctor-avatar.svg" alt="Doctor illustration" loading="lazy"
+                        onerror="this.style.display='none'" />
+                    <div class="avatar__pulse"></div>
+                </div>
+                <div>
+                    <p class="login-intro__card-eyebrow">Next visit</p>
+                    <p class="login-intro__card-title">10:30 AM - Follow up</p>
+                    <p class="login-intro__card-foot">3 new lab updates awaiting review</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="login-form__wrapper">
+
+
+            <header class="login-form__header">
+                <h2>Welcome back</h2>
+                <p>Sign in with your doctor credentials to access the prescription desk.</p>
+            </header>
+
+            <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+                <div class="form-field" [class.has-error]="
+            (formSubmitted || loginForm.get('mobileNo')?.touched) &&
+            loginForm.get('mobileNo')?.invalid
+          ">
+                    <label for="mobileNo">Mobile number</label>
+                    <div class="form-field__control !border-[1px] border-[#d1d1e9] rounded-md">
+                        <span class="form-field__prefix">+88</span>
+                        <input id="mobileNo" inputmode="numeric" maxlength="11" autocomplete="off"
+                            formControlName="mobileNo" placeholder="01800000000" required />
+                        <span class="form-field__icon" aria-hidden="true">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+                    </div>
+                    <mat-error *ngIf="loginForm.get('mobileNo')?.hasError('required')">
+                        Mobile number is required.
+                    </mat-error>
+                    <mat-error *ngIf="loginForm.get('mobileNo')?.hasError('pattern')">
+                        Enter an 11 digit Bangladeshi mobile number.
+                    </mat-error>
+                    <mat-error *ngIf="loginForm.get('mobileNo')?.hasError('customError')">
+                        {{ loginForm.get('mobileNo')?.getError('customError') }}
+                    </mat-error>
+                </div>
+
+                <div class="form-field" [class.has-error]="
+            (formSubmitted || loginForm.get('password')?.touched) &&
+            loginForm.get('password')?.invalid
+          ">
+                    <div class="form-field__label-row">
+                        <label for="password">Password</label>
+                        <button type="button" class="link" (click)="goToForgotPassword()">
+                            Forgot?
+                        </button>
+                    </div>
+                    <div class="form-field__control">
+                        <input id="password" autocomplete="off" formControlName="password" [type]="passwordFieldType"
+                            placeholder="Password123@*" />
+                        <button type="button" class="form-field__icon" (click)="passwordVisibility('password')"
+                            aria-label="Toggle password visibility">
+                            <i
+                                [class]="passwordFieldType === 'password' ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                        </button>
+                    </div>
+                    <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                        Password is required.
+                    </mat-error>
+                </div>
+
+                <button type="submit" class="login-form__submit" [disabled]="btnLoading || loginForm.invalid">
+                    <ng-container *ngIf="!btnLoading; else loading">
+                        <span>Sign in</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </ng-container>
+                </button>
+
+                <ng-template #loading>
+                    <span class="loading loading-dots loading-md"></span>
+                </ng-template>
+
+                <p class="login-form__footer">
+                    Trouble logging in?
+                    <a class="link" routerLink="/contact-us">Chat with support</a>
+                </p>
+            </form>
+
+            <div *ngIf="otp().otpError" class="login-form__alert" role="alert">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                {{ otp().otpError }}
+            </div>
+        </section>
+    </div>
+</div>

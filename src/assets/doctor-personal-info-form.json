@@ -1,0 +1,129 @@
+{
+  "description": "This is demo data",
+  "controls": {
+    "fullName": {
+      "controlType": "input",
+      "type": "text",
+      "label": "Full Name",
+      "value": ""
+    },
+    "email": {
+      "controlType": "input",
+      "type": "email",
+      "label": "Email",
+      "value": ""
+    },
+    "doctorTitle": {
+      "controlType": "select",
+      "label": "Select Title",
+      "value": "",
+      "options": []
+    },
+
+    "gender": {
+      "controlType": "select",
+      "label": "Select Gender",
+      "value": "",
+      "options": []
+    },
+    "dateOfBirth": {
+      "controlType": "date",
+      "label": "Date of Birth",
+      "value": ""
+    },
+    "country": {
+      "controlType": "select",
+      "label": "select Country",
+      "value": "",
+      "options": []
+    },
+    "city": {
+      "controlType": "select",
+      "label": "select City",
+      "value": "",
+      "options": []
+    },
+    "address": {
+      "controlType": "input",
+      "label": "Address",
+      "type": "text",
+      "value": ""
+    },
+    "zipCode": {
+      "controlType": "input",
+      "label": "Zip Code",
+      "type": "number",
+      "value": ""
+    },
+    "bmdcRegNo": {
+      "controlType": "input",
+      "label": "bmdcRegNo",
+      "type": "text",
+      "value": ""
+    },
+    "bmdcRegExpiryDate": {
+      "controlType": "input",
+      "label": "bmdcRegExpiryDate",
+      "type": "text",
+      "value": ""
+    },
+    "identityNumber": {
+      "controlType": "input",
+      "label": "identityNumber",
+      "type": "text",
+      "value": ""
+    },
+    "specialityId": {
+      "controlType": "select",
+      "label": "select Speciality",
+      "value": "",
+      "options": []
+    },
+
+    "password": {
+      "controlType": "input",
+      "type": "password",
+      "label": "Password",
+      "value": ""
+    },
+    "ConfirmPassword": {
+      "controlType": "input",
+      "type": "password",
+      "label": "Confirm Password",
+      "value": ""
+    }
+  }
+}
+
+
+{
+  "doctorProfileId": 50343,
+  "doctorName": "mUNTASIR UDOY12",
+  "doctorCode": "SGD20250411201",
+  "patientProfileId": 10114,
+  "patientMobileNo": "01874303208",
+  "patientName": "Mofiz ",
+  "patientCode": "SGP2024012230",
+  "appointmentCreatorId": 50343,
+  "appointmentCreatorRole": "doctor",
+  "appointmentDate": "2025-04-28T18:00:00.000Z",
+  "appointmentTime": "",
+  "appointmentStatus": 2,
+  "appointmentPaymentStatus": 2,
+  "doctorFee": 100,
+  "doctorChamberName": "Bangladesh Hospital",
+  "agentFee": 0,
+  "platformFee": 0,
+  "vatFee": 0,
+  "totalAppointmentFee": "100.00",
+  "doctorChamberId": 30375,
+  "doctorScheduleId": 30299,
+  "doctorScheduleDaySessionId": 31647,
+  "appointmentType": "2",
+  "doctorScheduleType": "30299",
+  "doctorFeesSetupId": 30412,
+  "consultancyType": 1,
+  "scheduleType": 1,
+  "weekDay": "Tuesday",
+  "chamberPaymentType": 2
+}

@@ -1,0 +1,22 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AppointmentCard } from './appointment-card.component';
+
+describe('AppointmentCardComponent', () => {
+  let component: AppointmentCard;
+  let fixture: ComponentFixture<AppointmentCard>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AppointmentCard],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AppointmentCard);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

@@ -1,0 +1,29 @@
+<div class="bg-gray-50 rounded-b w-full shadow-md">
+  <div class="border-[1px] p-3 flex flex-col gap-3">
+    <div>
+      <p class="text-sm pt-2 leading-4 text-gray-600">
+        {{ details.specialityName }}
+      </p>
+      <a
+        tabindex="0"
+        class="focus:outline-none text-[15px] md:text-[16px] font-semibold leading-5 text-gray-800 mt-2"
+      >
+        @if(userType =='agent'){
+
+        {{ details.doctorTitleName }} {{ details.doctorName }}
+
+        }@else {
+        {{ details.doctorTitleName }} {{ details.fullName }}
+
+        }
+      </a>
+      <p class="text-[14px]">{{ details.areaOfExperties }}</p>
+    </div>
+    <button
+      (click)="onClickConsultNow(details)"
+      class="bg-secondary text-white shadow-md font-semibold h-fit py-1.5 border-secondary/50 border-[1px] px-3 rounded-sm text-[14px]"
+    >
+      @if (isLoading) { Loading... }@else {Consult Now}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<!-- <h1 mat-dialog-title>{{ data.title }}</h1> -->
+<div mat-dialog-content>
+  @switch (data.type) {
+  @case ('complaint') {
+  <!-- Content for Chief Complaint -->
+  <app-chief-complain [data]="data.content"></app-chief-complain>
+  }
+  @case ('history') {
+  <!-- Content for Chief Complaint -->
+  <app-history [data]="data.content"></app-history>
+  }
+  @case ('diagnosis') {
+  <!-- Content for Chief Complaint -->
+  <app-diagnosis [data]="data.content"></app-diagnosis>
+  }
+  @case ('test') {
+  <!-- Content for Chief Complaint -->
+  <app-findings [data]="data.content"></app-findings>
+  }
+  @case ('examination') {
+  <!-- Content for On Examination -->
+  <app-on-examination [data]="data.content"></app-on-examination>
+  }
+  @case ('medicine') {
+  <!-- Content for Medicine -->
+  <app-medicine [data]="data.content"></app-medicine>
+  }
+  @case ('advice') {
+  <app-instruction [data]="data.content"></app-instruction>
+  }
+  @case('followUp') {
+  <app-follow-up [data]="data.content"></app-follow-up>
+  }
+  @case('select-chamber') {
+  <app-select-chamber [data]="data.content"></app-select-chamber>
+  }
+
+  @default {
+  <!-- Default content if no case matches -->
+  <p>No matching content found.</p>
+  }
+  }
+</div>

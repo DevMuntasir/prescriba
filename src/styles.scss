@@ -1,0 +1,263 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+// @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+// @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap');
+
+@font-face {
+  font-family: 'Roboto-Light';
+  src: url('/assets/fonts/Roboto/Roboto-Light.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto-Medium';
+  src: url('/assets/fonts/Roboto/Roboto-Medium.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto-Bold';
+  src: url('/assets/fonts/Roboto/Roboto-Bold.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/Roboto/Roboto-Regular.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins-Light';
+  src: url('/assets/fonts/Poppins/Poppins-Light.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins-Medium';
+  src: url('/assets/fonts/Poppins/Poppins-Medium.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins-Bold';
+  src: url('/assets/fonts/Poppins/Poppins-Bold.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/assets/fonts/Poppins/Poppins-Regular.ttf');
+  font-display: swap;
+}
+
+:host {
+  background: var(--gradient-brand-panel);
+  color: var(--brand-neutral);
+}
+
+body {
+  scroll-behavior: smooth;
+  background: var(--brand-surface);
+  color: var(--brand-neutral);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light;
+    color: var(--brand-neutral);
+  }
+}
+
+@layer utilities {
+  @variants responsive {
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  }
+}
+
+body::-webkit-scrollbar {
+  width: 7px;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--brand-highlight);
+  outline: none;
+  border-radius: 5px;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+}
+
+@layer components {
+  .container {
+    @apply max-w-[90%] 2xl:max-w-[1340px] 3xl:max-w-[1540px] mx-auto;
+  }
+
+  .container-full {
+    @apply xs:max-w-full sm:w-full md:w-[96%] 3xl:max-w-[1900px] mr-auto ml-auto px-4 box-border lg:px-0;
+  }
+
+  .container-items {
+    @apply flex items-center justify-between w-full;
+  }
+
+  .btn-prescription {
+    @apply active:scale-95 duration-150 flex items-center gap-1 rounded-lg py-2 px-4 font-Roboto shadow-lg bg-white text-brand-neutral border border-brand-border;
+  }
+
+  .btn-primary {
+    @apply whitespace-nowrap flex items-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:select-none rounded-md active:scale-90 transition-all duration-75 h-fit text-white font-poppins text-sm px-5 py-2 text-center bg-secondary hover:bg-secondary-dark;
+  }
+
+  .form_btn {
+    @apply active:scale-90 transition-all duration-75 w-full py-3 font-medium text-brand-neutral bg-primary hover:bg-secondary text-brand-neutral rounded-lg border border-brand-border hover:shadow inline-flex space-x-2 items-center justify-center;
+  }
+
+  .btn-secondary {
+    @apply whitespace-nowrap md:text-[16px] font-poppins disabled:hover:text-gray-400 py-1 sm:py-2 px-4 md:px-6 active:scale-90 disabled:scale-100 disabled:bg-gray-200 disabled:border-none disabled:shadow-none disabled:text-gray-400 disabled:select-none transition-all duration-75 hover:text-brand-neutral border border-transparent hover:border hover:border-secondary-border flex items-center justify-center text-center relative text-sm bg-secondary hover:bg-secondary-light hover:border-secondary-dark text-white font-medium rounded-[5px] md:rounded-md shadow-lg hover:shadow-none hover:opacity-75;
+  }
+
+  .btn-secondary-light {
+    @apply font-poppins active:scale-90 border-secondary-dark/30 border-[1px] py-1.5 md:py-2 transition-all duration-75 bg-secondary-light text-brand-neutral hover:text-brand-neutral px-5 mr-2 h-fit text-sm font-medium focus:outline-none rounded-md;
+  }
+
+  .signup-form {
+    @apply flex items-center w-full h-screen bg-brand-surface;
+  }
+
+  .signup-form__right {
+    @apply w-[60%] h-screen flex items-center bg-primary;
+  }
+
+  .signup-form__left {
+    @apply w-[40%] h-screen;
+  }
+
+  .signup-form__choose {
+    @apply flex justify-end items-center pr-5 relative overflow-hidden w-1/2 h-14 border border-brand-border shadow-[0_5px_30px_0_rgba(31, 34, 120, .08)] rounded-md;
+  }
+
+  .form_input {
+    @apply w-full rounded-md border border-brand-border bg-white py-1.5 md:py-2 px-3 text-base font-normal text-[14px] text-brand-neutral outline-none focus:border-secondary focus:shadow-md;
+  }
+
+  .dashbord-heading-text {
+    @apply text-slate-800 font-semibold text-[18px] font-Roboto;
+  }
+
+  .dashbord-heading-subtext {
+    @apply text-gray-500 font-light text-[14px] font-poppins;
+  }
+
+  .form-field-half {
+    @apply w-1/2;
+  }
+
+  .mat_label {
+    @apply text-[14px] font-medium font-Roboto text-label;
+  }
+
+  .th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase;
+  }
+
+  .td {
+    @apply px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800;
+  }
+
+  .signup-child-component-min-w {
+    @apply min-w-[90%];
+  }
+
+  .heading {
+    @apply font-Roboto text-[22px] text-slate-800;
+  }
+
+  .label {
+    @apply block font-medium text-[14px] text-[#07074D];
+  }
+}
+
+.btn-three {
+  color: var(--brand-primary);
+  transition: all 0.5s;
+  position: relative;
+  background: var(--brand-surface);
+}
+
+.btn-three::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.264);
+  transition: all 0.3s;
+}
+
+.btn-three:hover::before {
+  opacity: 0;
+  transform: scale(0.5, 0.5);
+}
+
+.btn-three::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0;
+  transition: all 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transform: scale(1.2, 1.2);
+}
+
+.btn-three:hover::after {
+  opacity: 1;
+  transform: scale(1, 1);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar.height::-webkit-scrollbar {
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--brand-highlight);
+  outline: none;
+  border-radius: 5px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

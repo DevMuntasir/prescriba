@@ -1,0 +1,16 @@
+<div class="d-flex flex-stack flex-wrap">
+  <div class="fs-6 fw-bold text-gray-700" style="margin-right: 7%;">Showing page {{page}} </div>
+  <div class="fs-6 fw-bold text-gray-700" style="margin-right: -14%;">Records per page </div>
+  <select class="form-select" style="height:40px !important; width:80px !important" [(ngModel)]="pageSize" (ngModelChange)="pageSizeChanged($event)">
+    <option *ngFor="let pageSizeValue of pageSizeValues" [ngValue]="pageSizeValue">{{pageSizeValue}}</option>
+  </select>
+  <ngb-pagination class="pagination"
+                  [collectionSize]="collectionSize"
+                  [pageSize]="pageSize"
+                  [(page)]="page"
+                  (pageChange)="pageChanged($event)"
+                  [rotate]="true"
+                  [maxSize]="5">
+  </ngb-pagination>
+</div>
+<!--style="border-radius: 0.42rem; border: solid 1px #009EF7;"-->

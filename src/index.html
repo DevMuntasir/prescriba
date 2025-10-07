@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>
+    Prescriba | Online health care service in Bangladesh.
+  </title>
+  <base href="/" />
+
+  <meta name="description"
+    content="Prescriba is more than just a healthcare platform; it's a testament to the enduring spirit of our founder and the unwavering dedication to the welfare of the people of Bangladesh." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fb;
+      color: #3f4c6b;
+    }
+
+    .preloader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.25rem;
+      background-color: #f5f7fb;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      border: 0.35rem solid rgba(33, 150, 243, 0.15);
+      border-top-color: #21f3a6;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #3f4c6b;
+      font-weight: 600;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script> -->
+
+</head>
+
+<body class="relative">
+  <app-root>
+    <div class="preloader">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading...</div>
+    </div>
+  </app-root>
+</body>
+
+</html>
+

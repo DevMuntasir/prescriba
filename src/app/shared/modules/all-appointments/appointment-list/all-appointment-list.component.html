@@ -1,0 +1,12 @@
+<div #scrollContainer class="w-full scroll-container pt-3 h-[calc(100vh-160px)] custom-scrollbar overflow-auto"
+    infinite-scroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="150"
+    [infiniteScrollContainer]="scrollContainerRef" [infiniteScrollDisabled]="false" (scrolled)="onScrollDown.emit()">
+    @for(appointment of appointmentList; track $index) {
+    <appointment-card [appointment]="appointment" [user]="user" (cancelAppointment)="cancelAppointment.emit($event)"
+        (completeAppointment)="completeAppointment.emit($event)" />
+    }@empty {
+    <div class="flex justify-center items-center h-[500px] flex-shrink">
+        <div>No records has been found!</div>
+    </div>
+    }
+</div>

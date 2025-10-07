@@ -1,0 +1,35 @@
+<app-section-header (openForm)="openDialog()" [headingText]="'Hospital/Chamber'" [iconClass]="'fa-solid fa-hospital'"
+  [buttonText]="'Add New'"></app-section-header>
+
+<div class="flex flex-col mt-3">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div class="border rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="th">Id</th>
+              <th scope="col" class="th">Hospital Name</th>
+              <th scope="col" class="th">City</th>
+              <th scope="col" class="th">Address</th>
+              <th scope="col" class="th">Visible Prescription</th>
+              <th scope="col" class="text-righ th">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let item of chamberList; let i = index">
+              <td class="td">{{ i + 1 }}</td>
+              <td class="td">{{ item.chamberName }}</td>
+              <td class="td">{{ item.city }}</td>
+              <td class="td">{{ item.address }}</td>
+              <td class="td">{{ item.isVisibleOnPrescription }}</td>
+              <td class="td">
+                <a class="text-blue-500 hover:text-blue-700" (click)="onPlaceEdit(item)">Edit</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

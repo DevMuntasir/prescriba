@@ -1,0 +1,85 @@
+<div class="admin-login-shell">
+  <div class="admin-login-shell__glow"></div>
+  <div class="admin-login-panel">
+    <section class="admin-login-panel__intro">
+      <div class="admin-login-brand">
+        <span class="admin-login-brand__badge">PS</span>
+        <div>
+          <p class="admin-login-brand__eyebrow">Prescription Suite</p>
+          <h1 class="admin-login-brand__title">Admin Console</h1>
+        </div>
+      </div>
+      <p class="admin-login-panel__subtitle">
+        Minimal sign-in crafted to match the clinician portal while keeping focus on control tasks.
+      </p>
+      <ul class="admin-login-highlights">
+        <li><span class="dot"></span>Centralize organisation access</li>
+        <li><span class="dot"></span>Approve prescribers in seconds</li>
+        <li><span class="dot"></span>Monitor compliance snapshots</li>
+      </ul>
+    </section>
+    <section class="admin-login-panel__form">
+      <header class="admin-login-form__header">
+        <h2>Sign in</h2>
+        <p>Use your administrator credentials to continue.</p>
+      </header>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="admin-login-form">
+        <div class="form-field" [class.has-error]="hasError('email')">
+          <label for="admin-email">Work email</label>
+          <input
+            id="admin-email"
+            type="email"
+            placeholder="name@company.com"
+            formControlName="email"
+            autocomplete="username"
+          />
+          <p class="form-error" *ngIf="hasError('email')">
+            {{ form.get('email')?.hasError('required') ? 'Email is required.' : 'Enter a valid email address.' }}
+          </p>
+        </div>
+
+        <div class="form-field" [class.has-error]="hasError('password')">
+          <label for="admin-password">Password</label>
+          <div class="form-field__control">
+            <input
+              id="admin-password"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Enter password"
+              formControlName="password"
+              autocomplete="current-password"
+            />
+            <button type="button" class="toggle" (click)="togglePasswordVisibility()" aria-label="Toggle password">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+          <p class="form-error" *ngIf="hasError('password')">
+            {{ form.get('password')?.hasError('required') ? 'Password is required.' : 'Minimum 6 characters needed.' }}
+          </p>
+        </div>
+
+        <div class="form-meta">
+          <label class="remember">
+            <input type="checkbox" formControlName="remember" />
+            <span>Keep me signed in</span>
+          </label>
+          <a routerLink="/login" class="link">Doctor portal</a>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="submitting">
+          {{ submitting ? 'Signing in…' : 'Access Console' }}
+        </button>
+
+        <p class="form-hint">Need access? Contact the Prescription Suite team.</p>
+
+        <p
+          *ngIf="statusMessage() as message"
+          class="form-status"
+          role="status"
+          aria-live="polite"
+        >
+          {{ message }}
+        </p>
+      </form>
+    </section>
+  </div>
+</div>
