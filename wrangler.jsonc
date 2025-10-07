@@ -1,0 +1,7 @@
+{
+  "name": "prescriba-v2",
+  "compatibility_date": "2025-10-07",
+  "assets": {
+    "directory": "./dist/prescriba-v2/browser"
+  }
+}
