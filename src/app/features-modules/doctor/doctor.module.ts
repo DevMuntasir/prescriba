@@ -12,7 +12,9 @@ const routes: Route[] = [
   {
     path: '',
     component: DoctorComponent,
-    // canActivate: [isAuth],
+    canActivate: [isAuth],
+    canActivateChild: [isAuth],
+    data: { roles: ['doctor'] },
     children: [
       {
         path: '',
@@ -22,6 +24,7 @@ const routes: Route[] = [
       {
         path: 'dashboard',
         canActivate: [isAuth],
+        data: { roles: ['doctor'] },
         loadChildren: () =>
           import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
@@ -61,10 +64,14 @@ const routes: Route[] = [
       // },
       {
         path: 'build-prescription',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
         component: PrescribeComponent,
       },
       {
         path: 'prescriptions',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
         component: DoctorsPrescriptionsComponent,
       },
     ],
