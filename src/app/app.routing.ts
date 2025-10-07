@@ -22,7 +22,19 @@ export const appRoutes: Route[] = [
 
   {
     path: 'ps-admin',
-    component: AdminLoginComponent,
+    children: [
+      {
+        path: '',
+        component: AdminLoginComponent,
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./features-modules/admin/admin-dashboard/admin-dashboard.module').then(
+            (m) => m.AdminDashboardModule
+          ),
+      },
+    ],
   },
 
   {

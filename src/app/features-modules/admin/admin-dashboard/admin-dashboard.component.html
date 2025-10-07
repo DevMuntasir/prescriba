@@ -1,0 +1,44 @@
+<section class="admin-dashboard">
+  <header class="admin-dashboard__header">
+    <div>
+      <p class="eyebrow">Prescription Suite</p>
+      <h1>Admin Control Centre</h1>
+      <p class="lede">
+        Welcome back. Manage your organisation, review approvals and keep your teams moving—all from one
+        streamlined dashboard.
+      </p>
+    </div>
+    <button type="button" class="cta">Create Announcement</button>
+  </header>
+
+  <section class="admin-dashboard__stats">
+    <div class="stat">
+      <p class="stat__label">Pending approvals</p>
+      <p class="stat__value">12</p>
+      <p class="stat__hint">Awaiting review</p>
+    </div>
+    <div class="stat">
+      <p class="stat__label">Active clinicians</p>
+      <p class="stat__value">248</p>
+      <p class="stat__hint">Up 8% vs last month</p>
+    </div>
+    <div class="stat">
+      <p class="stat__label">Support tickets</p>
+      <p class="stat__value">5</p>
+      <p class="stat__hint">2 urgent</p>
+    </div>
+  </section>
+
+  <section class="admin-dashboard__panel">
+    <h2>Quick actions</h2>
+    <div class="admin-dashboard__quick-links">
+      <article class="quick-link" *ngFor="let link of quickLinks">
+        <div class="quick-link__icon" aria-hidden="true">{{ link.icon }}</div>
+        <div>
+          <h3>{{ link.label }}</h3>
+          <p>{{ link.description }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</section>
