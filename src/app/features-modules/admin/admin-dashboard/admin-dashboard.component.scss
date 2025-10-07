@@ -26,7 +26,8 @@
   padding: 0.85rem 1rem;
   text-align: left;
   color: rgba(16, 41, 49, 0.72);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .sidebar-link:hover:not(.sidebar-link--disabled) {
