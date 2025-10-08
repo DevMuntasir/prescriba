@@ -70,7 +70,7 @@
     </article>
   </section>
 
-  <section class="rounded-3xl border border-brand-primary/15 bg-white shadow-[0_26px_60px_rgba(6,180,139,0.12)]">
+  <section class="roster rounded-3xl border border-brand-primary/15 bg-white shadow-[0_26px_60px_rgba(6,180,139,0.12)]">
     <header class="flex flex-wrap items-center justify-between gap-4 border-b border-brand-primary/10 px-6 py-4">
       <div>
         <h2 class="text-lg font-semibold text-brand-neutral">Doctor roster</h2>
@@ -89,13 +89,16 @@
     </header>
 
     <ng-container *ngIf="isLoading(); else loadedDoctors">
-      <div class="px-6 py-8 text-sm text-brand-neutral/60">Loading prescriber records…</div>
+      <div class="loading-state" role="status" aria-live="polite">
+        <span class="loading-state__spinner" aria-hidden="true"></span>
+        <span>Loading prescriber records…</span>
+      </div>
     </ng-container>
 
     <ng-template #loadedDoctors>
       <ng-container *ngIf="!loadError(); else doctorError">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-brand-primary/10">
+        <div class="roster__scroll">
+          <table class="roster__table divide-y divide-brand-primary/10">
             <thead class="bg-brand-primary/5 text-left text-xs font-semibold uppercase tracking-wider text-brand-neutral/60">
               <tr>
                 <th class="px-6 py-3">Doctor</th>

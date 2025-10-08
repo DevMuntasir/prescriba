@@ -83,7 +83,7 @@
     </article>
   </section>
 
-  <section class="rounded-3xl border border-brand-primary/15 bg-white shadow-[0_26px_60px_rgba(6,180,139,0.12)]">
+  <section class="ledger rounded-3xl border border-brand-primary/15 bg-white shadow-[0_26px_60px_rgba(6,180,139,0.12)]">
     <header class="flex flex-wrap items-center justify-between gap-4 border-b border-brand-primary/10 px-6 py-4">
       <div>
         <h2 class="text-lg font-semibold text-brand-neutral">Prescription ledger</h2>
@@ -97,15 +97,16 @@
     </header>
 
     <ng-container *ngIf="isLoading(); else loadedState">
-      <div class="px-6 py-8 text-sm text-brand-neutral/60">
-        Fetching the latest prescriptions…
+      <div class="loading-state" role="status" aria-live="polite">
+        <span class="loading-state__spinner" aria-hidden="true"></span>
+        <span>Fetching the latest prescriptions…</span>
       </div>
     </ng-container>
 
     <ng-template #loadedState>
       <ng-container *ngIf="!loadError(); else errorState">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-brand-primary/10">
+        <div class="ledger__scroll">
+          <table class="ledger__table divide-y divide-brand-primary/10">
             <thead class="bg-brand-primary/5 text-left text-xs font-semibold uppercase tracking-wider text-brand-neutral/60">
               <tr>
                 <th class="px-6 py-3">#</th>
