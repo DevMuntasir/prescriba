@@ -123,8 +123,8 @@ interface DoctorDetail {
 export class AdminDashboardOverviewComponent {
   readonly summaryStats: SummaryStat[] = [
     {
-      label: 'Pending approvals',
-      value: '12',
+      label: 'Prescriptions',
+      value: '1,212',
       hint: 'Awaiting review before activation',
       badge: '+4 new',
       badgeClass: 'bg-brand-primary/10 text-brand-primary',
@@ -133,8 +133,8 @@ export class AdminDashboardOverviewComponent {
         'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] shadow-[0_12px_24px_rgba(6,180,139,0.25)]',
     },
     {
-      label: 'Active clinicians',
-      value: '248',
+      label: 'Active Doctors',
+      value: '44+',
       hint: 'Logged in within the last month',
       badge: '↑ 8% MoM',
       badgeClass: 'bg-emerald-100 text-emerald-600',
@@ -151,8 +151,8 @@ export class AdminDashboardOverviewComponent {
       iconBgClass: 'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_24px_rgba(59,130,246,0.25)]',
     },
     {
-      label: 'Compliance score',
-      value: '96%',
+      label: 'Total Patients',
+      value: '9,807',
       hint: 'Audit ready across all divisions',
       badge: '+2 this week',
       badgeClass: 'bg-violet-100 text-violet-600',
