@@ -1,0 +1,171 @@
+<div class="flex flex-col gap-8">
+  <header class="flex flex-col gap-2">
+    <span class="text-xs font-semibold uppercase tracking-[0.35em] text-brand-primary/70">Prescriptions</span>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold text-brand-neutral">Network prescription catalogue</h1>
+        <p class="text-sm text-brand-neutral/60">
+          Monitor every script generated across the Prescriba platform. Review activity trends, follow-up schedules and
+          prescriber coverage in one view.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-[0_10px_24px_rgba(6,180,139,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary hover:shadow-[0_18px_36px_rgba(6,180,139,0.2)]"
+        (click)="reload()"
+        [disabled]="isLoading()"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v6h6"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 20v-6h-6"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 19A9 9 0 0 1 19 5"></path>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="summary-card">
+      <div class="summary-card__icon">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h9l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 3v7h7"></path>
+        </svg>
+      </div>
+      <p class="summary-card__label">Total prescriptions</p>
+      <p class="summary-card__value">{{ summary().total }}</p>
+      <p class="summary-card__hint">Across all care settings</p>
+    </article>
+    <article class="summary-card">
+      <div class="summary-card__icon summary-card__icon--accent">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+      </div>
+      <p class="summary-card__label">Issued in last 7 days</p>
+      <p class="summary-card__value">{{ summary().issuedThisWeek }}</p>
+      <p class="summary-card__hint">Recent prescribing momentum</p>
+    </article>
+    <article class="summary-card">
+      <div class="summary-card__icon summary-card__icon--warning">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 17h.01"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+        </svg>
+      </div>
+      <p class="summary-card__label">Follow-ups due (7 days)</p>
+      <p class="summary-card__value">{{ summary().followUpsDue }}</p>
+      <p class="summary-card__hint">Proactive patient outreach</p>
+    </article>
+    <article class="summary-card">
+      <div class="summary-card__icon summary-card__icon--neutral">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 8v6"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M23 11h-6"></path>
+        </svg>
+      </div>
+      <p class="summary-card__label">Active prescribers</p>
+      <p class="summary-card__value">{{ summary().uniqueDoctors }}</p>
+      <p class="summary-card__hint">Unique doctor profiles contributing</p>
+    </article>
+  </section>
+
+  <section class="rounded-3xl border border-brand-primary/15 bg-white shadow-[0_26px_60px_rgba(6,180,139,0.12)]">
+    <header class="flex flex-wrap items-center justify-between gap-4 border-b border-brand-primary/10 px-6 py-4">
+      <div>
+        <h2 class="text-lg font-semibold text-brand-neutral">Prescription ledger</h2>
+        <p class="text-xs text-brand-neutral/60">Consolidated snapshot of every approved prescription.</p>
+      </div>
+      <div
+        class="inline-flex items-center gap-2 rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary"
+      >
+        {{ summary().total }} records
+      </div>
+    </header>
+
+    <ng-container *ngIf="isLoading(); else loadedState">
+      <div class="px-6 py-8 text-sm text-brand-neutral/60">
+        Fetching the latest prescriptions…
+      </div>
+    </ng-container>
+
+    <ng-template #loadedState>
+      <ng-container *ngIf="!loadError(); else errorState">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-brand-primary/10">
+            <thead class="bg-brand-primary/5 text-left text-xs font-semibold uppercase tracking-wider text-brand-neutral/60">
+              <tr>
+                <th class="px-6 py-3">#</th>
+                <th class="px-6 py-3">Reference</th>
+                <th class="px-6 py-3">Doctor</th>
+                <th class="px-6 py-3">Patient</th>
+                <th class="px-6 py-3">Prescription date</th>
+                <th class="px-6 py-3">Follow-up</th>
+                <th class="px-6 py-3">Consultancy</th>
+                <th class="px-6 py-3">Appointment</th>
+                <th class="px-6 py-3">Advice</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-primary/10 text-sm text-brand-neutral">
+              <tr
+                *ngFor="let prescription of prescriptions(); let i = index; trackBy: trackById"
+                class="hover:bg-brand-primary/5 transition-colors"
+              >
+                <td class="px-6 py-4 text-xs font-semibold text-brand-neutral/60">{{ i + 1 }}</td>
+                <td class="px-6 py-4 font-semibold text-brand-neutral">{{ prescription.refferenceCode || '—' }}</td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <div class="flex flex-col">
+                    <span class="font-semibold">{{ prescription.doctorName || 'Unassigned' }}</span>
+                    <span class="text-xs text-brand-neutral/60">{{ prescription.doctorSpecilityName || 'Speciality pending' }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <div class="flex flex-col">
+                    <span class="font-semibold">{{ prescription.patientName || 'Not recorded' }}</span>
+                    <span class="text-xs text-brand-neutral/60">Code: {{ prescription.patientCode || '—' }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <span>{{ prescription.prescriptionDate | date: 'mediumDate' }}</span>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <span>
+                    {{ prescription.followupDate ? (prescription.followupDate | date: 'mediumDate') : '—' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">{{ prescription.consultancyTypeName || '—' }}</td>
+                <td class="px-6 py-4 text-brand-neutral/80">{{ prescription.appointmentTypeName || '—' }}</td>
+                <td class="px-6 py-4 text-brand-neutral/70">
+                  <span class="line-clamp-2 max-w-xs">{{ prescription.advice || '—' }}</span>
+                </td>
+              </tr>
+              <tr *ngIf="!prescriptions().length">
+                <td colspan="9" class="px-6 py-8 text-center text-sm text-brand-neutral/60">
+                  No prescriptions recorded yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+      <ng-template #errorState>
+        <div class="px-6 py-10 text-center text-sm text-rose-500">
+          {{ loadError() }}
+        </div>
+      </ng-template>
+    </ng-template>
+  </section>
+</div>
