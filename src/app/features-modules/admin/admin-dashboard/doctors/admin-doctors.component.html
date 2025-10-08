@@ -115,7 +115,7 @@
               >
                 <td class="px-6 py-4">
                   <div class="flex flex-col">
-                    <span class="font-semibold text-brand-neutral">{{ doctor.fullName || doctor.firstName || 'Name pending' }}</span>
+                    <span class="font-semibold text-brand-neutral">{{ doctor.fullName || doctor.firstName || 'Pending' }}</span>
                     <span class="text-xs text-brand-neutral/60">{{ doctor.doctorTitleName || '—' }}</span>
                   </div>
                 </td>
@@ -152,10 +152,10 @@
                         class="h-2 w-2 rounded-full"
                         [ngClass]="doctor.isOnline ? 'bg-emerald-500' : 'bg-slate-400'"
                       ></span>
-                      {{ doctor.isActive ? 'Active' : 'Pending activation' }}
+                      {{ doctor.isActive ? 'Active' : 'Pending' }}
                     </span>
                     <span class="text-xs text-brand-neutral/60">
-                      {{ doctor.isOnline ? 'Online now' : 'Offline' }}
+                      {{ doctor.isOnline ? 'Online' : 'Offline' }}
                     </span>
                   </div>
                 </td>
