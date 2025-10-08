@@ -7,11 +7,11 @@ import { Environment } from '@abp/ng.core';
 
 export const serviceBaseUrl = 'http://localhost:3000';
 export const USER_SECRATE = 'soowgood@@2024';
-const apiUrl = 'https://deutsch-iowa-feet-queens.trycloudflare.com';
+const apiUrl = 'https://alliance-bestsellers-truck-tracked.trycloudflare.com';
 export const authenticationApi =
-  'https://smallest-trends-nearly-marine.trycloudflare.com';
+  'https://specialized-joint-entertainment-weddings.trycloudflare.com';
 export const prescriptionApi =
-  'https://southern-agriculture-notes-fruit.trycloudflare.com';
+  'https://february-excellence-shipping-rider.trycloudflare.com';
 export const environment = {
   production: false,
   application: {
