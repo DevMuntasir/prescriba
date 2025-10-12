@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+import {
+  AdminPrescriptionService,
+  MedicationUsage,
+  PrescriptionAnalyticsResult,
+} from '../services/admin.prescription.service';
 
 type TrendDirection = 'up' | 'down' | 'steady';
 
@@ -21,6 +27,7 @@ interface DemographicMetric {
   readonly change: string;
   readonly icon: 'female' | 'male' | 'family';
   readonly accentClass: string;
+  readonly changeClass?: string;
 }
 
 interface AgeDistribution {
@@ -114,7 +121,8 @@ interface SidebarLink {
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
 })
-export class AdminDashboardComponent {
+export class AdminDashboardComponent implements OnInit {
+  private readonly adminPrescriptionService = inject(AdminPrescriptionService);
   readonly sidebarLinks: SidebarLink[] = [
     {
       label: 'Dashboard',
@@ -191,35 +199,7 @@ export class AdminDashboardComponent {
     },
   ];
 
-  readonly demographicBreakdown: DemographicMetric[] = [
-    {
-      label: 'Female patients',
-      total: '1,140',
-      share: '53%',
-      change: '+4.2% vs last month',
-      icon: 'female',
-      accentClass:
-        'bg-[linear-gradient(135deg,#ec4899_0%,#f472b6_100%)] shadow-[0_12px_28px_rgba(236,72,153,0.25)]',
-    },
-    {
-      label: 'Male patients',
-      total: '920',
-      share: '43%',
-      change: '+2.8% vs last month',
-      icon: 'male',
-      accentClass:
-        'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] shadow-[0_12px_28px_rgba(6,180,139,0.25)]',
-    },
-    {
-      label: 'Paediatric & senior',
-      total: '80',
-      share: '4%',
-      change: '+1.1% vs last month',
-      icon: 'family',
-      accentClass:
-        'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_28px_rgba(59,130,246,0.25)]',
-    },
-  ];
+  demographicBreakdown: DemographicMetric[] = [];
 
   readonly ageDistribution: AgeDistribution[] = [
     {
@@ -301,7 +281,7 @@ export class AdminDashboardComponent {
     },
   ];
 
-  readonly medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
+  medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
     day: [
       {
         name: 'Azithromycin 500mg',
@@ -584,8 +564,153 @@ export class AdminDashboardComponent {
 
   readonly periodKeys: PeriodKey[] = ['day', 'week', 'month'];
 
+  topMedicationsLoading = false;
+  topMedicationsError: string | null = null;
+  prescriptionAnalyticsLoading = false;
+  prescriptionAnalyticsError: string | null = null;
+
   selectedMedicinePeriod: PeriodKey = 'day';
   selectedDoctorId: number = this.doctorSummaries[0]?.id ?? 0;
+
+  ngOnInit(): void {
+    this.loadTopMedications();
+    this.loadPrescriptionAnalytics();
+  }
+
+  private loadTopMedications(): void {
+    this.topMedicationsLoading = true;
+    this.topMedicationsError = null;
+
+    this.adminPrescriptionService
+      .getMostUsedMedications()
+      .pipe(finalize(() => (this.topMedicationsLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const items = response?.result ?? response?.results ?? [];
+
+          if (!items.length) {
+            this.medicinePerformance = { day: [], week: [], month: [] };
+            this.topMedicationsError = response?.message ?? 'No medication usage data available right now.';
+            return;
+          }
+
+          const totalUsage =
+            response?.totalCount && response.totalCount > 0
+              ? response.totalCount
+              : items.reduce((sum, item) => sum + item.usageCount, 0);
+
+          const mapped = items.map((item) => this.mapMedicationUsageToPerformance(item, totalUsage));
+
+          this.medicinePerformance = {
+            day: mapped,
+            week: [...mapped],
+            month: [...mapped],
+          };
+        },
+        error: () => {
+          this.topMedicationsError = 'Unable to load top prescribed medicines.';
+          this.medicinePerformance = { day: [], week: [], month: [] };
+        },
+      });
+  }
+
+  private loadPrescriptionAnalytics(): void {
+    this.prescriptionAnalyticsLoading = true;
+    this.prescriptionAnalyticsError = null;
+
+    this.adminPrescriptionService
+      .getPrescriptionAnalytics()
+      .pipe(finalize(() => (this.prescriptionAnalyticsLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const results = response?.results;
+
+          if (!results) {
+            this.demographicBreakdown = [];
+            this.prescriptionAnalyticsError =
+              response?.message ?? 'No demographics available right now.';
+            return;
+          }
+
+          this.demographicBreakdown = this.mapAnalyticsToDemographics(results);
+        },
+        error: () => {
+          this.prescriptionAnalyticsError = 'Unable to load patient demographics.';
+          this.demographicBreakdown = [];
+        },
+      });
+  }
+
+  private mapMedicationUsageToPerformance(usage: MedicationUsage, total: number): MedicinePerformance {
+    const genericName = (usage.genericName || '').trim();
+    const manufacturer = (usage.manufacturer || '').trim();
+    const descriptorParts = [genericName, manufacturer].filter((part) => part);
+    const category = descriptorParts.length ? descriptorParts.join(' | ') : 'Not specified';
+    const shareValue = total > 0 ? (usage.usageCount / total) * 100 : 0;
+    const normalizedShare = Number.isFinite(shareValue) ? shareValue : 0;
+    const formattedShare =
+      normalizedShare === 0 ? '0' : normalizedShare.toFixed(1).replace(/\.0$/, '');
+
+    return {
+      name: usage.medicationName,
+      category,
+      prescriptions: usage.usageCount,
+      share: `${formattedShare}%`,
+      growth: '--',
+      trend: 'steady',
+    };
+  }
+
+  private mapAnalyticsToDemographics(result: PrescriptionAnalyticsResult): DemographicMetric[] {
+    const formatter = new Intl.NumberFormat('en-US');
+    const femaleCount = result.female ?? 0;
+    const maleCount = result.male ?? 0;
+    const prescriptions = result.totalPrescription ?? 0;
+    const patientTotal = femaleCount + maleCount;
+
+    const computeShare = (value: number, total: number): string => {
+      if (!total || total <= 0) {
+        return '0%';
+      }
+
+      const shareValue = (value / total) * 100;
+      const formatted = Number.isFinite(shareValue) ? shareValue.toFixed(1) : '0.0';
+      return `${formatted.replace(/\.0$/, '')}%`;
+    };
+
+    return [
+      {
+        label: 'Female patients',
+        total: formatter.format(femaleCount),
+        share: computeShare(femaleCount, patientTotal),
+        change: 'Updated just now',
+        changeClass: 'text-brand-neutral/60',
+        icon: 'female',
+        accentClass:
+          'bg-[linear-gradient(135deg,#ec4899_0%,#f472b6_100%)] shadow-[0_12px_28px_rgba(236,72,153,0.25)]',
+      },
+      {
+        label: 'Male patients',
+        total: formatter.format(maleCount),
+        share: computeShare(maleCount, patientTotal),
+        change: 'Updated just now',
+        changeClass: 'text-brand-neutral/60',
+        icon: 'male',
+        accentClass:
+          'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] shadow-[0_12px_28px_rgba(6,180,139,0.25)]',
+      },
+      {
+        label: 'Total prescriptions',
+        total: formatter.format(prescriptions),
+        share: prescriptions ? '100%' : '0%',
+        change: 'Includes all recorded scripts',
+        changeClass: 'text-brand-neutral/60',
+        icon: 'family',
+        accentClass:
+          'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_28px_rgba(59,130,246,0.25)]',
+      },
+    ];
+  }
 
   get medicineLeaderboard(): MedicinePerformance[] {
     return this.medicinePerformance[this.selectedMedicinePeriod];

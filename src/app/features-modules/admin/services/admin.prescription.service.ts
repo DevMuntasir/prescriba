@@ -21,12 +21,15 @@ export interface MedicationUsage {
   medicationId: number;
   medicationName: string;
   usageCount: number;
-  totalCount: number;
+  totalCount: number | null;
+  manufacturer: string;
+  genericName: string;
 }
 
 export interface MedicationUsageResponse {
   totalCount: number;
-  results: MedicationUsage[];
+  result: MedicationUsage[];
+  results?: MedicationUsage[];
   message: string;
   isSuccess: boolean;
   statusCode: number;
