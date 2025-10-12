@@ -7,7 +7,7 @@ import { Environment } from '@abp/ng.core';
 
 export const serviceBaseUrl = 'http://localhost:3000';
 export const USER_SECRATE = 'soowgood@@2024';
-const apiUrl = 'https://bracket-alloy-types-analyzed.trycloudflare.com ';
+const apiUrl = 'https://bracket-alloy-types-analyzed.trycloudflare.com';
 export const authenticationApi =
   'https://song-hung-sue-grateful.trycloudflare.com';
 export const prescriptionApi =
