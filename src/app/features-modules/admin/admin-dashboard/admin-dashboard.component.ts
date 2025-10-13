@@ -9,6 +9,26 @@ import {
   PrescriptionAnalyticsResult,
 } from '../services/admin.prescription.service';
 
+interface RegionGenderSplit {
+  readonly label: string;
+  readonly percent: number;
+  readonly barClass: string;
+}
+
+interface RegionalPerformance {
+  readonly name: string;
+  readonly shareLabel: string;
+  readonly sharePercent: number;
+  readonly prescriptions: number;
+  readonly totalMedicines: number;
+  readonly topMedicine: {
+    readonly name: string;
+    readonly prescriptions: number;
+    readonly share: string;
+  };
+  readonly notableInsights: string;
+  readonly genderSplit: readonly RegionGenderSplit[];
+}
 type TrendDirection = 'up' | 'down' | 'steady';
 
 interface SummaryStat {
@@ -125,6 +145,126 @@ interface SidebarLink {
 export class AdminDashboardComponent implements OnInit {
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
   private readonly authService = inject(AppAuthService);
+
+  readonly regionalPerformance: RegionalPerformance[] = [
+    {
+      name: 'Dhaka division',
+      shareLabel: '34% of volume',
+      sharePercent: 34,
+      prescriptions: 6820,
+      totalMedicines: 198,
+      topMedicine: {
+        name: 'Metformin 500mg',
+        prescriptions: 1240,
+        share: '18% of scripts',
+      },
+      notableInsights:
+        'Digital-first clinics drove a 9% lift in chronic care renewals.',
+      genderSplit: [
+        { label: 'Female', percent: 56, barClass: 'from-rose-400 to-rose-500' },
+        {
+          label: 'Male',
+          percent: 40,
+          barClass: 'from-brand-primary to-emerald-400',
+        },
+        {
+          label: 'Other / Undisclosed',
+          percent: 4,
+          barClass: 'from-indigo-400 to-sky-400',
+        },
+      ],
+    },
+    {
+      name: 'Chattogram',
+      shareLabel: '21% of volume',
+      sharePercent: 21,
+      prescriptions: 4185,
+      totalMedicines: 142,
+      topMedicine: {
+        name: 'Amlodipine 5mg',
+        prescriptions: 820,
+        share: '20% of scripts',
+      },
+      notableInsights:
+        'Seaport employer partnerships added 260 new patients this cycle.',
+      genderSplit: [
+        { label: 'Female', percent: 48, barClass: 'from-rose-400 to-rose-500' },
+        {
+          label: 'Male',
+          percent: 47,
+          barClass: 'from-brand-primary to-emerald-400',
+        },
+        {
+          label: 'Other / Undisclosed',
+          percent: 5,
+          barClass: 'from-indigo-400 to-sky-400',
+        },
+      ],
+    },
+    {
+      name: 'Rajshahi',
+      shareLabel: '14% of volume',
+      sharePercent: 14,
+      prescriptions: 2790,
+      totalMedicines: 116,
+      topMedicine: {
+        name: 'Montelukast 10mg',
+        prescriptions: 442,
+        share: '16% of scripts',
+      },
+      notableInsights:
+        'Seasonal allergy cases peaked, nudging average prescription lengths higher.',
+      genderSplit: [
+        { label: 'Female', percent: 44, barClass: 'from-rose-400 to-rose-500' },
+        {
+          label: 'Male',
+          percent: 49,
+          barClass: 'from-brand-primary to-emerald-400',
+        },
+        {
+          label: 'Other / Undisclosed',
+          percent: 7,
+          barClass: 'from-indigo-400 to-sky-400',
+        },
+      ],
+    },
+    {
+      name: 'Sylhet',
+      shareLabel: '11% of volume',
+      sharePercent: 11,
+      prescriptions: 2146,
+      totalMedicines: 104,
+      topMedicine: {
+        name: 'Salbutamol inhaler',
+        prescriptions: 386,
+        share: '18% of scripts',
+      },
+      notableInsights:
+        'Cross-border clinics are fuelling respiratory consult growth.',
+      genderSplit: [
+        { label: 'Female', percent: 46, barClass: 'from-rose-400 to-rose-500' },
+        {
+          label: 'Male',
+          percent: 45,
+          barClass: 'from-brand-primary to-emerald-400',
+        },
+        {
+          label: 'Other / Undisclosed',
+          percent: 9,
+          barClass: 'from-indigo-400 to-sky-400',
+        },
+      ],
+    },
+  ];
+
+  selectedRegion: RegionalPerformance = this.regionalPerformance[0];
+  selectRegion(region: RegionalPerformance): void {
+    this.selectedRegion = region;
+  }
+
+  trackRegionByName(_: number, region: RegionalPerformance): string {
+    return region.name;
+  }
   readonly sidebarLinks: SidebarLink[] = [
     {
       label: 'Dashboard',
@@ -183,7 +323,8 @@ export class AdminDashboardComponent implements OnInit {
       badge: '↑ 8% MoM',
       badgeClass: 'bg-emerald-100 text-emerald-600',
       icon: 'clinicians',
-      iconBgClass: 'bg-[linear-gradient(135deg,#14b8a6_0%,#5eead4_100%)] shadow-[0_12px_24px_rgba(20,184,166,0.25)]',
+      iconBgClass:
+        'bg-[linear-gradient(135deg,#14b8a6_0%,#5eead4_100%)] shadow-[0_12px_24px_rgba(20,184,166,0.25)]',
     },
     {
       label: 'Support tickets',
@@ -192,7 +333,8 @@ export class AdminDashboardComponent implements OnInit {
       badge: '2 urgent',
       badgeClass: 'bg-orange-100 text-orange-600',
       icon: 'tickets',
-      iconBgClass: 'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_24px_rgba(59,130,246,0.25)]',
+      iconBgClass:
+        'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_24px_rgba(59,130,246,0.25)]',
     },
     {
       label: 'Compliance score',
@@ -201,7 +343,8 @@ export class AdminDashboardComponent implements OnInit {
       badge: '+2 this week',
       badgeClass: 'bg-violet-100 text-violet-600',
       icon: 'compliance',
-      iconBgClass: 'bg-[linear-gradient(135deg,#a855f7_0%,#c084fc_100%)] shadow-[0_12px_24px_rgba(168,85,247,0.25)]',
+      iconBgClass:
+        'bg-[linear-gradient(135deg,#a855f7_0%,#c084fc_100%)] shadow-[0_12px_24px_rgba(168,85,247,0.25)]',
     },
   ];
 
@@ -237,7 +380,8 @@ export class AdminDashboardComponent implements OnInit {
   readonly quickLinks: QuickLink[] = [
     {
       label: 'Manage user roles',
-      description: 'Invite administrators, reset credentials and update permissions.',
+      description:
+        'Invite administrators, reset credentials and update permissions.',
       cta: 'Open directory',
       icon: 'users',
       iconBgClass:
@@ -245,24 +389,28 @@ export class AdminDashboardComponent implements OnInit {
     },
     {
       label: 'Approve clinicians',
-      description: 'Review documentation and activate new prescribers in minutes.',
+      description:
+        'Review documentation and activate new prescribers in minutes.',
       cta: 'Review queue',
       icon: 'approvals',
-      iconBgClass: 'bg-[linear-gradient(135deg,#3b82f6_0%,#60a5fa_100%)] shadow-[0_12px_24px_rgba(59,130,246,0.25)]',
+      iconBgClass:
+        'bg-[linear-gradient(135deg,#3b82f6_0%,#60a5fa_100%)] shadow-[0_12px_24px_rgba(59,130,246,0.25)]',
     },
     {
       label: 'Usage analytics',
       description: 'Track adoption, peak usage hours and trending specialties.',
       cta: 'View reports',
       icon: 'insights',
-      iconBgClass: 'bg-[linear-gradient(135deg,#f97316_0%,#fbbf24_100%)] shadow-[0_12px_24px_rgba(249,115,22,0.25)]',
+      iconBgClass:
+        'bg-[linear-gradient(135deg,#f97316_0%,#fbbf24_100%)] shadow-[0_12px_24px_rgba(249,115,22,0.25)]',
     },
     {
       label: 'Broadcast updates',
       description: 'Send policy updates or planned maintenance announcements.',
       cta: 'Compose notice',
       icon: 'broadcast',
-      iconBgClass: 'bg-[linear-gradient(135deg,#8b5cf6_0%,#c4b5fd_100%)] shadow-[0_12px_24px_rgba(139,92,246,0.25)]',
+      iconBgClass:
+        'bg-[linear-gradient(135deg,#8b5cf6_0%,#c4b5fd_100%)] shadow-[0_12px_24px_rgba(139,92,246,0.25)]',
     },
   ];
 
@@ -482,8 +630,16 @@ export class AdminDashboardComponent implements OnInit {
         { name: 'Sitagliptin 50mg', prescriptions: 94, share: '19%' },
       ],
       upcomingClinics: [
-        { date: 'Wed, 12 Jun', window: '15:00 – 18:00', location: 'Banani Digital Clinic' },
-        { date: 'Fri, 14 Jun', window: '10:00 – 13:00', location: 'Telehealth sessions' },
+        {
+          date: 'Wed, 12 Jun',
+          window: '15:00 – 18:00',
+          location: 'Banani Digital Clinic',
+        },
+        {
+          date: 'Fri, 14 Jun',
+          window: '10:00 – 13:00',
+          location: 'Telehealth sessions',
+        },
       ],
       patientFeedback: {
         score: '4.8/5',
@@ -505,8 +661,16 @@ export class AdminDashboardComponent implements OnInit {
         { name: 'Atorvastatin 20mg', prescriptions: 128, share: '24%' },
       ],
       upcomingClinics: [
-        { date: 'Thu, 13 Jun', window: '09:00 – 12:00', location: 'Chattogram Heart Centre' },
-        { date: 'Sat, 15 Jun', window: '16:00 – 18:00', location: 'Tele-consultation block' },
+        {
+          date: 'Thu, 13 Jun',
+          window: '09:00 – 12:00',
+          location: 'Chattogram Heart Centre',
+        },
+        {
+          date: 'Sat, 15 Jun',
+          window: '16:00 – 18:00',
+          location: 'Tele-consultation block',
+        },
       ],
       patientFeedback: {
         score: '4.6/5',
@@ -528,8 +692,16 @@ export class AdminDashboardComponent implements OnInit {
         { name: 'Salbutamol inhaler', prescriptions: 108, share: '23%' },
       ],
       upcomingClinics: [
-        { date: 'Tue, 11 Jun', window: '17:00 – 20:00', location: 'Sylhet Respiratory Centre' },
-        { date: 'Sat, 15 Jun', window: '11:00 – 13:00', location: 'Telehealth follow-ups' },
+        {
+          date: 'Tue, 11 Jun',
+          window: '17:00 – 20:00',
+          location: 'Sylhet Respiratory Centre',
+        },
+        {
+          date: 'Sat, 15 Jun',
+          window: '11:00 – 13:00',
+          location: 'Telehealth follow-ups',
+        },
       ],
       patientFeedback: {
         score: '4.7/5',
@@ -551,8 +723,16 @@ export class AdminDashboardComponent implements OnInit {
         { name: 'Pantoprazole 40mg', prescriptions: 96, share: '21%' },
       ],
       upcomingClinics: [
-        { date: 'Mon, 10 Jun', window: '14:00 – 17:00', location: 'Khulna City Clinic' },
-        { date: 'Thu, 13 Jun', window: '18:00 – 20:00', location: 'Virtual quick consults' },
+        {
+          date: 'Mon, 10 Jun',
+          window: '14:00 – 17:00',
+          location: 'Khulna City Clinic',
+        },
+        {
+          date: 'Thu, 13 Jun',
+          window: '18:00 – 20:00',
+          location: 'Virtual quick consults',
+        },
       ],
       patientFeedback: {
         score: '4.5/5',
@@ -596,7 +776,9 @@ export class AdminDashboardComponent implements OnInit {
 
           if (!items.length) {
             this.medicinePerformance = { day: [], week: [], month: [] };
-            this.topMedicationsError = response?.message ?? 'No medication usage data available right now.';
+            this.topMedicationsError =
+              response?.message ??
+              'No medication usage data available right now.';
             return;
           }
 
@@ -605,7 +787,9 @@ export class AdminDashboardComponent implements OnInit {
               ? response.totalCount
               : items.reduce((sum, item) => sum + item.usageCount, 0);
 
-          const mapped = items.map((item) => this.mapMedicationUsageToPerformance(item, totalUsage));
+          const mapped = items.map((item) =>
+            this.mapMedicationUsageToPerformance(item, totalUsage)
+          );
 
           this.medicinePerformance = {
             day: mapped,
@@ -641,21 +825,29 @@ export class AdminDashboardComponent implements OnInit {
           this.demographicBreakdown = this.mapAnalyticsToDemographics(results);
         },
         error: () => {
-          this.prescriptionAnalyticsError = 'Unable to load patient demographics.';
+          this.prescriptionAnalyticsError =
+            'Unable to load patient demographics.';
           this.demographicBreakdown = [];
         },
       });
   }
 
-  private mapMedicationUsageToPerformance(usage: MedicationUsage, total: number): MedicinePerformance {
+  private mapMedicationUsageToPerformance(
+    usage: MedicationUsage,
+    total: number
+  ): MedicinePerformance {
     const genericName = (usage.genericName || '').trim();
     const manufacturer = (usage.manufacturer || '').trim();
     const descriptorParts = [genericName, manufacturer].filter((part) => part);
-    const category = descriptorParts.length ? descriptorParts.join(' | ') : 'Not specified';
+    const category = descriptorParts.length
+      ? descriptorParts.join(' | ')
+      : 'Not specified';
     const shareValue = total > 0 ? (usage.usageCount / total) * 100 : 0;
     const normalizedShare = Number.isFinite(shareValue) ? shareValue : 0;
     const formattedShare =
-      normalizedShare === 0 ? '0' : normalizedShare.toFixed(1).replace(/\.0$/, '');
+      normalizedShare === 0
+        ? '0'
+        : normalizedShare.toFixed(1).replace(/\.0$/, '');
 
     return {
       name: usage.medicationName,
@@ -667,7 +859,9 @@ export class AdminDashboardComponent implements OnInit {
     };
   }
 
-  private mapAnalyticsToDemographics(result: PrescriptionAnalyticsResult): DemographicMetric[] {
+  private mapAnalyticsToDemographics(
+    result: PrescriptionAnalyticsResult
+  ): DemographicMetric[] {
     const formatter = new Intl.NumberFormat('en-US');
     const femaleCount = result.female ?? 0;
     const maleCount = result.male ?? 0;
@@ -680,7 +874,9 @@ export class AdminDashboardComponent implements OnInit {
       }
 
       const shareValue = (value / total) * 100;
-      const formatted = Number.isFinite(shareValue) ? shareValue.toFixed(1) : '0.0';
+      const formatted = Number.isFinite(shareValue)
+        ? shareValue.toFixed(1)
+        : '0.0';
       return `${formatted.replace(/\.0$/, '')}%`;
     };
 
@@ -742,14 +938,28 @@ export class AdminDashboardComponent implements OnInit {
     const tables: string[] = [];
 
     tables.push(
-      this.buildTable('Summary metrics', ['Metric', 'Value', 'Insight', 'Badge'], this.summaryStats.map((stat) => [stat.label, stat.value, stat.hint, stat.badge]))
+      this.buildTable(
+        'Summary metrics',
+        ['Metric', 'Value', 'Insight', 'Badge'],
+        this.summaryStats.map((stat) => [
+          stat.label,
+          stat.value,
+          stat.hint,
+          stat.badge,
+        ])
+      )
     );
 
     tables.push(
       this.buildTable(
         'Demographic breakdown',
         ['Segment', 'Patients', 'Share', 'Change'],
-        this.demographicBreakdown.map((demo) => [demo.label, demo.total, demo.share, demo.change])
+        this.demographicBreakdown.map((demo) => [
+          demo.label,
+          demo.total,
+          demo.share,
+          demo.change,
+        ])
       )
     );
 
@@ -757,14 +967,26 @@ export class AdminDashboardComponent implements OnInit {
       this.buildTable(
         'Age distribution',
         ['Age range', 'Patients', 'Percent'],
-        this.ageDistribution.map((age) => [age.range, age.patients, `${age.percent}%`])
+        this.ageDistribution.map((age) => [
+          age.range,
+          age.patients,
+          `${age.percent}%`,
+        ])
       )
     );
 
     tables.push(
       this.buildTable(
         'Top medicines',
-        ['Period', 'Medicine', 'Category', 'Prescriptions', 'Share', 'Growth', 'Trend'],
+        [
+          'Period',
+          'Medicine',
+          'Category',
+          'Prescriptions',
+          'Share',
+          'Growth',
+          'Trend',
+        ],
         this.periodKeys.flatMap((period) =>
           this.medicinePerformance[period].map((medicine) => [
             this.periodLabels[period],
@@ -801,10 +1023,14 @@ export class AdminDashboardComponent implements OnInit {
         this.doctorSummaries.map((summary) => {
           const detail = this.doctorDetails[summary.id];
           const topMedicines = detail?.topMedicines
-            .map((item) => `${item.name} (${item.prescriptions}, ${item.share})`)
+            .map(
+              (item) => `${item.name} (${item.prescriptions}, ${item.share})`
+            )
             .join(' | ');
           const upcomingClinics = detail?.upcomingClinics
-            .map((clinic) => `${clinic.date} ${clinic.window} @ ${clinic.location}`)
+            .map(
+              (clinic) => `${clinic.date} ${clinic.window} @ ${clinic.location}`
+            )
             .join(' | ');
           const feedback = detail
             ? `${detail.patientFeedback.score} (${detail.patientFeedback.change})`
@@ -834,7 +1060,11 @@ export class AdminDashboardComponent implements OnInit {
       this.buildTable(
         'Recent updates',
         ['Message', 'Highlight', 'Time'],
-        this.recentUpdates.map((update) => [update.message.trim(), update.highlight ?? '—', update.time])
+        this.recentUpdates.map((update) => [
+          update.message.trim(),
+          update.highlight ?? '—',
+          update.time,
+        ])
       )
     );
 
@@ -852,9 +1082,18 @@ export class AdminDashboardComponent implements OnInit {
     return `<!DOCTYPE html><html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8" /><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Prescriba Report</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>${tableMarkup}</body></html>`;
   }
 
-  private buildTable(title: string, headers: string[], rows: (string | number)[][]): string {
+  private buildTable(
+    title: string,
+    headers: string[],
+    rows: (string | number)[][]
+  ): string {
     const headerHtml = headers
-      .map((header) => `<th style="background:#0f766e;color:#ffffff;padding:8px 12px;border:1px solid #0f766e;text-align:left;">${this.escapeCell(header)}</th>`)
+      .map(
+        (header) =>
+          `<th style="background:#0f766e;color:#ffffff;padding:8px 12px;border:1px solid #0f766e;text-align:left;">${this.escapeCell(
+            header
+          )}</th>`
+      )
       .join('');
     const bodyHtml = rows.length
       ? rows
@@ -863,7 +1102,9 @@ export class AdminDashboardComponent implements OnInit {
               `<tr>${row
                 .map(
                   (cell) =>
-                    `<td style="padding:6px 10px;border:1px solid #d1d5db;vertical-align:top;">${this.escapeCell(cell)}</td>`
+                    `<td style="padding:6px 10px;border:1px solid #d1d5db;vertical-align:top;">${this.escapeCell(
+                      cell
+                    )}</td>`
                 )
                 .join('')}</tr>`
           )
