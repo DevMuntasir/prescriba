@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AdminPrescriptionService, MedicationUsage } from '../../services/admin.prescription.service';
+import { finalize } from 'rxjs';
 
 type TrendDirection = 'up' | 'down' | 'steady';
 
@@ -121,6 +123,88 @@ interface DoctorDetail {
   styleUrls: ['./overview.component.scss'],
 })
 export class AdminDashboardOverviewComponent {
+
+  private readonly adminPrescriptionService = inject(AdminPrescriptionService);
+readonly periodLabels: Record<PeriodKey, string> = {
+    day: 'Today',
+    week: 'This week',
+    month: 'This month',
+  };
+
+  readonly periodKeys: PeriodKey[] = ['day', 'week', 'month'];
+
+  topMedicationsLoading = false;
+  topMedicationsError: string | null = null;
+  prescriptionAnalyticsLoading = false;
+  prescriptionAnalyticsError: string | null = null;
+
+  selectedMedicinePeriod: PeriodKey = 'day';
+  medicinePerformance: any = {} as Record<PeriodKey, MedicinePerformance[]>;
+
+
+  ngOnInit(): void {
+    this.loadTopMedications();
+    // this.loadPrescriptionAnalytics();
+  }
+  private loadTopMedications(): void {
+    this.topMedicationsLoading = true;
+    this.topMedicationsError = null;
+
+    this.adminPrescriptionService
+      .getMostUsedMedications()
+      .pipe(finalize(() => (this.topMedicationsLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const items = response?.result ?? response?.results ?? [];
+
+          if (!items.length) {
+            this.medicinePerformance = { day: [], week: [], month: [] };
+            this.topMedicationsError = response?.message ?? 'No medication usage data available right now.';
+            return;
+          }
+
+          const totalUsage =
+            response?.totalCount && response.totalCount > 0
+              ? response.totalCount
+              : items.reduce((sum, item) => sum + item.usageCount, 0);
+
+          const mapped = items.map((item) => this.mapMedicationUsageToPerformance(item, totalUsage));
+
+          this.medicinePerformance = {
+            day: mapped,
+            week: [...mapped],
+            month: [...mapped],
+          };
+        },
+        error: () => {
+          this.topMedicationsError = 'Unable to load top prescribed medicines.';
+          this.medicinePerformance = { day: [], week: [], month: [] };
+        },
+      });
+  }
+
+  private mapMedicationUsageToPerformance(usage: MedicationUsage, total: number): MedicinePerformance {
+    const genericName = (usage.genericName || '').trim();
+    const manufacturer = (usage.manufacturer || '').trim();
+    const descriptorParts = [genericName, manufacturer].filter((part) => part);
+    const category = descriptorParts.length ? descriptorParts.join(' | ') : 'Not specified';
+    const shareValue = total > 0 ? (usage.usageCount / total) * 100 : 0;
+    const normalizedShare = Number.isFinite(shareValue) ? shareValue : 0;
+    const formattedShare =
+      normalizedShare === 0 ? '0' : normalizedShare.toFixed(1).replace(/\.0$/, '');
+
+    return {
+      name: usage.medicationName,
+      category,
+      prescriptions: usage.usageCount,
+      share: `${formattedShare}%`,
+      growth: '--',
+      trend: 'steady',
+    };
+  }
+
+
+
   readonly summaryStats: SummaryStat[] = [
     {
       label: 'Pending approvals',
@@ -348,134 +432,7 @@ export class AdminDashboardOverviewComponent {
     },
   ];
 
-  readonly medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
-    day: [
-      {
-        name: 'Azithromycin 500mg',
-        category: 'Antibiotic',
-        prescriptions: 124,
-        share: '18%',
-        growth: '+6.1%',
-        trend: 'up',
-      },
-      {
-        name: 'Omeprazole 20mg',
-        category: 'Gastrointestinal',
-        prescriptions: 98,
-        share: '14%',
-        growth: '+3.4%',
-        trend: 'up',
-      },
-      {
-        name: 'Montelukast 10mg',
-        category: 'Respiratory',
-        prescriptions: 86,
-        share: '12%',
-        growth: '+1.2%',
-        trend: 'steady',
-      },
-      {
-        name: 'Amlodipine 5mg',
-        category: 'Cardiac',
-        prescriptions: 79,
-        share: '11%',
-        growth: '-0.8%',
-        trend: 'down',
-      },
-      {
-        name: 'Paracetamol 500mg',
-        category: 'Analgesic',
-        prescriptions: 72,
-        share: '10%',
-        growth: '+4.3%',
-        trend: 'up',
-      },
-    ],
-    week: [
-      {
-        name: 'Azithromycin 500mg',
-        category: 'Antibiotic',
-        prescriptions: 612,
-        share: '16%',
-        growth: '+8.4%',
-        trend: 'up',
-      },
-      {
-        name: 'Amlodipine 5mg',
-        category: 'Cardiac',
-        prescriptions: 538,
-        share: '14%',
-        growth: '+2.6%',
-        trend: 'up',
-      },
-      {
-        name: 'Metformin 500mg',
-        category: 'Endocrine',
-        prescriptions: 504,
-        share: '13%',
-        growth: '+5.9%',
-        trend: 'up',
-      },
-      {
-        name: 'Montelukast 10mg',
-        category: 'Respiratory',
-        prescriptions: 452,
-        share: '12%',
-        growth: '+1.7%',
-        trend: 'steady',
-      },
-      {
-        name: 'Paracetamol 500mg',
-        category: 'Analgesic',
-        prescriptions: 436,
-        share: '11%',
-        growth: '-0.9%',
-        trend: 'down',
-      },
-    ],
-    month: [
-      {
-        name: 'Metformin 500mg',
-        category: 'Endocrine',
-        prescriptions: 2214,
-        share: '17%',
-        growth: '+10.2%',
-        trend: 'up',
-      },
-      {
-        name: 'Amlodipine 5mg',
-        category: 'Cardiac',
-        prescriptions: 1986,
-        share: '15%',
-        growth: '+4.4%',
-        trend: 'up',
-      },
-      {
-        name: 'Atorvastatin 20mg',
-        category: 'Cardiac',
-        prescriptions: 1820,
-        share: '14%',
-        growth: '+2.1%',
-        trend: 'up',
-      },
-      {
-        name: 'Losartan 50mg',
-        category: 'Cardiac',
-        prescriptions: 1742,
-        share: '13%',
-        growth: '+1.6%',
-        trend: 'steady',
-      },
-      {
-        name: 'Omeprazole 20mg',
-        category: 'Gastrointestinal',
-        prescriptions: 1655,
-        share: '12%',
-        growth: '-1.9%',
-        trend: 'down',
-      },
-    ],
-  };
+
 
   readonly doctorSummaries: DoctorSummary[] = [
     {
@@ -623,15 +580,9 @@ export class AdminDashboardOverviewComponent {
     },
   };
 
-  readonly periodLabels: Record<PeriodKey, string> = {
-    day: 'Today',
-    week: 'This week',
-    month: 'This month',
-  };
 
-  readonly periodKeys: PeriodKey[] = ['day', 'week', 'month'];
 
-  selectedMedicinePeriod: PeriodKey = 'day';
+
   selectedDoctorId: number = this.doctorSummaries[0]?.id ?? 0;
 
   get medicineLeaderboard(): MedicinePerformance[] {
@@ -716,7 +667,7 @@ export class AdminDashboardOverviewComponent {
         'Top medicines',
         ['Period', 'Medicine', 'Category', 'Prescriptions', 'Share', 'Growth', 'Trend'],
         this.periodKeys.flatMap((period) =>
-          this.medicinePerformance[period].map((medicine) => [
+          this.medicinePerformance[period].map((medicine:any) => [
             this.periodLabels[period],
             medicine.name,
             medicine.category,
