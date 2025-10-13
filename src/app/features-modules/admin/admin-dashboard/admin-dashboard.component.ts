@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AppAuthService } from '../../../auth-services/app-auth.service';
 import { finalize } from 'rxjs/operators';
 import {
   AdminPrescriptionService,
@@ -123,6 +124,7 @@ interface SidebarLink {
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
+  private readonly authService = inject(AppAuthService);
   readonly sidebarLinks: SidebarLink[] = [
     {
       label: 'Dashboard',
@@ -158,6 +160,10 @@ export class AdminDashboardComponent implements OnInit {
       badge: 'Coming soon',
     },
   ];
+
+  onLogout(): void {
+    this.authService.logout();
+  }
 
   readonly summaryStats: SummaryStat[] = [
     {

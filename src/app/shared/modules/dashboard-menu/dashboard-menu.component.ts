@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppAuthService } from '../../../auth-services/app-auth.service';
 
 @Component({
   selector: 'app-dashboard-menu',
@@ -10,7 +11,10 @@ export class DashboardMenuComponent implements OnInit {
   collapsed = false;
   private autoCollapsed = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AppAuthService,
+  ) {}
 
   ngOnInit(): void {
     this.updateCollapseState(window.innerWidth);
@@ -39,5 +43,9 @@ export class DashboardMenuComponent implements OnInit {
       this.collapsed = false;
       this.autoCollapsed = false;
     }
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }
