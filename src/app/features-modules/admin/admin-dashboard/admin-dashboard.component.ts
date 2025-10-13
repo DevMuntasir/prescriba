@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AppAuthService } from '../../../auth-services/app-auth.service';
 
 interface SidebarLink {
   readonly label: string;
@@ -61,4 +62,10 @@ export class AdminDashboardComponent {
       badge: 'Coming soon',
     },
   ];
+
+  constructor(private readonly authService: AppAuthService) {}
+
+  onLogout(): void {
+    this.authService.logout();
+  }
 }
