@@ -276,13 +276,13 @@ export class AdminDashboardComponent implements OnInit {
       label: 'Prescriptions',
       icon: 'prescriptions',
       description: 'Monitor generated scripts',
-
-       path: '/ps-admin/prescriptions',
+      path: '/ps-admin/dashboard/prescriptions',
     },
     {
       label: 'Doctors',
       icon: 'doctors',
       description: 'Manage prescriber network',
+      path: '/ps-admin/dashboard/doctors',
     },
     {
       label: 'Patients',
