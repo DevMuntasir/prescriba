@@ -36,21 +36,55 @@ export interface MedicationUsageResponse {
   status: string;
 }
 
+export interface MedicationDivisionUsage {
+  divisionName: string;
+  totalPrescriptions: number;
+}
+
+export interface MedicationDivisionUsageResponse {
+  result?: MedicationDivisionUsage[];
+  results?: MedicationDivisionUsage[];
+  message?: string;
+  isSuccess?: boolean;
+  statusCode?: number;
+  status?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminPrescriptionService {
- private baseUrl = prescriptionApi + '/api/2025-02';
+  private readonly baseUrl = prescriptionApi + '/api/2025-02';
+
   constructor(private http: HttpClient) {}
 
   getPrescriptionAnalytics(): Observable<PrescriptionAnalyticsResponse> {
-    return this.http.get<PrescriptionAnalyticsResponse>(this.baseUrl + '/get-prescription-analytics');
+    return this.http.get<PrescriptionAnalyticsResponse>(
+      this.baseUrl + '/get-prescription-analytics'
+    );
   }
 
-  getMostUsedMedications(pageNumber = 1, pageSize = 10): Observable<MedicationUsageResponse> {
+  getMostUsedMedications(
+    pageNumber = 1,
+    pageSize = 10
+  ): Observable<MedicationUsageResponse> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber)
       .set('pageSize', pageSize);
 
-    return this.http.get<MedicationUsageResponse>(this.baseUrl + '/gets-most-used-medication' , { params });
+    return this.http.get<MedicationUsageResponse>(
+      this.baseUrl + '/gets-most-used-medication',
+      { params }
+    );
+  }
+
+  getMedicationDivisionUsage(
+    medicationId: number
+  ): Observable<MedicationDivisionUsageResponse> {
+    const params = new HttpParams().set('medicationId', medicationId);
+
+    return this.http.get<MedicationDivisionUsageResponse>(
+      this.baseUrl + '/get-medication-division-usage',
+      { params }
+    );
   }
 }
 

@@ -77,7 +77,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let row of rows">
+            <tr
+              *ngFor="let row of rows"
+              class="interactive-row"
+              role="button"
+              tabindex="0"
+              (click)="openDetails(row)"
+              (keydown.enter)="openDetails(row)"
+              (keydown.space)="openDetails(row); $event.preventDefault()"
+            >
               <td>{{ row.rank }}</td>
               <td>
                 <div class="cell-main">
@@ -106,6 +114,73 @@
 
     <div *ngIf="error && rows.length" class="inline-alert">
       {{ error }}
+    </div>
+  </div>
+
+  <div
+    class="modal-overlay"
+    *ngIf="modalOpen"
+    (click)="closeModal()"
+  >
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="selectedMedicine ? 'medicine-modal-title' : null"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="modal__header">
+        <div>
+          <p class="modal__eyebrow">Regional breakdown</p>
+          <h2 id="medicine-modal-title" class="modal__title">
+            {{ selectedMedicine?.name }}
+          </h2>
+          <p class="modal__meta">
+            Molecule ID: {{ selectedMedicine?.medicationId }} &bull;
+            Total prescriptions: {{ selectedMedicine?.usageCount | number }}
+          </p>
+        </div>
+        <button type="button" class="modal__close" (click)="closeModal()" aria-label="Close">
+          <svg class="icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </header>
+
+      <div class="modal__body" *ngIf="divisionLoading">
+        <div class="loader" aria-label="Loading regional data"></div>
+        <p class="modal__hint">Fetching regional performance…</p>
+      </div>
+
+      <div class="modal__body" *ngIf="!divisionLoading && divisionMetrics.length">
+        <ul class="division-list">
+          <li
+            *ngFor="let metric of divisionMetrics; trackBy: trackDivision"
+            class="division-item"
+          >
+            <div class="division-item__content">
+              <span class="division-item__name">{{ metric.divisionName }}</span>
+              <span class="division-item__count">{{ metric.totalPrescriptions | number }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="modal__body" *ngIf="!divisionLoading && !divisionMetrics.length">
+        <p class="modal__hint">
+          {{ divisionError ?? 'No regional distribution data available right now.' }}
+        </p>
+      </div>
+
+      <footer class="modal__footer" *ngIf="divisionMetrics.length">
+        <span class="modal__footnote">
+          Showing divisions ranked by prescription volume.
+        </span>
+      </footer>
+
+      <div *ngIf="divisionError && divisionMetrics.length" class="modal__alert">
+        {{ divisionError }}
+      </div>
     </div>
   </div>
 </section>
