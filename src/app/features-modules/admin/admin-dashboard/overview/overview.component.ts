@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { AdminPrescriptionService, MedicationUsage } from '../../services/admin.prescription.service';
+import { Component, HostListener, inject } from '@angular/core';
+import {
+  AdminPrescriptionService,
+  MedicationDivisionUsage,
+  MedicationUsage,
+} from '../../services/admin.prescription.service';
 import { finalize } from 'rxjs';
 
 type TrendDirection = 'up' | 'down' | 'steady';
@@ -70,6 +74,7 @@ interface RecentUpdate {
 type PeriodKey = 'day' | 'week' | 'month';
 
 interface MedicinePerformance {
+  readonly medicationId: number;
   readonly name: string;
   readonly category: string;
   readonly prescriptions: number;
@@ -131,9 +136,9 @@ interface DoctorDetail {
   styleUrls: ['./overview.component.scss'],
 })
 export class AdminDashboardOverviewComponent {
-
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
-readonly periodLabels: Record<PeriodKey, string> = {
+
+  readonly periodLabels: Record<PeriodKey, string> = {
     day: 'Today',
     week: 'This week',
     month: 'This month',
@@ -147,8 +152,19 @@ readonly periodLabels: Record<PeriodKey, string> = {
   prescriptionAnalyticsError: string | null = null;
 
   selectedMedicinePeriod: PeriodKey = 'day';
-  medicinePerformance: any = {} as Record<PeriodKey, MedicinePerformance[]>;
+  medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
+    day: [],
+    week: [],
+    month: [],
+  };
 
+  medicineModalOpen = false;
+  selectedMedicine: MedicinePerformance | null = null;
+  divisionLoading = false;
+  divisionError: string | null = null;
+  divisionMetrics: MedicationDivisionUsage[] = [];
+
+  private readonly divisionCache = new Map<number, MedicationDivisionUsage[]>();
 
   ngOnInit(): void {
     this.loadTopMedications();
@@ -202,6 +218,7 @@ readonly periodLabels: Record<PeriodKey, string> = {
       normalizedShare === 0 ? '0' : normalizedShare.toFixed(1).replace(/\.0$/, '');
 
     return {
+      medicationId: usage.medicationId,
       name: usage.medicationName,
       category,
       prescriptions: usage.usageCount,
@@ -211,7 +228,105 @@ readonly periodLabels: Record<PeriodKey, string> = {
     };
   }
 
+  openMedicineModal(medicine: MedicinePerformance): void {
+    this.selectedMedicine = medicine;
+    this.medicineModalOpen = true;
+    this.divisionError = null;
+    this.divisionMetrics = [];
 
+    const medicationId = medicine.medicationId;
+    if (!medicationId) {
+      this.divisionError = 'Medication identifier is missing for this record.';
+      return;
+    }
+
+    const cached = this.divisionCache.get(medicationId);
+    if (cached) {
+      this.divisionMetrics = cached;
+      return;
+    }
+
+    this.divisionLoading = false;
+    const dummyMetrics = this.buildDummyDivisionMetrics(medicine);
+
+    if (dummyMetrics.length) {
+      this.divisionMetrics = dummyMetrics;
+      this.divisionCache.set(medicationId, dummyMetrics);
+    } else {
+      this.divisionError = 'Division-level data is not available for this medicine yet.';
+    }
+  }
+
+  closeMedicineModal(): void {
+    this.medicineModalOpen = false;
+    this.selectedMedicine = null;
+    this.divisionLoading = false;
+    this.divisionError = null;
+    this.divisionMetrics = [];
+  }
+
+  trackDivision(_index: number, metric: MedicationDivisionUsage): string {
+    return metric.divisionName ?? `${_index}`;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.medicineModalOpen) {
+      this.closeMedicineModal();
+    }
+  }
+
+  private buildDummyDivisionMetrics(
+    medicine: MedicinePerformance
+  ): MedicationDivisionUsage[] {
+    const divisions = [
+      'Dhaka',
+      'Chattogram',
+      'Rajshahi',
+      'Khulna',
+      'Sylhet',
+      'Barishal',
+      'Rangpur',
+      'Mymensingh',
+    ];
+
+    const templates: number[][] = [
+      [0.33, 0.19, 0.13, 0.12, 0.08, 0.06, 0.05, 0.04],
+      [0.28, 0.22, 0.16, 0.12, 0.1, 0.06, 0.04, 0.02],
+      [0.31, 0.21, 0.14, 0.1, 0.09, 0.07, 0.05, 0.03],
+    ];
+
+    const templateIndex =
+      Math.abs(medicine.medicationId ?? medicine.name.length) % templates.length;
+    const selectedTemplate = templates[templateIndex];
+    const totalPrescriptions =
+      medicine.prescriptions > 0 ? medicine.prescriptions : 100;
+
+    const metrics = divisions.map((division, index) => {
+      const share = selectedTemplate[index] ?? 0;
+      return {
+        divisionName: division,
+        totalPrescriptions: Math.max(
+          1,
+          Math.round(totalPrescriptions * share)
+        ),
+      };
+    });
+
+    const totalFromMetrics = metrics.reduce(
+      (sum, metric) => sum + metric.totalPrescriptions,
+      0
+    );
+
+    if (totalFromMetrics !== totalPrescriptions && metrics.length) {
+      const difference = totalPrescriptions - totalFromMetrics;
+      const adjusted =
+        metrics[0].totalPrescriptions + difference;
+      metrics[0].totalPrescriptions = Math.max(1, adjusted);
+    }
+
+    return metrics.filter((metric) => metric.totalPrescriptions > 0);
+  }
 
   readonly summaryStats: SummaryStat[] = [
     {
