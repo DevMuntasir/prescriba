@@ -6,6 +6,7 @@ import {
   MedicationUsage,
 } from '../../services/admin.prescription.service';
 import { finalize } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 type TrendDirection = 'up' | 'down' | 'steady';
 
@@ -131,7 +132,7 @@ interface DoctorDetail {
 @Component({
   selector: 'app-admin-dashboard-overview',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
 })
