@@ -276,7 +276,8 @@ export class AdminDashboardComponent implements OnInit {
       label: 'Prescriptions',
       icon: 'prescriptions',
       description: 'Monitor generated scripts',
-      badge: 'Live',
+
+       path: '/ps-admin/prescriptions',
     },
     {
       label: 'Doctors',

@@ -89,7 +89,15 @@ interface DoctorSummary {
   readonly newPatients: number;
   readonly repeatRate: string;
 }
-
+interface DemographicMetric {
+  readonly label: string;
+  readonly total: string;
+  readonly share: string;
+  readonly change: string;
+  readonly icon: 'female' | 'male' | 'family';
+  readonly accentClass: string;
+  readonly changeClass?: string;
+}
 interface DoctorDetail {
   readonly utilisation: string;
   readonly utilisationChange: string;
