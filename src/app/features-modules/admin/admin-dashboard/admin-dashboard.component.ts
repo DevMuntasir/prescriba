@@ -25,7 +25,7 @@ interface SidebarLink {
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent  {
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
   private readonly authService = inject(AppAuthService);
 
