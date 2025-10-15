@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AppAuthService } from '../../../auth-services/app-auth.service';
 import { finalize } from 'rxjs/operators';
