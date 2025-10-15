@@ -1,0 +1,246 @@
+<section class="flex flex-col gap-8">
+  <header
+    class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_32px_80px_rgba(6,180,139,0.12)]">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="space-y-3">
+        <a routerLink="/ps-admin/dashboard"
+          class="inline-flex items-center gap-2 text-xs font-semibold text-brand-primary transition-colors duration-150 hover:text-brand-primary/80">
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back to dashboard
+        </a>
+        <div>
+          <h1 class="text-2xl font-semibold text-brand-neutral sm:text-3xl">Company performance insights</h1>
+          <p class="mt-1 text-sm text-brand-neutral/70">
+            Understand which organisations lead prescription activity, their market share contributions,
+            and how momentum shifts across key medicines and time.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="onRefresh()"
+          class="inline-flex items-center gap-2 rounded-2xl border border-brand-primary/30 px-4 py-2 text-sm font-semibold text-brand-primary transition-all duration-150 hover:border-brand-primary hover:bg-brand-primary hover:text-white">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 4v6h6M20 20v-6h-6M5 19A9 9 0 0 1 5 5m14 14a9 9 0 0 1 0-12"></path>
+          </svg>
+          Refresh data
+        </button>
+      </div>
+    </div>
+    <div *ngIf="error" class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+      {{ error }}
+    </div>
+  </header>
+
+  <ng-container *ngIf="!loading; else loadingState">
+    <div class="w-full">
+      <article
+        class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_60px_rgba(6,180,139,0.10)]">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">Company-wise prescription count</h2>
+            <p class="text-xs text-brand-neutral/50">Volume leaders ranked by total prescriptions and coverage.</p>
+          </div>
+          <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">
+            {{ summaries.length }} companies
+          </span>
+        </div>
+        <ng-container *ngIf="summaries.length; else emptySummaries">
+          <div class="max-h-[360px] overflow-auto rounded-2xl border border-brand-primary/10">
+            <table class="min-w-full divide-y divide-brand-primary/15 text-sm">
+              <thead class="bg-brand-primary/5 text-xs uppercase text-brand-neutral/60">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold tracking-wide">Company</th>
+                  <th class="px-4 py-3 text-right font-semibold tracking-wide">Prescriptions</th>
+                  <th class="px-4 py-3 text-right font-semibold tracking-wide">Market share</th>
+                  <th class="px-4 py-3 text-left font-semibold tracking-wide">Top districts</th>
+                  <th class="px-4 py-3 text-right font-semibold tracking-wide">Trend</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-brand-primary/10">
+                <tr *ngFor="let summary of summaries; trackBy: trackSummary" class="transition-colors duration-150 hover:bg-brand-primary/5">
+                  <td class="px-4 py-3 font-semibold text-brand-neutral">{{ summary.companyName }}</td>
+                  <td class="px-4 py-3 text-right text-brand-neutral/80">{{ summary.prescriptionCount | number }}</td>
+                  <td class="px-4 py-3 text-right text-brand-neutral/80">{{ summary.marketSharePercent | number: '1.0-2' }}%</td>
+                  <td class="px-4 py-3 text-xs text-brand-neutral/60">{{ summary.topDistricts }}</td>
+                  <td class="px-4 py-3 text-right">
+                    <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold" [ngClass]="{
+                      'bg-emerald-100 text-emerald-600': summary.trendDirection === 'up',
+                      'bg-amber-100 text-amber-600': summary.trendDirection === 'steady',
+                      'bg-rose-100 text-rose-600': summary.trendDirection === 'down'
+                    }">
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path *ngIf="summary.trendDirection === 'up'" stroke-linecap="round" stroke-linejoin="round"
+                          d="M5 12l5-5 4 4 5-5"></path>
+                        <path *ngIf="summary.trendDirection === 'down'" stroke-linecap="round" stroke-linejoin="round"
+                          d="M5 12l5 5 4-4 5 5"></path>
+                        <path *ngIf="summary.trendDirection === 'steady'" stroke-linecap="round"
+                          stroke-linejoin="round" d="M4 12h16"></path>
+                      </svg>
+                      {{ summary.trendLabel }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+        <ng-template #emptySummaries>
+          <div class="rounded-2xl bg-brand-primary/5 p-4 text-sm text-brand-neutral/60">
+            No company-level prescription data is available yet.
+          </div>
+        </ng-template>
+      </article>
+
+      <div class=" grid grid-cols-2 gap-4 my-4">
+
+        <article
+          class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_60px_rgba(6,180,139,0.10)]">
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-semibold text-brand-neutral">Market share percentage</h2>
+              <p class="text-xs text-brand-neutral/50">Share of total prescriptions captured per company.</p>
+            </div>
+          </div>
+          <ng-container *ngIf="marketShareSegments.length; else emptyMarketShare">
+            <div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+              <div class="relative mx-auto h-48 w-48 rounded-full border-8 border-white shadow-inner"
+                [style.background]="marketShareGradient">
+                <div
+                  class="absolute inset-6 rounded-full border border-white/60 bg-white text-center text-xs font-semibold text-brand-neutral/70">
+                  <div class="flex h-full flex-col items-center justify-center gap-1">
+                    <span>Total share</span>
+                    <span class="text-lg text-brand-neutral">
+                      {{ marketShareTotalPercent | number: '1.0-1' }}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <ul class="flex-1 space-y-3">
+                <li *ngFor="let segment of marketShareSegments; trackBy: trackMarketShare"
+                  class="flex items-center justify-between gap-3 rounded-2xl bg-brand-primary/5 px-4 py-3 text-sm">
+                  <div class="flex items-center gap-3">
+                    <span class="h-3 w-3 rounded-full" [style.background]="segment.color"></span>
+                    <span class="font-semibold text-brand-neutral">{{ segment.label }}</span>
+                  </div>
+                  <span class="text-brand-neutral/70">{{ segment.percent | number: '1.0-2' }}%</span>
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+          <ng-template #emptyMarketShare>
+            <div class="rounded-2xl bg-brand-primary/5 p-4 text-sm text-brand-neutral/60">
+              Market share distribution is not available at the moment.
+            </div>
+          </ng-template>
+        </article>
+  
+        <article
+          class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_60px_rgba(6,180,139,0.10)]">
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-semibold text-brand-neutral">Leading company by medicine</h2>
+              <p class="text-xs text-brand-neutral/50">Identify which company owns the strongest presence per molecule.</p>
+            </div>
+          </div>
+          <ng-container *ngIf="medicineLeaders.length; else emptyMedicines">
+            <ul class="space-y-4">
+              <li *ngFor="let leader of medicineLeaders; trackBy: trackMedicineLeader" class="space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <div>
+                    <p class="font-semibold text-brand-neutral">{{ leader.medicineName }}</p>
+                    <p class="text-xs text-brand-neutral/60">{{ leader.leadingCompany }}</p>
+                  </div>
+                  <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold text-brand-primary">
+                    {{ leader.prescriptionCount | number }} scripts
+                  </span>
+                </div>
+                <div class="h-2.5 w-full overflow-hidden rounded-full bg-brand-primary/10">
+                  <div class="h-full rounded-full" [style.background]="leader.color"
+                    [style.width.%]="leader.barWidth"></div>
+                </div>
+                <div *ngIf="leader.marketSharePercent !== undefined"
+                  class="text-xs font-semibold text-brand-neutral/60">
+                  {{ leader.marketSharePercent | number: '1.0-2' }}% market share
+                </div>
+              </li>
+            </ul>
+          </ng-container>
+          <ng-template #emptyMedicines>
+            <div class="rounded-2xl bg-brand-primary/5 p-4 text-sm text-brand-neutral/60">
+              Leading medicine insights will appear once prescribing activity is received.
+            </div>
+          </ng-template>
+        </article>
+      </div>
+
+      <article
+        class="rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_60px_rgba(6,180,139,0.10)]">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-brand-neutral">Time-based performance trend</h2>
+            <p class="text-xs text-brand-neutral/50">Track momentum shifts across the reporting periods.</p>
+          </div>
+        </div>
+        <ng-container *ngIf="trendSeries.length; else emptyTrend">
+          <div class="space-y-4">
+            <div class="relative h-56 w-full overflow-hidden rounded-2xl bg-brand-primary/5">
+              <svg class="h-full w-full text-brand-primary/10" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <g stroke="currentColor" stroke-width="0.3">
+                  <line *ngFor="let y of [20, 40, 60, 80]" [attr.x1]="0" [attr.x2]="100" [attr.y1]="y"
+                    [attr.y2]="y"></line>
+                </g>
+                <ng-container *ngFor="let series of trendSeries; trackBy: trackTrendSeries">
+                  <polyline fill="none" [attr.points]="series.points" [attr.stroke]="series.color" stroke-width="2"></polyline>
+                </ng-container>
+              </svg>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-brand-neutral/70">
+              <span *ngFor="let series of trendSeries; trackBy: trackTrendSeries"
+                class="inline-flex items-center gap-2 rounded-full bg-brand-primary/5 px-3 py-1">
+                <span class="h-2 w-2 rounded-full" [style.background]="series.color"></span>
+                {{ series.companyName }}
+              </span>
+            </div>
+            <div class="grid gap-2 text-xs text-brand-neutral/60 sm:grid-cols-2 lg:grid-cols-3">
+              <div *ngFor="let series of trendSeries; trackBy: trackTrendSeries" class="rounded-2xl bg-brand-primary/5 p-3">
+                <p class="font-semibold text-brand-neutral text-sm">{{ series.companyName }}</p>
+                <ul class="mt-2 space-y-1">
+                  <li *ngFor="let value of series.values">
+                    <span class="font-semibold text-brand-neutral/70">{{ value.period }}:</span>
+                    {{ value.value | number }} scripts
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #emptyTrend>
+          <div class="rounded-2xl bg-brand-primary/5 p-4 text-sm text-brand-neutral/60">
+            Time-series data will surface once we have multiple reporting periods.
+          </div>
+        </ng-template>
+      </article>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingState>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div *ngFor="let _ of [0, 1, 2, 3]"
+        class="h-72 rounded-3xl border border-brand-primary/15 bg-white p-6 shadow-[0_24px_60px_rgba(6,180,139,0.08)]">
+        <div class="mb-4 flex items-center justify-between">
+          <span class="h-6 w-48 animate-pulse rounded-full bg-brand-primary/10"></span>
+          <span class="h-6 w-16 animate-pulse rounded-full bg-brand-primary/10"></span>
+        </div>
+        <div class="space-y-3">
+          <div *ngFor="let __ of [0, 1, 2]" class="h-4 animate-pulse rounded-full bg-brand-primary/10"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</section>

@@ -1,4 +1,3 @@
-//import { ComplainStatus } from "../../../proxy/cmsenums";
 
 import { DoctorTitle } from "../../proxy/enums";
 
@@ -26,31 +25,6 @@ export class Common {
     );
   }
 
-  //public static maskCharacter(anyStr: any, showNo: number) {
-  //  if (anyStr) {
-  //    var mask = '';
-  //    for (let i = 1; i <= anyStr.length; i++) {
-  //      mask += "*";
-  //    }
-  //    //console.log(mask + anyStr.slice((anyStr.length - showNo), anyStr.length));
-  //    return mask + anyStr.slice((anyStr.length - showNo), anyStr.length);
-  //  }
-  //}
-
-  //public static quarters = [
-  //  { "id": 1, "name": "Quarter One" },
-  //  { "id": 2, "name": "Quarter Two" },
-  //  { "id": 3, "name": "Quarter Three" }
-  //];
-
-  //public static buildings = [
-  //  { "id": 1, "quarterId": 1, "name": "Building 1" },
-  //  { "id": 2, "quarterId": 1, "name": "Building 2" },
-  //  { "id": 3, "quarterId": 1, "name": "Building 3" },
-  //  { "id": 4, "quarterId": 2, "name": "Building 4" },
-  //  { "id": 5, "quarterId": 2, "name": "Building 5" },
-  //  { "id": 6, "quarterId": 2, "name": "Building 6" }
-  //];
 
   public static displayDoctorTitle = [
     { "id": 1, "status": DoctorTitle.Dr, "name": "Dr." },

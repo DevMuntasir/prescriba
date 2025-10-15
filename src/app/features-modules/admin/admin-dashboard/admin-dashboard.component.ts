@@ -276,12 +276,13 @@ export class AdminDashboardComponent implements OnInit {
       label: 'Prescriptions',
       icon: 'prescriptions',
       description: 'Monitor generated scripts',
-      badge: 'Live',
+      path: '/ps-admin/dashboard/prescriptions',
     },
     {
       label: 'Doctors',
       icon: 'doctors',
       description: 'Manage prescriber network',
+      path: '/ps-admin/dashboard/doctors',
     },
     {
       label: 'Patients',
@@ -293,12 +294,12 @@ export class AdminDashboardComponent implements OnInit {
       icon: 'settings',
       description: 'Security & configuration',
     },
-    {
-      label: 'Analytics report',
-      icon: 'analytics',
-      description: 'Deep dive into insights',
-      badge: 'Coming soon',
-    },
+    // {
+    //   label: 'Analytics report',
+    //   icon: 'analytics',
+    //   description: 'Deep dive into insights',
+    //   badge: 'Coming soon',
+    // },
   ];
 
   onLogout(): void {
