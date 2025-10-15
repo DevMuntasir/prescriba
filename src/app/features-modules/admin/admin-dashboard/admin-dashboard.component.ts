@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AppAuthService } from '../../../auth-services/app-auth.service';
+import { AdminPrescriptionService } from '../services/admin.prescription.service';
 
 interface SidebarLink {
   readonly label: string;
@@ -28,7 +29,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
   private readonly authService = inject(AppAuthService);
 
-  readonly regionalPerformance: RegionalPerformance[] = [
+  readonly regionalPerformance: any[] = [
     {
       name: 'Dhaka division',
       shareLabel: '34% of volume',
@@ -139,12 +140,12 @@ export class AdminDashboardComponent implements OnInit {
     },
   ];
 
-  selectedRegion: RegionalPerformance = this.regionalPerformance[0];
-  selectRegion(region: RegionalPerformance): void {
+  selectedRegion: any = this.regionalPerformance[0];
+  selectRegion(region: any): void {
     this.selectedRegion = region;
   }
 
-  trackRegionByName(_: number, region: RegionalPerformance): string {
+  trackRegionByName(_: number, region: any): string {
     return region.name;
   }
   readonly sidebarLinks: SidebarLink[] = [
@@ -184,7 +185,7 @@ export class AdminDashboardComponent implements OnInit {
     // },
   ];
 
-  constructor(private readonly authService: AppAuthService) {}
+
 
   onLogout(): void {
     this.authService.logout();
