@@ -294,12 +294,12 @@ export class AdminDashboardComponent implements OnInit {
       icon: 'settings',
       description: 'Security & configuration',
     },
-    {
-      label: 'Analytics report',
-      icon: 'analytics',
-      description: 'Deep dive into insights',
-      badge: 'Coming soon',
-    },
+    // {
+    //   label: 'Analytics report',
+    //   icon: 'analytics',
+    //   description: 'Deep dive into insights',
+    //   badge: 'Coming soon',
+    // },
   ];
 
   onLogout(): void {

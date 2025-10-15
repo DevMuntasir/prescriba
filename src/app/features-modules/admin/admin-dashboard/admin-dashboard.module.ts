@@ -5,6 +5,7 @@ import { AdminDashboardOverviewComponent } from './overview/overview.component';
 import { AdminPrescriptionsComponent } from './prescriptions/admin-prescriptions.component';
 import { AdminDoctorsComponent } from './doctors/admin-doctors.component';
 import { TopMedicinesComponent } from './overview/top-medicine/top-medicine.component';
+import { CompanyPerformanceComponent } from './overview/company-performance/company-performance.component';
 
 const routes: Route[] = [
   {
@@ -27,6 +28,10 @@ const routes: Route[] = [
         path: 'top-medicines',
         component: TopMedicinesComponent,
       },
+      {
+        path: 'company-performance',
+        component: CompanyPerformanceComponent,
+      },
     ],
   },
 ];
@@ -39,6 +44,7 @@ const routes: Route[] = [
     AdminPrescriptionsComponent,
     AdminDoctorsComponent,
     TopMedicinesComponent,
+    CompanyPerformanceComponent,
   ],
 })
 export class AdminDashboardModule {}

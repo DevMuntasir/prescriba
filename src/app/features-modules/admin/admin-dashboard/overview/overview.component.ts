@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject } from '@angular/core';
 import {
   AdminPrescriptionService,
+  CompanyPerformanceSummary,
   MedicationDivisionUsage,
   MedicationUsage,
+  PatientAgeDistribution,
 } from '../../services/admin.prescription.service';
 import { finalize } from 'rxjs';
 import { RouterModule } from '@angular/router';
@@ -33,6 +35,16 @@ interface AgeDistribution {
   readonly range: string;
   readonly patients: number;
   readonly percent: number;
+  readonly accentClass: string;
+}
+
+interface CompanyPerformanceCard {
+  readonly companyName: string;
+  readonly prescriptionCount: number;
+  readonly marketShare: number;
+  readonly topDistricts: string;
+  readonly trendDirection: TrendDirection;
+  readonly trendLabel: string;
   readonly accentClass: string;
 }
 
@@ -164,11 +176,36 @@ export class AdminDashboardOverviewComponent {
   divisionLoading = false;
   divisionError: string | null = null;
   divisionMetrics: MedicationDivisionUsage[] = [];
+  ageDistributionLoading = false;
+  ageDistributionError: string | null = null;
+  ageDistribution: AgeDistribution[] = [];
+  ageDistributionTotalPatients = 0;
+  companyPerformanceLoading = false;
+  companyPerformanceError: string | null = null;
+  companyPerformanceCards: CompanyPerformanceCard[] = [];
+
+  private readonly ageDistributionAccents = [
+    'from-sky-400 to-brand-primary-accent',
+    'from-brand-primary to-emerald-400',
+    'from-violet-500 to-fuchsia-400',
+    'from-amber-500 to-orange-400',
+    'from-rose-500 to-rose-400',
+  ];
+  private readonly companyAccentClasses = [
+    'from-brand-primary to-emerald-400',
+    'from-sky-400 to-brand-primary-accent',
+    'from-violet-500 to-fuchsia-400',
+    'from-amber-500 to-orange-400',
+    'from-rose-500 to-pink-400',
+    'from-indigo-500 to-sky-400',
+  ];
 
   private readonly divisionCache = new Map<number, MedicationDivisionUsage[]>();
 
   ngOnInit(): void {
     this.loadTopMedications();
+    this.loadAgeDistribution();
+    this.loadCompanyPerformanceOverview();
     // this.loadPrescriptionAnalytics();
   }
   private loadTopMedications(): void {
@@ -208,6 +245,94 @@ export class AdminDashboardOverviewComponent {
       });
   }
 
+  private loadAgeDistribution(): void {
+    this.ageDistributionLoading = true;
+    this.ageDistributionError = null;
+
+    this.adminPrescriptionService
+      .getPatientAgeDistribution()
+      .pipe(finalize(() => (this.ageDistributionLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const groups =
+            (response?.results ?? response?.result ?? []) as PatientAgeDistribution[];
+
+          if (!groups.length) {
+            this.ageDistribution = [];
+            this.ageDistributionTotalPatients = 0;
+            this.ageDistributionError =
+              response?.message ?? 'No age distribution data available right now.';
+            return;
+          }
+
+          const mapped = groups.map((group, index) => {
+            const patients =
+              typeof group.patientCount === 'number' && Number.isFinite(group.patientCount)
+                ? group.patientCount
+                : 0;
+            const percentValue =
+              typeof group.percentage === 'number' && Number.isFinite(group.percentage)
+                ? group.percentage
+                : Number(group.percentage ?? 0);
+            const percent = Number.isFinite(percentValue)
+              ? Number(percentValue.toFixed(2))
+              : 0;
+
+            return {
+              range: group.ageGroup?.trim() || 'Unknown',
+              patients,
+              percent,
+              accentClass:
+                this.ageDistributionAccents[index % this.ageDistributionAccents.length],
+            };
+          });
+
+          this.ageDistribution = mapped;
+          this.ageDistributionError = null;
+          this.ageDistributionTotalPatients = mapped.reduce(
+            (sum, item) => sum + item.patients,
+            0
+          );
+        },
+        error: () => {
+          this.ageDistributionError = 'Unable to load age distribution data.';
+          this.ageDistribution = [];
+          this.ageDistributionTotalPatients = 0;
+        },
+      });
+  }
+
+  private loadCompanyPerformanceOverview(): void {
+    this.companyPerformanceLoading = true;
+    this.companyPerformanceError = null;
+
+    this.adminPrescriptionService
+      .getCompanyPerformanceOverview(5)
+      .pipe(finalize(() => (this.companyPerformanceLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const companies =
+            (response?.results ?? response?.result ?? []) as CompanyPerformanceSummary[];
+
+          if (!companies.length) {
+            this.companyPerformanceCards = [];
+            this.companyPerformanceError =
+              response?.message ?? 'No company performance data available right now.';
+            return;
+          }
+
+          this.companyPerformanceCards = companies.map((company, index) =>
+            this.mapCompanyPerformanceToCard(company, index)
+          );
+          this.companyPerformanceError = null;
+        },
+        error: () => {
+          this.companyPerformanceError = 'Unable to load company performance data.';
+          this.companyPerformanceCards = [];
+        },
+      });
+  }
+
   private mapMedicationUsageToPerformance(usage: MedicationUsage, total: number): MedicinePerformance {
     const genericName = (usage.genericName || '').trim();
     const manufacturer = (usage.manufacturer || '').trim();
@@ -226,6 +351,58 @@ export class AdminDashboardOverviewComponent {
       share: `${formattedShare}%`,
       growth: '--',
       trend: 'steady',
+    };
+  }
+
+  private mapCompanyPerformanceToCard(
+    company: CompanyPerformanceSummary,
+    index: number
+  ): CompanyPerformanceCard {
+    const prescriptionCount =
+      typeof company.prescriptionCount === 'number' && Number.isFinite(company.prescriptionCount)
+        ? company.prescriptionCount
+        : 0;
+
+    const marketShareValue =
+      typeof company.marketSharePercent === 'number' && Number.isFinite(company.marketSharePercent)
+        ? company.marketSharePercent
+        : Number(company.marketSharePercent ?? 0);
+    const marketShare = Number.isFinite(marketShareValue)
+      ? Number(marketShareValue.toFixed(2))
+      : 0;
+
+    const direction: TrendDirection =
+      company.trendDirection === 'up' || company.trendDirection === 'down' || company.trendDirection === 'steady'
+        ? company.trendDirection
+        : 'steady';
+
+    const trendPercentValue =
+      typeof company.trendPercent === 'number' && Number.isFinite(company.trendPercent)
+        ? company.trendPercent
+        : Number(company.trendPercent ?? 0);
+    const trendPercent = Number.isFinite(trendPercentValue)
+      ? Number(trendPercentValue.toFixed(1))
+      : 0;
+
+    const formattedTrend =
+      direction === 'steady'
+        ? 'Steady vs last month'
+        : `${trendPercent >= 0 ? '+' : ''}${trendPercent}% vs last month`;
+
+    const topDistricts = (company.topDistricts ?? [])
+      .map((district) => district?.trim())
+      .filter((district): district is string => !!district)
+      .slice(0, 3)
+      .join(', ');
+
+    return {
+      companyName: company.companyName?.trim() || 'Unnamed company',
+      prescriptionCount,
+      marketShare,
+      topDistricts: topDistricts || 'District data pending',
+      trendDirection: direction,
+      trendLabel: formattedTrend,
+      accentClass: this.companyAccentClasses[index % this.companyAccentClasses.length],
     };
   }
 
@@ -396,33 +573,6 @@ export class AdminDashboardOverviewComponent {
       icon: 'family',
       accentClass:
         'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_28px_rgba(59,130,246,0.25)]',
-    },
-  ];
-
-  readonly ageDistribution: AgeDistribution[] = [
-    {
-      range: '18–25 years',
-      patients: 468,
-      percent: 22,
-      accentClass: 'from-sky-400 to-brand-primary-accent',
-    },
-    {
-      range: '26–40 years',
-      patients: 812,
-      percent: 38,
-      accentClass: 'from-brand-primary to-emerald-400',
-    },
-    {
-      range: '41–55 years',
-      patients: 512,
-      percent: 24,
-      accentClass: 'from-violet-500 to-fuchsia-400',
-    },
-    {
-      range: '56+ years',
-      patients: 268,
-      percent: 12,
-      accentClass: 'from-amber-500 to-orange-400',
     },
   ];
 
@@ -757,6 +907,20 @@ export class AdminDashboardOverviewComponent {
         'Age distribution',
         ['Age range', 'Patients', 'Percent'],
         this.ageDistribution.map((age) => [age.range, age.patients, `${age.percent}%`])
+      )
+    );
+
+    tables.push(
+      this.buildTable(
+        'Company performance overview',
+        ['Company', 'Prescriptions', 'Market share', 'Top districts', 'Trend'],
+        this.companyPerformanceCards.map((company) => [
+          company.companyName,
+          company.prescriptionCount,
+          `${company.marketShare}%`,
+          company.topDistricts,
+          company.trendLabel,
+        ])
       )
     );
 
