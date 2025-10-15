@@ -34,27 +34,17 @@ export class AdminDoctorsComponent implements OnInit {
     return { total, active, online };
   });
 
-  readonly filteredDoctors = computed<DoctorProfileDto[]>(() => {
-    const term = this.searchTerm().trim().toLowerCase();
-    const items = this.doctors();
-    if (!term) {
-      return items;
-    }
-    return items.filter((doctor) => {
-      const haystack = [doctor.fullName, doctor.firstName, doctor.lastName, doctor.mobileNo, doctor.email]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-      return haystack.includes(term);
-    });
-  });
-
   ngOnInit(): void {
     this.fetchDoctors();
   }
 
   onSearch(term: string): void {
-    this.searchTerm.set(term);
+    const normalized = term?.trim() ?? '';
+    if (normalized === this.searchTerm()) {
+      return;
+    }
+    this.searchTerm.set(normalized);
+    this.fetchDoctors(normalized || undefined);
   }
 
   trackById(_index: number, item: DoctorProfileDto): number | undefined {
@@ -62,7 +52,8 @@ export class AdminDoctorsComponent implements OnInit {
   }
 
   reload(): void {
-    this.fetchDoctors();
+    const currentTerm = this.searchTerm();
+    this.fetchDoctors(currentTerm || undefined);
   }
 
   getCreationTime(doctor: DoctorProfileDto): string | undefined {
@@ -74,12 +65,15 @@ export class AdminDoctorsComponent implements OnInit {
     return entity?.lastModificationTime ?? entity?.creationTime;
   }
 
-  private fetchDoctors(): void {
+  private fetchDoctors(searchName?: string): void {
     this.isLoading.set(true);
     this.loadError.set(null);
 
+    const normalized = searchName?.trim() ?? '';
+    const requestName = normalized || undefined;
+
     const doctorFilter: DataFilterModel = {
-      name: undefined,
+      name: requestName,
       consultancyType: undefined,
       specialityId: undefined,
       specializationId: undefined,
@@ -106,6 +100,9 @@ export class AdminDoctorsComponent implements OnInit {
 
     this.doctorService.getDoctorListFilterByAdmin(doctorFilter, pagination).subscribe({
       next: (response) => {
+        if (this.searchTerm() !== normalized) {
+          return;
+        }
         const result = Array.isArray(response)
           ? response
           : Array.isArray((response as any)?.items)
@@ -115,6 +112,9 @@ export class AdminDoctorsComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
+        if (this.searchTerm() !== normalized) {
+          return;
+        }
         this.doctorsSignal.set([]);
         this.isLoading.set(false);
         this.loadError.set('Unable to load doctors right now. Please try again later.');
