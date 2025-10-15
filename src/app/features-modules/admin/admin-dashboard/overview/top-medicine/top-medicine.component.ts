@@ -1,8 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { finalize } from 'rxjs/operators';
-import { AdminPrescriptionService, MedicationUsage } from '../../../services/admin.prescription.service';
+import {
+  AdminPrescriptionService,
+  MedicationDivisionUsage,
+  MedicationUsage,
+} from '../../../services/admin.prescription.service';
 
 interface TopMedicineRow {
   readonly rank: number;
@@ -18,8 +22,8 @@ interface TopMedicineRow {
   selector: 'app-top-medicines',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './top-medicines.component.html',
-  styleUrls: ['./top-medicines.component.scss'],
+  templateUrl: './top-medicine.component.html',
+  styleUrls: ['./top-medicine.component.scss'],
 })
 export class TopMedicinesComponent implements OnInit {
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
@@ -30,10 +34,24 @@ export class TopMedicinesComponent implements OnInit {
   pageSize = 20;
   totalCount = 0;
 
+  modalOpen = false;
+  divisionLoading = false;
+  divisionError: string | null = null;
+  divisionMetrics: MedicationDivisionUsage[] = [];
+  selectedMedicine: TopMedicineRow | null = null;
+
   private pageItems: MedicationUsage[] = [];
+  private readonly divisionCache = new Map<number, MedicationDivisionUsage[]>();
 
   ngOnInit(): void {
     this.fetchTopMedicines();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.modalOpen) {
+      this.closeModal();
+    }
   }
 
   get rows(): TopMedicineRow[] {
@@ -71,7 +89,8 @@ export class TopMedicinesComponent implements OnInit {
   }
 
   get totalPages(): number {
-    const pages = this.totalCount > 0 ? Math.ceil(this.totalCount / this.pageSize) : 1;
+    const pages =
+      this.totalCount > 0 ? Math.ceil(this.totalCount / this.pageSize) : 1;
     return pages < 1 ? 1 : pages;
   }
 
@@ -93,6 +112,61 @@ export class TopMedicinesComponent implements OnInit {
 
   onRefresh(): void {
     this.fetchTopMedicines();
+  }
+
+  openDetails(row: TopMedicineRow): void {
+    this.selectedMedicine = row;
+    this.modalOpen = true;
+    this.divisionError = null;
+    this.divisionMetrics = [];
+
+    const cached = this.divisionCache.get(row.medicationId);
+    if (cached) {
+      this.divisionMetrics = cached;
+      return;
+    }
+
+    this.divisionLoading = true;
+    this.adminPrescriptionService
+      .getMedicationDivisionUsage(row.medicationId)
+      .pipe(finalize(() => (this.divisionLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const metrics =
+            response?.result ??
+            response?.results ??
+            ([] as MedicationDivisionUsage[]);
+
+          this.divisionMetrics = metrics;
+          if (metrics.length) {
+            this.divisionCache.set(row.medicationId, metrics);
+          } else {
+            this.divisionError =
+              response?.message ??
+              'No regional distribution data available right now.';
+          }
+        },
+        error: () => {
+          this.divisionError =
+            'Unable to load regional distribution data at the moment.';
+          this.divisionMetrics = [];
+        },
+      });
+  }
+
+  closeModal(): void {
+    this.modalOpen = false;
+    this.selectedMedicine = null;
+    this.divisionError = null;
+    this.divisionMetrics = [];
+    this.divisionLoading = false;
+  }
+
+  trackDivision(
+    _index: number,
+    metric: MedicationDivisionUsage
+  ): string | number {
+    return metric.divisionName ?? _index;
   }
 
   private fetchTopMedicines(): void {
