@@ -46,10 +46,9 @@ export const appRoutes: Route[] = [
     path: 'signup',
     //canActivate:[routerGuard],
     loadChildren: () =>
-      import('./core-modules/auth/signup-o/signup.module').then(
-        (m) => m.SignupModule
+      import('./core-modules/auth/signup/signup.component').then(
+        (m) => m.SignupComponent
       ),
-    // component: SignupComponent,
   },
   {
     path: 'doctor',
