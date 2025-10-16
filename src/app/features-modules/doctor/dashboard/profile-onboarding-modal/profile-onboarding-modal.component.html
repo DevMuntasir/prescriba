@@ -1,0 +1,187 @@
+<div
+  *ngIf="open"
+  class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-neutral/80 bg-opacity-70 backdrop-blur-sm px-4 py-8"
+>
+  <div
+    class="onboarding-modal relative w-full max-w-3xl rounded-3xl bg-white p-8 shadow-[0_45px_85px_rgba(6,180,139,0.18)]"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="onboarding-modal-title"
+  >
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 id="onboarding-modal-title" class="text-xl font-semibold text-brand-primary">
+          Complete your doctor profile
+        </h2>
+        <p class="text-sm text-brand-neutral/70">
+          Finish these quick steps so patients can discover you in the platform.
+        </p>
+      </div>
+      <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-medium text-brand-primary">
+        Step {{ currentStep + 1 }} of {{ steps.length }}
+      </span>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <ng-container *ngFor="let label of steps; let idx = index">
+        <div class="flex items-center gap-2">
+          <span
+            class="grid h-8 w-8 place-items-center rounded-full text-sm font-semibold"
+            [ngClass]="{
+              'bg-brand-primary text-white': idx <= currentStep,
+              'bg-brand-neutral/10 text-brand-neutral/70': idx > currentStep
+            }"
+          >
+            {{ idx + 1 }}
+          </span>
+          <span
+            class="text-sm font-medium"
+            [ngClass]="{ 'text-brand-primary': idx === currentStep, 'text-brand-neutral/70': idx !== currentStep }"
+          >
+            {{ label }}
+          </span>
+        </div>
+        <span
+          *ngIf="idx < steps.length - 1"
+          class="hidden h-px flex-1 bg-brand-neutral/20 sm:block"
+        ></span>
+      </ng-container>
+    </div>
+
+    <form class="mt-8 space-y-6" [formGroup]="form" (ngSubmit)="submit()">
+      <ng-container [ngSwitch]="currentStep">
+        <div *ngSwitchCase="0" class="grid gap-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="doctorTitleName" class="mb-2 block text-sm font-medium text-brand-neutral">
+              Preferred title
+            </label>
+            <input
+              id="doctorTitleName"
+              type="text"
+              formControlName="doctorTitleName"
+              class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            />
+            <p
+              class="mt-1 text-xs text-red-500"
+              *ngIf="form.get('doctorTitleName')?.touched && form.get('doctorTitleName')?.invalid"
+            >
+              Let patients know how to address you.
+            </p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="fullName" class="mb-2 block text-sm font-medium text-brand-neutral">
+              Full name
+            </label>
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            />
+            <p
+              class="mt-1 text-xs text-red-500"
+              *ngIf="form.get('fullName')?.touched && form.get('fullName')?.invalid"
+            >
+              Your full name is required.
+            </p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="email" class="mb-2 block text-sm font-medium text-brand-neutral">
+              Contact email
+            </label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            />
+            <p class="mt-1 text-xs text-red-500" *ngIf="form.get('email')?.touched && form.get('email')?.errors">
+              <span *ngIf="form.get('email')?.errors?.['required']">Email is required.</span>
+              <span *ngIf="form.get('email')?.errors?.['email']">Enter a valid email address.</span>
+            </p>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="1" class="grid gap-4">
+          <div>
+            <label for="specialityName" class="mb-2 block text-sm font-medium text-brand-neutral">
+              Primary speciality
+            </label>
+            <input
+              id="specialityName"
+              type="text"
+              formControlName="specialityName"
+              class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            />
+            <p
+              class="mt-1 text-xs text-red-500"
+              *ngIf="form.get('specialityName')?.touched && form.get('specialityName')?.invalid"
+            >
+              Please enter your speciality (e.g. Cardiology).
+            </p>
+          </div>
+          <div>
+            <label for="areaOfExperties" class="mb-2 block text-sm font-medium text-brand-neutral">
+              Area of expertise
+            </label>
+            <textarea
+              id="areaOfExperties"
+              rows="4"
+              formControlName="areaOfExperties"
+              class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            ></textarea>
+            <p
+              class="mt-1 text-xs text-red-500"
+              *ngIf="form.get('areaOfExperties')?.touched && form.get('areaOfExperties')?.invalid"
+            >
+              Share a short summary (minimum 10 characters).
+            </p>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs text-brand-neutral/60">
+          You must complete these steps before accessing the dashboard features.
+        </p>
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="rounded-xl border border-brand-neutral/30 px-5 py-2 text-sm font-medium text-brand-neutral transition hover:border-brand-neutral/60"
+            (click)="goToPreviousStep()"
+            [disabled]="currentStep === 0 || saving"
+          >
+            Back
+          </button>
+          <button
+            *ngIf="currentStep < steps.length - 1"
+            type="button"
+            class="rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
+            (click)="goToNextStep()"
+            [disabled]="saving"
+          >
+            Continue
+          </button>
+          <button
+            *ngIf="currentStep === steps.length - 1"
+            type="submit"
+            class="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
+            [disabled]="saving"
+          >
+            <ng-container *ngIf="!saving; else savingTpl">Save profile</ng-container>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <ng-template #savingTpl>
+      <span class="flex items-center gap-2">
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+        Saving...
+      </span>
+    </ng-template>
+  </div>
+</div>

@@ -27,12 +27,19 @@ export class SelectChamberComponent implements OnInit {
   ngOnInit(): void {
     const doctorProfileId = this.authService.authInfo().id;
 
+    this.initializeSelectedChambers();
   }
 
   initializeSelectedChambers() {
     if (this.data) {
       this.selectedChambers = [...this.data];
     }
+  }
+
+  isDisabled(chamber: DoctorChamberDto): boolean {
+    const alreadySelected = this.isSelected(chamber);
+    const maxSelected = this.selectedChambers.length >= 2;
+    return maxSelected && !alreadySelected;
   }
 
   isSelected(chamber: DoctorChamberDto): boolean {

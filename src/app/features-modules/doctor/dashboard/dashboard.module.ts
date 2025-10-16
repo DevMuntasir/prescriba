@@ -9,6 +9,7 @@ import { WelcomeHeaderComponent } from './welcome-header/welcome-header.componen
 import { StatsComponent } from './stats/stats.component';
 import { WarrningComponent } from './warrning/warrning.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ProfileOnboardingModalComponent } from './profile-onboarding-modal/profile-onboarding-modal.component';
 
 const routes: Route[] = [
   {
@@ -29,6 +30,7 @@ const routes: Route[] = [
     StatsComponent,
     WarrningComponent,
     MatTabsModule,
+    ProfileOnboardingModalComponent,
   ],
 })
 export class DashboardModule {}

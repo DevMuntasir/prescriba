@@ -3,6 +3,7 @@ import {
   DoctorProfileDto
 } from 'src/app/proxy/dto-models';
 import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-state.service';
+import { MockOnboardingService } from 'src/app/shared/services/mock-onboarding.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,11 +12,40 @@ import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-st
 })
 export class DashboardComponent implements OnInit {
   private UserService = inject(UserinfoStateService);
+  private onboardingService = inject(MockOnboardingService);
   authenticatedUserDetails: DoctorProfileDto = {} as DoctorProfileDto;
-  authInfo: any;
+  showProfileOnboarding = false;
+  savingProfile = false;
   ngOnInit(): void {
     this.UserService.authenticateUserInfo.subscribe((res) => {
-      this.authenticatedUserDetails = res;
+      if (res) {
+        this.authenticatedUserDetails = res;
+        this.evaluateOnboardingState(res);
+      }
     });
+  }
+
+  handleProfileCompletion(updatedProfile: DoctorProfileDto): void {
+    this.savingProfile = true;
+    this.onboardingService.completeProfile(updatedProfile).subscribe({
+      next: (profile) => {
+        this.savingProfile = false;
+        this.showProfileOnboarding = false;
+        this.authenticatedUserDetails = profile;
+        this.UserService.sendData(profile);
+      },
+      error: () => {
+        this.savingProfile = false;
+      },
+    });
+  }
+
+  private evaluateOnboardingState(profile: DoctorProfileDto): void {
+    const profileId = profile?.id ?? null;
+    if (!profileId) {
+      this.showProfileOnboarding = false;
+      return;
+    }
+    this.showProfileOnboarding = this.onboardingService.shouldShowOnboarding(profileId);
   }
 }

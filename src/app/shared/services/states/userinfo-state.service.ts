@@ -4,6 +4,7 @@ import {
 import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { MockOnboardingService } from '../mock-onboarding.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class UserinfoStateService implements OnInit {
   constructor(
     private DoctorProfileService: DoctorProfileService,
     private NormalAuth: AuthService,
+    private onboardingService: MockOnboardingService
   ) {}
   public authenticateUserInfo = new BehaviorSubject<any>({});
   public userPatientInfo = new BehaviorSubject<any>([]);
@@ -38,8 +40,19 @@ export class UserinfoStateService implements OnInit {
   getProfileInfo(id: any, role: string): void {
     if (id) {
       if (role == 'doctor') {
-        this.DoctorProfileService.get(id).subscribe((res) => {
-          this.sendData(res);
+        const mockProfile = this.onboardingService.getStoredProfile(Number(id));
+        if (mockProfile) {
+          this.sendData(mockProfile);
+          return;
+        }
+
+        this.DoctorProfileService.get(id).subscribe({
+          next: (res) => {
+            this.sendData(res);
+          },
+          error: () => {
+            // keep silent for mock environment
+          },
         });
       }
     }

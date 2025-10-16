@@ -1,3 +1,10 @@
+<app-profile-onboarding-modal
+  [open]="showProfileOnboarding"
+  [profile]="authenticatedUserDetails"
+  [saving]="savingProfile"
+  (completed)="handleProfileCompletion($event)"
+></app-profile-onboarding-modal>
+
 <div class="min-h-screen bg-brand-surface px-4 py-6 sm:px-6 lg:px-8">
   <div class="mx-auto flex max-w-[1200px] flex-col gap-8">
     <app-welcome-header [userInfo]="authenticatedUserDetails"></app-welcome-header>
