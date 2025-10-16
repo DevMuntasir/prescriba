@@ -34,4 +34,7 @@ export class SignupComponent {
   ];
   countryList = countries;
   constructor(private fb: FormBuilder, private normalAuth: AuthService) {}
+
+
+
 }

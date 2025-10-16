@@ -2,9 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DoctorChamberDto } from 'src/app/proxy/dto-models';
 import { PrescriptionService } from './../../../../services/prescription.service';
 import { AuthService } from './../../../../../../../shared/services/auth.service';
-import { DoctorChamberService } from './../../../../../../../proxy/services/doctor-chamber.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { DoctorScheduleService } from 'src/app/proxy/services';
 import { map, of, tap } from 'rxjs';
 
 @Component({
@@ -20,23 +18,15 @@ export class SelectChamberComponent implements OnInit {
   selectedChambers: DoctorChamberDto[] = [];
 
   constructor(
-    private doctorChamberService: DoctorChamberService,
+
     private authService: AuthService,
     private prescriptionService: PrescriptionService,
-    private DoctorScheduleService: DoctorScheduleService
+
   ) {}
 
   ngOnInit(): void {
     const doctorProfileId = this.authService.authInfo().id;
 
-    if (doctorProfileId) {
-      this.doctorChamberService
-        .getDoctorChamberListByDoctorId(doctorProfileId)
-        .subscribe((res) => {
-          this.chamberList = res;
-          this.initializeSelectedChambers();
-        });
-    }
   }
 
   initializeSelectedChambers() {
@@ -64,24 +54,7 @@ export class SelectChamberComponent implements OnInit {
         (chamber) => chamber.chamberName !== item.chamberName
       );
     }
-    // TODO
-    item.doctorProfileId &&
-      this.DoctorScheduleService.getScheduleListByDoctorId(item.doctorProfileId)
-        .pipe(
-          tap((res) => {
-            console.log(res);
-          })
-        )
-        .subscribe((res) => {
-          console.log(res);
-        }),
-      this.prescriptionService.setDoctorInfo({
-        chamber: this.selectedChambers,
-        schedule: [],
-      });
   }
 
-  isDisabled(item: DoctorChamberDto): boolean {
-    return this.selectedChambers.length >= 2 && !this.isSelected(item);
-  }
+ 
 }

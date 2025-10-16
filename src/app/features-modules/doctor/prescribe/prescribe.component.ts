@@ -25,14 +25,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute } from '@angular/router';
-import { forkJoin, map, of, Subscription, filter } from 'rxjs';
+import { forkJoin, map,  Subscription } from 'rxjs';
 import { AuthInterceptor } from 'src/app/helper/auth.interceptor';
 import { AppointmentDto } from 'src/app/proxy/dto-models';
 import { DoctorProfileService } from 'src/app/proxy/services';
 import { environment } from 'src/environments/environment';
-import { DoctorChamberService } from './../../../proxy/services/doctor-chamber.service';
-import { DoctorScheduleService } from './../../../proxy/services/doctor-schedule.service';
+
 import { DocumentsAttachmentService } from './../../../proxy/services/documents-attachment.service';
 import { AuthService } from './../../../shared/services/auth.service';
 import { BottomNavComponent } from './components/others/bottom-nav/bottom-nav.component';
@@ -168,7 +166,6 @@ export class PrescribeComponent implements OnInit, OnDestroy {
 
   loadAppointmentDataForPrehandByDrId(doctorProfileId: number) {
     this.isLoading = true;
-
     forkJoin({
       doctorDetails: this.DoctorProfileService.getDoctorByProfileId(
         doctorProfileId

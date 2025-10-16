@@ -11,26 +11,10 @@ import { UserInfoDto } from 'src/app/proxy/dto-models';
 export class AuthService {
   private _authenticated: boolean = false;
   isOtpLoading = signal(false);
-  //   authUser = signal({
-  //     agentMasterId
-  // : 0
-  // fullName
-  // :
-  // ""
-  // id
-  // :
-  // 0
-  // userId
-  // :
-  // "f4c88123-8d1d-a51b-8460-3a14146ddfb7"
-  // userType
-  // :
-  // "agent
-  //   })
+
   constructor(
-    //private oAuthService: OAuthService,
     private _router: Router,
-    private HttpClient: HttpClient
+
   ) {}
 
   setAuthInfoInLocalStorage(data: any): void {
