@@ -1,18 +1,20 @@
 import { RestService, Rest } from '@abp/ng.core';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import type {
   DataFilterModel,
   DoctorProfileDto,
   FilterModel,
 } from '../dto-models/models';
 import type { DoctorProfileInputDto } from '../input-dto/models';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DoctorProfileService {
   apiName = 'Default';
-
+  http = inject(HttpClient);
   create = (input: DoctorProfileInputDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, DoctorProfileDto>(
       {
@@ -69,14 +71,10 @@ export class DoctorProfileService {
       { apiName: this.apiName, ...config }
     );
 
-  getDoctorByProfileId = (id: number, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, DoctorProfileDto>(
-      {
-        method: 'GET',
-        url: `/api/app/doctor-profile/${id}/doctor-by-profile-id`,
-      },
-      { apiName: this.apiName, ...config }
-    );
+  getDoctorByProfileId = (id: number): Observable<DoctorProfileDto> => {
+    return this.http.get<DoctorProfileDto>('/assets/doctorById.json');
+  }
+    
 
   getDoctorDetailsByAdmin = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, DoctorProfileDto>(

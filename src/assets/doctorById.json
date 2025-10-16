@@ -1,0 +1,42 @@
+{
+
+  "fullName": "Dr. John Doe",
+  "doctorTitleId": 1,
+  "gender": 1,
+  "address": "123 Green Street",
+  "zila":4,
+  "city": 21,
+  "zipCode": "1207",
+  "country": 1,
+  "mobileNo": "+8801712345678",
+  "email": "john.doe@example.com",
+  "bmdcRegNo": "BMDC-56789",
+  "bmdcRegExpiryDate": "2028-12-31",
+  "specialityId": 5,
+
+  "degrees": [
+    {
+      "degreeId": 1,
+      "institute": "Dhaka Medical College",
+      "passingYear": 2004
+    },
+    {
+      "degreeId": 2,
+      "institute": "BCPS",
+      "passingYear": 2009
+    }
+  ],
+
+  "qualifications": "MBBS, FCPS (Medicine)",
+  "doctorSpecialization": [
+    {
+      "specializationId": 3,
+      "experienceYears": 10
+    }
+  ],
+
+  "areaOfExperties": "Cardiovascular diseases, hypertension management",
+  "profileStep": 3,
+  "profilePic": "https://example.com/images/doctors/john_doe.jpg"
+  
+}

@@ -31,7 +31,6 @@ import { AuthInterceptor } from 'src/app/helper/auth.interceptor';
 import { AppointmentDto } from 'src/app/proxy/dto-models';
 import { DoctorProfileService } from 'src/app/proxy/services';
 import { environment } from 'src/environments/environment';
-import { AppointmentService } from './../../../proxy/services/appointment.service';
 import { DoctorChamberService } from './../../../proxy/services/doctor-chamber.service';
 import { DoctorScheduleService } from './../../../proxy/services/doctor-schedule.service';
 import { DocumentsAttachmentService } from './../../../proxy/services/documents-attachment.service';
@@ -85,7 +84,6 @@ interface ExtendedAppointmentDto extends AppointmentDto {
   styleUrls: ['./prescribe.component.scss'],
 })
 export class PrescribeComponent implements OnInit, OnDestroy {
-  appointmentInfo: AppointmentDto = {} as AppointmentDto;
   prescribeForm!: FormGroup;
   private formSubscription!: Subscription;
   @ViewChild('fullScreenElement') fullScreenElement!: ElementRef;
@@ -107,10 +105,6 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private prescriptionService: PrescriptionService,
     private DoctorProfileService: DoctorProfileService,
-    private DoctorChamberService: DoctorChamberService,
-    private DoctorScheduleService: DoctorScheduleService,
-    private AppointmentService: AppointmentService,
-    private ActivatedRoute: ActivatedRoute,
     private AuthService: AuthService,
     private DocumentsAttachmentService: DocumentsAttachmentService
   ) {}
@@ -136,19 +130,11 @@ export class PrescribeComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     window.scrollTo(0, 0);
-
     this.prescriptionService.resetForm();
     this.prescribeForm = this.prescriptionService.prescribeForm();
     const doctorProfileId = this.AuthService.authInfo().id ?? null;
-    this.ActivatedRoute.queryParams.subscribe((params) => {
-      if (params['aptId']) {
-        this.prescriptionService.setAppointmentId(Number(params['aptId']));
-        this.loadAppointmentData(Number(params['aptId']), doctorProfileId);
-      } else {
-        this.prescriptionService.setPreHand(true);
-        this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
-      }
-    });
+    this.prescriptionService.setPreHand(true);
+    this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
     this.prescribeForm.get('uploadImage')?.valueChanges.subscribe((res) =>
       res !== '' || res !== undefined
         ? (this.uploadImage = {
@@ -240,220 +226,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadAppointmentData(appointmentId: number, doctorProfileId: number): void {
-    this.isLoading = true;
 
-    this.AppointmentService.get(appointmentId).subscribe((appointmentInfo) => {
-      this.appointmentInfo = appointmentInfo;
-
-      const {
-        patientName,
-        doctorScheduleId,
-        doctorChamberId,
-        appointmentCode,
-      } = this.appointmentInfo;
-      this.prescriptionService.setAppointmentCode(appointmentCode);
-      if (doctorProfileId) {
-        forkJoin({
-          chamber: doctorChamberId
-            ? this.DoctorChamberService.get(doctorChamberId).pipe(
-                map((res) => [res])
-              )
-            : of([]),
-
-          schedule: doctorScheduleId
-            ? this.DoctorScheduleService.get(doctorScheduleId).pipe(
-                map((schedule) => {
-                  const sessions =
-                    schedule?.doctorScheduleDaySession
-                      ?.filter(
-                        (day) =>
-                          day.scheduleDayofWeek && day.startTime && day.endTime
-                      )
-                      ?.map((day) => ({
-                        day: day.scheduleDayofWeek!,
-                        startTime: day.startTime!,
-                        endTime: day.endTime || day.startTime,
-                      })) || [];
-
-                  const groupedByDay: {
-                    [key: string]: { startTime: string; endTime: string }[];
-                  } = {};
-
-                  sessions.forEach(({ day, startTime, endTime }) => {
-                    if (!groupedByDay[day]) {
-                      groupedByDay[day] = [];
-                    }
-
-                    if (
-                      !groupedByDay[day].some(
-                        (item) =>
-                          item.startTime === startTime &&
-                          item.endTime === endTime
-                      )
-                    ) {
-                      groupedByDay[day].push({
-                        startTime,
-                        endTime: endTime || '',
-                      });
-                    }
-                  });
-
-                  const groupedSchedule = Object.entries(groupedByDay).map(
-                    ([day, times]) => {
-                      const sortedTimes = times.sort((a, b) => {
-                        const t1 = new Date(
-                          `1970-01-01T${this.convertTo24(a.startTime)}`
-                        );
-                        const t2 = new Date(
-                          `1970-01-01T${this.convertTo24(b.startTime)}`
-                        );
-                        return t1.getTime() - t2.getTime();
-                      });
-
-                      return {
-                        day,
-                        startTime: sortedTimes[0].startTime,
-                        endTime: sortedTimes[sortedTimes.length - 1].endTime,
-                      };
-                    }
-                  );
-
-                  const optimizedSchedule = [];
-                  let currentRange = {
-                    start: groupedSchedule[0]?.day,
-                    end: groupedSchedule[0]?.day,
-                    startTime: groupedSchedule[0]?.startTime,
-                    endTime: groupedSchedule[0]?.endTime,
-                  };
-
-                  for (let i = 1; i < groupedSchedule.length; i++) {
-                    const current = groupedSchedule[i];
-
-                    const isConsecutive = this.isConsecutiveDays(
-                      currentRange.end,
-                      current.day
-                    );
-                    const isSameTime =
-                      current.startTime === currentRange.startTime &&
-                      current.endTime === currentRange.endTime;
-
-                    if (isConsecutive && isSameTime) {
-                      currentRange.end = current.day;
-                    } else {
-                      if (currentRange.start === currentRange.end) {
-                        optimizedSchedule.push({
-                          start: currentRange.start,
-                          end: currentRange.start,
-                          startTime: currentRange.startTime,
-                          endTime: currentRange.endTime,
-                        });
-                      } else {
-                        optimizedSchedule.push({ ...currentRange });
-                      }
-                      currentRange = {
-                        start: current.day,
-                        end: current.day,
-                        startTime: current.startTime,
-                        endTime: current.endTime,
-                      };
-                    }
-                  }
-
-                  if (currentRange.start === currentRange.end) {
-                    optimizedSchedule.push({
-                      start: currentRange.start,
-                      end: currentRange.start,
-                      startTime: currentRange.startTime,
-                      endTime: currentRange.endTime,
-                    });
-                  } else {
-                    optimizedSchedule.push({ ...currentRange });
-                  }
-
-                  return optimizedSchedule;
-                })
-              )
-            : of([]),
-
-          signature:
-            this.DocumentsAttachmentService.getAttachmentInfoByEntityTypeAndEntityIdAndAttachmentType(
-              'Doctor',
-              doctorProfileId,
-              'DoctorSign'
-            ).pipe(
-              map((at) =>
-                at.map((e) => {
-                  let prePaths: string = '';
-                  var re = /wwwroot/gi;
-                  prePaths = e.path ? e.path : '';
-                  this.docFile = prePaths.replace(re, '');
-                  return this.picUrl + this.docFile;
-                })
-              )
-            ),
-          doctorDetails: this.DoctorProfileService.getDoctorByProfileId(
-            doctorProfileId
-          ).pipe(
-            map((doctorDetails) => ({
-              ...doctorDetails,
-              degrees: doctorDetails?.degrees
-                ?.map(
-                  ({
-                    degreeName,
-                    instituteName,
-                    instituteCity,
-                    instituteCountry,
-                    isPrescriptionShow,
-                  }) => ({
-                    degreeName,
-                    instituteName,
-                    instituteCity,
-                    instituteCountry,
-                    isPrescriptionShow,
-                  })
-                )
-                .filter((d) => d.isPrescriptionShow == true),
-            }))
-          ),
-        }).subscribe(({ schedule, signature, doctorDetails, chamber }) => {
-          // this.doctorDetails = doctorDetails;
-          this.prescriptionService.setDoctorInfo({
-            doctorName:
-              doctorDetails.doctorTitleName + ' ' + doctorDetails.fullName,
-            doctorCode: doctorDetails.doctorCode || null,
-            doctorProfileId,
-            degree: doctorDetails.degrees,
-            qualification: doctorDetails.qualifications || null,
-            areaOfExperties: doctorDetails.areaOfExperties || null,
-            bmdc: doctorDetails.bmdcRegNo || null,
-            chamber,
-            schedule,
-            signature: signature[0] || '',
-          });
-          this.isLoading = false;
-        });
-      } else {
-        console.log('Doctor profile ID not found');
-      }
-
-      if (patientName) {
-        this.prescriptionService.setPatientInfo({
-          patientName,
-          patientAge: this.appointmentInfo.patientAge
-            ? String(this.appointmentInfo.patientAge)
-            : '',
-          patientGender:
-            ((this.appointmentInfo as any)?.patientGender as string) ??
-            ((this.appointmentInfo as any)?.gender as string) ?? '',
-          patientCode: this.appointmentInfo.patientCode || null,
-          patientProfileId: this.appointmentInfo.patientProfileId || null,
-          patientPhoneNo: this.appointmentInfo.patientMobileNo || null,
-          patientBloodGroup: (this.appointmentInfo.bloodGroup as string) ?? '',
-        });
-      }
-    });
-  }
   convertTo24(time: string): string {
     const [t, modifier] = time.split(' ');
     let [hours, minutes] = t.split(':').map(Number);

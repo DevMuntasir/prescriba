@@ -1,6 +1,6 @@
 <div class="px-4">
-  <app-topbar (enterFullScreen)="enterFullScreen()" [isPreHand]="isPreHand" [appointmentId]="appointmentInfo.id"
-    [patientId]="appointmentInfo.patientProfileId" [doctorId]="appointmentInfo.doctorProfileId"
+  <app-topbar (enterFullScreen)="enterFullScreen()" [isPreHand]="isPreHand" 
+    [patientId]="0" [doctorId]="0"
     (onClickSelectChamber)="onClickSelectChamber()" />
   <div>
 
@@ -84,25 +84,20 @@
                     <button class="flex items-center gap-1 font-poppins">
                       Follow-up
                     </button>
-
                     <div
                       class="relative border-dotted rounded-xl border-2 border-gray-300 p-4 text-center w-full h-[100px] flex items-center justify-center">
-
                       <input class="absolute top-0 opacity-0" matInput [matDatepicker]="picker"
                         (dateInput)="addEvent('input', $event)" (dateChange)="addEvent('change', $event)" />
                       @if (!followupDate) {Add Follo-up Date} @else { {{followupDate | date: 'dd-MM-yyyy'}} }
                       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>
-
                     </div>
-
-
                   </div>
                 </div>
               </div>
             </div>
             }
-            <app-bottom-nav [isPreHand]="isPreHand" [appointmentCode]="appointmentCode" />
+            <app-bottom-nav [isPreHand]="isPreHand" [appointmentCode]="'0'" />
           </div>
         </form>
 
