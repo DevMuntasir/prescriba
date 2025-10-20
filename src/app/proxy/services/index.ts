@@ -7,7 +7,7 @@ export * from './doctor-profile.service';
 export * from './doctor-specialization.service';
 export * from './documents-attachment.service';
 export * from './drug-rx.service';
-export * from './master-doctor.service';
+
 export * from './otp.service';
 export * from './patient-profile.service';
 export * from './prescription-master.service';
