@@ -5,6 +5,7 @@ import { LoginComponent } from './core-modules/auth/login/login.component';
 import { AdminLoginComponent } from './core-modules/auth/admin-login/admin-login.component';
 import { DoctorLayoutComponent } from './layout-module/doctor-layout.component';
 import { isAuth } from './auth-gurd/auth.service';
+import { SignupComponent } from './core-modules/auth/signup/signup.component';
 
 export const appRoutes: Route[] = [
   {
@@ -35,9 +36,9 @@ export const appRoutes: Route[] = [
         canActivate: [isAuth],
         data: { roles: ['admin'] },
         loadChildren: () =>
-          import('./features-modules/admin/admin-dashboard/admin-dashboard.module').then(
-            (m) => m.AdminDashboardModule
-          ),
+          import(
+            './features-modules/admin/admin-dashboard/admin-dashboard.module'
+          ).then((m) => m.AdminDashboardModule),
       },
     ],
   },
@@ -45,10 +46,7 @@ export const appRoutes: Route[] = [
   {
     path: 'signup',
     //canActivate:[routerGuard],
-    loadChildren: () =>
-      import('./core-modules/auth/signup/signup.component').then(
-        (m) => m.SignupComponent
-      ),
+    component: SignupComponent,
   },
   {
     path: 'doctor',
@@ -85,4 +83,3 @@ export const appRoutes: Route[] = [
   exports: [RouterModule],
 })
 export class AppRouting {}
-

@@ -11,7 +11,6 @@ export * from './master-doctor.service';
 export * from './otp.service';
 export * from './patient-profile.service';
 export * from './prescription-master.service';
-export * from './role-management.service';
 export * from './service-provider.service';
 export * from './speciality.service';
 export * from './specialization.service';

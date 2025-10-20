@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { RoleManagementService } from './proxy/services';
 
 @Component({
   selector: 'app-root',
@@ -8,22 +7,6 @@ import { RoleManagementService } from './proxy/services';
 })
 export class AppComponent implements OnInit {
   loading: boolean = false;
-  constructor(
-    @Inject(RoleManagementService)
-    private RoleManagementService: RoleManagementService
-  ) {}
 
-  ngOnInit(): void {
-    const checkIsRolesExist = localStorage.getItem('roles')
-      ? JSON.parse(localStorage.getItem('roles') ?? '{}')
-      : null;
-
-    if (!checkIsRolesExist) {
-      this.RoleManagementService.getRolesAll().subscribe({
-        next: (res) => {
-          localStorage.setItem('roles', JSON.stringify(res.results));
-        },
-      });
-    }
-  }
+  ngOnInit(): void {}
 }
