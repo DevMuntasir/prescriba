@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Route, RouterModule } from '@angular/router';
-import { DashboardMenuModule } from 'src/app/shared/modules/dashboard-menu/dashboard-menu.module';
 import { DoctorComponent } from './doctor.component';
 import { DoctorsPrescriptionsComponent } from './doctors-prescriptions/doctors-prescriptions.component';
 import { PrescribeComponent } from './prescribe/prescribe.component';
 import { isAuth } from 'src/app/auth-gurd/auth.service';
 import { MyPatientsComponent } from './my-patients/my-patients.component';
+import { DashboardMenuComponent } from 'src/app/shared/modules/dashboard-menu/dashboard-menu.component';
 
 const routes: Route[] = [
   {
@@ -80,10 +80,10 @@ const routes: Route[] = [
   declarations: [DoctorComponent],
   imports: [
     CommonModule,
-    DashboardMenuModule,
     MatSidenavModule,
     RouterModule.forChild(routes),
     DoctorsPrescriptionsComponent,
+    DashboardMenuComponent,
   ],
   // providers: [
   //   { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }

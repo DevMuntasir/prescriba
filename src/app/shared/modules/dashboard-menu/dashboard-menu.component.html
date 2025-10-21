@@ -18,12 +18,14 @@
       (click)="toggleSidebar()" [attr.aria-expanded]="!collapsed"
       [attr.aria-label]="collapsed ? 'Expand navigation' : 'Collapse navigation'">
       <ng-container *ngIf="collapsed; else expandedIcon">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M10 6l6 6-6 6"></path>
         </svg>
       </ng-container>
       <ng-template #expandedIcon>
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M14 6l-6 6 6 6"></path>
         </svg>
       </ng-template>
@@ -55,47 +57,30 @@
   </section>
 
   <footer class="relative z-10 w-full pt-4">
-    <button
-      *ngIf="collapsed"
-      type="button"
+    <button *ngIf="collapsed" type="button"
       class="grid h-12 w-12 place-items-center rounded-2xl border border-brand-primary/30 bg-white/90 text-brand-primary shadow-[0_16px_28px_rgba(6,180,139,0.18)] transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
-      (click)="logout()"
-      aria-label="Log out">
-      <svg
-        class="h-5 w-5"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        viewBox="0 0 24 24"
+      (click)="logout()" aria-label="Log out">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
         <path stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5"></path>
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3"></path>
       </svg>
     </button>
-    <div
-      *ngIf="!collapsed"
+    <div *ngIf="!collapsed"
       class="flex flex-col gap-4 rounded-3xl border border-brand-primary/20 bg-[linear-gradient(135deg,rgba(6,180,139,0.18)_0%,rgba(0,194,168,0.14)_100%)] p-5 shadow-[0_20px_38px_rgba(6,180,139,0.16)]">
       <div>
         <p class="text-sm font-semibold text-brand-neutral">Need help?</p>
         <span class="text-xs text-brand-neutral/70">Our care crew is online 24/7</span>
       </div>
       <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-        <button
-          type="button"
+        <button type="button"
           class="rounded-xl bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_26px_rgba(6,180,139,0.25)] transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/40">
           Chat
         </button>
-        <button
-          type="button"
-          (click)="logout()"
+        <button type="button" (click)="logout()"
           class="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-primary/20 bg-white/90 px-4 py-2 text-sm font-semibold text-brand-primary shadow-[0_16px_28px_rgba(6,180,139,0.18)] transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/40">
-          <svg
-            class="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            viewBox="0 0 24 24"
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
             <path stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5"></path>
@@ -107,4 +92,3 @@
     </div>
   </footer>
 </aside>
-

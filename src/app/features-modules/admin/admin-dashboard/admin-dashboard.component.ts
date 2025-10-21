@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AppAuthService } from '../../../auth-services/app-auth.service';
 import { AdminPrescriptionService } from '../services/admin.prescription.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 interface SidebarLink {
   readonly label: string;
@@ -25,9 +25,9 @@ interface SidebarLink {
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
 })
-export class AdminDashboardComponent  {
+export class AdminDashboardComponent {
   private readonly adminPrescriptionService = inject(AdminPrescriptionService);
-  private readonly authService = inject(AppAuthService);
+  private readonly authService = inject(AuthService);
 
   readonly regionalPerformance: any[] = [
     {
@@ -185,9 +185,5 @@ export class AdminDashboardComponent  {
     // },
   ];
 
-
-
-  onLogout(): void {
-    this.authService.logout();
-  }
+  onLogout(): void {}
 }
