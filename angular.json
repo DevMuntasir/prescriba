@@ -16,7 +16,7 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
-          //"builder": "@angular-devkit/build-angular:browser",
+
           "options": {
             "outputPath": {
               "base": "dist/cloudflare"
@@ -34,8 +34,7 @@
               "src/firebase-messaging-sw.js"
             ],
             "styles": [
-              // "node_modules/swiper/swiper-bundle.min.css",
-              // "@angular/material/prebuilt-themes/indigo-pink.css",
+      
 
               "src/styles.scss"
             ],
