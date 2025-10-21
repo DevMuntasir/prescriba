@@ -33,6 +33,15 @@ const routes: Route[] = [
         path: 'patients',
         component: MyPatientsComponent,
       },
+      {
+        path: 'hospital',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadComponent: () =>
+          import('./hospital/hospital.component').then(
+            (c) => c.HospitalComponent
+          ),
+      },
       // {
       //   path: 'hospital-schedule',
       //   loadChildren: () =>
