@@ -8,11 +8,10 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/api/services';
 import { AuthService } from '../../services/auth.service';
 import { UserinfoStateService } from '../../services/states/userinfo-state.service';
-import { CreatePatientComponent } from '../create-patient/create-patient.component';
 import { PatientProfileService } from './../../../api/services/patient-profile.service';
 
 @Component({
@@ -38,9 +37,7 @@ export class PublicPatientsComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     let user = this.NormalAuth.authInfo();
-    if (user) {
-      this.UserinfoStateService.getUserPatientInfo(user.id, user.userType);
-    }
+
     this.searchField.valueChanges
       .pipe(debounceTime(600), distinctUntilChanged())
       .subscribe({
@@ -73,9 +70,7 @@ export class PublicPatientsComponent implements OnInit {
   }
   pageNumber: number = 1;
   addNewPatient() {
-    this.dialog.open(CreatePatientComponent, {
-      maxHeight: '450px',
-    });
+
   }
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef;
 

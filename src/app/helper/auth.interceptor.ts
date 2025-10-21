@@ -46,7 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
 //   HttpClient,
 // } from '@angular/common/http';
 // import { Injectable, Injector } from '@angular/core';
-// import { Observable, throwError, from, of } from 'rxjs';
+// import { Observable, throwError, from, of } from 'rxjs/operators';
 // import { catchError, switchMap } from 'rxjs/operators';
 // import { Router } from '@angular/router';
 

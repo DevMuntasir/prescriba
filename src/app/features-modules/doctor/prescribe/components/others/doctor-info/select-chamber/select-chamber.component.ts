@@ -3,7 +3,7 @@ import { DoctorChamberDto } from 'src/app/api/dto-models';
 import { PrescriptionService } from './../../../../services/prescription.service';
 import { AuthService } from './../../../../../../../shared/services/auth.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { map, of, tap } from 'rxjs';
+
 
 @Component({
   selector: 'app-select-chamber',

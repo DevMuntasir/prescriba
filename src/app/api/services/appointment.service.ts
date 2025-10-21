@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import {  map } from 'rxjs/operators';
 import { API_BASE_URL } from '../api-urls';
 import { ApiResponse } from '../core/generic-models';
 import type { AppointmentDto } from '../dto-models/models';
+import { Observable } from 'rxjs';
 
 export interface AppointmentPatientQuery {
   searchTerm?: string;
