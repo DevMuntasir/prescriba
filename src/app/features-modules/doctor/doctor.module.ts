@@ -42,6 +42,15 @@ const routes: Route[] = [
             (c) => c.HospitalComponent
           ),
       },
+      {
+        path: 'schedule',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadComponent: () =>
+          import('./schedule/schedule.component').then(
+            (c) => c.ScheduleComponent
+          ),
+      },
       // {
       //   path: 'hospital-schedule',
       //   loadChildren: () =>
