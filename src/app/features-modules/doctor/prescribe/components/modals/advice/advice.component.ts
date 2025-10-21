@@ -67,7 +67,7 @@ export class AdviceComponent {
   private PrescriptionService = inject(PrescriptionService);
   public dialogRef = inject(MatDialogRef<AdviceComponent>);
   private NormalAuth = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef);
+
 
   loading = {
     isSpinner: false,

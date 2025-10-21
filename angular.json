@@ -33,10 +33,10 @@
               "src/firebase-messaging-sw.js"
             ],
             "styles": [
-              "node_modules/swiper/swiper-bundle.min.css",
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "node_modules/@ngneat/hot-toast/src/styles/styles.css",
-              
+              // "node_modules/swiper/swiper-bundle.min.css",
+              // "@angular/material/prebuilt-themes/indigo-pink.css",
+              // "node_modules/@ngneat/hot-toast/src/styles/styles.css",
+
               "src/styles.scss"
             ],
             "scripts": []
@@ -46,13 +46,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "4mb"
+                  "maximumWarning": "250kb",
+                  "maximumError": "300kb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "500kb",
-                  "maximumError": "400kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
                 }
               ],
               "outputHashing": "all",
@@ -112,4 +112,3 @@
     "analytics": "36d14921-83bb-4812-8dea-e78ace704267"
   }
 }
-

@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { MenuService } from 'src/app/shared/services/menu.service';
 import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-state.service';
-
+import '@ngneat/hot-toast/styles.css';
 @Component({
   selector: 'app-doctor',
   templateUrl: './doctor.component.html',

@@ -5,7 +5,6 @@ import { Route, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TableSkeletonModule } from 'src/app/shared/modules/table-skeleton/table-skeleton.module';
 import { WelcomeHeaderComponent } from './welcome-header/welcome-header.component';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ProfileOnboardingModalComponent } from './profile-onboarding-modal/profile-onboarding-modal.component';
 
 const routes: Route[] = [
@@ -23,7 +22,6 @@ const routes: Route[] = [
     RouterModule.forChild(routes),
     TableSkeletonModule,
     WelcomeHeaderComponent,
-    MatTabsModule,
     ProfileOnboardingModalComponent,
   ],
 })
