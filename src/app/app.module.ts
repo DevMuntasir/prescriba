@@ -1,6 +1,3 @@
-import { CoreModule } from '@abp/ng.core';
-import { registerLocale } from '@abp/ng.core/locale';
-import { AbpOAuthModule } from '@abp/ng.oauth';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -12,7 +9,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { NgOtpInputModule } from 'ng-otp-input';
-import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
 import { AppRouting } from './app.routing';
 
@@ -30,11 +26,6 @@ import { MaterialModulesModule } from './shared/modules/material-modules/materia
     MatNativeDateModule,
     HttpClientModule,
     NgOtpInputModule,
-    MatNativeDateModule,
-    CoreModule.forRoot({
-      environment,
-      registerLocaleFn: registerLocale(),
-    }),
     BrowserAnimationsModule,
     MaterialModulesModule,
     AppRouting,
@@ -44,7 +35,6 @@ import { MaterialModulesModule } from './shared/modules/material-modules/materia
     MatSidenavModule,
     ReactiveFormsModule,
     FormsModule,
-    AbpOAuthModule.forRoot(),
   ],
   providers: [
     {

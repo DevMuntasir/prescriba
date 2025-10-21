@@ -27,11 +27,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { forkJoin, map,  Subscription } from 'rxjs';
 import { AuthInterceptor } from 'src/app/helper/auth.interceptor';
-import { AppointmentDto } from 'src/app/proxy/dto-models';
-import { DoctorProfileService } from 'src/app/proxy/services';
+import { AppointmentDto } from 'src/app/api/dto-models';
+import { DoctorProfileService } from 'src/app/api/services';
 import { environment } from 'src/environments/environment';
 
-import { DocumentsAttachmentService } from './../../../proxy/services/documents-attachment.service';
+import { DocumentsAttachmentService } from './../../../api/services/documents-attachment.service';
 import { AuthService } from './../../../shared/services/auth.service';
 import { BottomNavComponent } from './components/others/bottom-nav/bottom-nav.component';
 import { DoctorInfoComponent } from './components/others/doctor-info/doctor-info.component';

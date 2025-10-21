@@ -1,5 +1,5 @@
 import { TosterService } from './../../services/toster.service';
-import { UserAccountsService } from './../../../proxy/services/user-accounts.service';
+import { UserAccountsService } from './../../../api/services/user-accounts.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../../utils/auth-helper';

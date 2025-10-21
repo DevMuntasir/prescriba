@@ -1,5 +1,5 @@
 
-import { DoctorTitle } from "../../proxy/enums";
+import { DoctorTitle } from "../../api/enums";
 
 export class Common {
 

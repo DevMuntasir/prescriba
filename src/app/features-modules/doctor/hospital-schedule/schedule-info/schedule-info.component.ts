@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DoctorScheduleDto } from 'src/app/proxy/dto-models';
+import { DoctorScheduleDto } from 'src/app/api/dto-models';
 import { HospitalStateService } from '../../../../shared/services/states/hospital-state.service';
-import { DoctorScheduleService } from './../../../../proxy/services/doctor-schedule.service';
+import { DoctorScheduleService } from './../../../../api/services/doctor-schedule.service';
 import { AuthService } from './../../../../shared/services/auth.service';
 // import { ScheduleDialogComponent } from '../schedule-dialog/schedule-dialog.component';
 // import { MatDialog } from '@angular/material/dialog';

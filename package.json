@@ -11,15 +11,6 @@
   },
   "private": true,
   "dependencies": {
-    "@abp/ng.account": "~7.2.3",
-    "@abp/ng.components": "~7.2.3",
-    "@abp/ng.core": "~7.2.3",
-    "@abp/ng.identity": "~7.2.3",
-    "@abp/ng.oauth": "~7.2.3",
-    "@abp/ng.setting-management": "~7.2.3",
-    "@abp/ng.tenant-management": "~7.2.3",
-    "@abp/ng.theme.basic": "^7.4.5",
-    "@abp/ng.theme.shared": "~7.2.3",
     "@angular/animations": "^17.1.2",
     "@angular/cdk": "^17.1.2",
     "@angular/common": "^17.1.2",
@@ -50,7 +41,6 @@
     "zone.js": "^0.14.3"
   },
   "devDependencies": {
-    "@abp/ng.schematics": "^7.4.5",
     "@angular-devkit/build-angular": "^17.1.2",
     "@angular/cli": "^17.1.2",
     "@angular/compiler-cli": "^17.1.2",

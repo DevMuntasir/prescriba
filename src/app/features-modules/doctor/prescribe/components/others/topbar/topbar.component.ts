@@ -12,7 +12,7 @@ import { PrescriptionService } from '../../../services/prescription.service';
 import { UploadImageComponent } from '../upload-image/upload-image.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplatesComponent } from '../templates/templates.component';
-import { DocumentsAttachmentService } from 'src/app/proxy/services';
+import { DocumentsAttachmentService } from 'src/app/api/services';
 import { PreviousDocumentsDialogComponent } from '../previous-documents-dialog/previous-documents-dialog.component';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/shared/services/auth.service';

@@ -1,24 +1,16 @@
-import { Environment } from '@abp/ng.core';
-
-const baseUrl = 'http://apibetasoowgood.com';
-const apiUrl = 'http://apibetasoowgood.com';
-const issuerUrl = 'https://authsoowgoodbeta.com';
-export const serviceBaseUrl = 'http://localhost:3000'; //
+export const serviceBaseUrl = 'http://localhost:3000';
 export const USER_SECRATE = 'soowgood@@2024';
+const apiUrl = 'https://steady-grateful-farms-temp.trycloudflare.com';
+export const authenticationApi =
+  'https://cheaper-enter-losing-copied.trycloudflare.com';
+export const prescriptionApi =
+  'https://outcomes-deaths-society-mozilla.trycloudflare.com';
+
 export const environment = {
   production: true,
   application: {
-    baseUrl,
     name: 'SoowGoodWeb',
     logoUrl: '',
-  },
-  oAuthConfig: {
-    issuer: issuerUrl,
-    redirectUri: baseUrl,
-    clientId: 'SoowGoodWeb_App',
-    responseType: 'code',
-    scope: 'offline_access openid profile role email phone SoowGoodWeb',
-    requireHttps: true,
   },
   apis: {
     default: {
@@ -26,4 +18,16 @@ export const environment = {
       rootNamespace: 'SoowGoodWeb',
     },
   },
-} as Environment;
+  localization: {
+    defaultResourceName: 'SoowGoodWeb',
+    languages: [
+      {
+        cultureName: 'en',
+        uiCultureName: 'en',
+        displayName: 'English',
+        flagIcon: 'famfamfam-flags gb',
+        isDefault: true,
+      },
+    ],
+  },
+} as const;

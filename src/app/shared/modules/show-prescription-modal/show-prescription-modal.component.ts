@@ -1,5 +1,5 @@
 import { TosterService } from 'src/app/shared/services/toster.service';
-import { PrescriptionMasterService } from './../../../proxy/services/prescription-master.service';
+import { PrescriptionMasterService } from './../../../api/services/prescription-master.service';
 import {
   Component,
   ElementRef,

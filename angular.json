@@ -30,12 +30,7 @@
               "src/assets",
               "src/sitemap.xml",
               "src/robots.txt",
-              "src/firebase-messaging-sw.js",
-              {
-                "glob": "**/*",
-                "input": "node_modules/@abp/ng.core/assets",
-                "output": "/assets"
-              }
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "node_modules/swiper/swiper-bundle.min.css",

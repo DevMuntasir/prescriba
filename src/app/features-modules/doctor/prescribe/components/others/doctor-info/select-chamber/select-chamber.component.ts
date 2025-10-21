@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DoctorChamberDto } from 'src/app/proxy/dto-models';
+import { DoctorChamberDto } from 'src/app/api/dto-models';
 import { PrescriptionService } from './../../../../services/prescription.service';
 import { AuthService } from './../../../../../../../shared/services/auth.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';

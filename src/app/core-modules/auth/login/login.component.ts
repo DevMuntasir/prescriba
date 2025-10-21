@@ -17,19 +17,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgOtpInputModule } from 'ng-otp-input';
-import { LoginResponseDto, PatientProfileDto } from 'src/app/proxy/dto-models';
-import { OtpRequestDto } from 'src/app/proxy/soow-good/domain/service/models/otp';
+import { LoginResponseDto, PatientProfileDto } from 'src/app/api/dto-models';
+import { OtpRequestDto } from 'src/app/api/soow-good/domain/service/models/otp';
 import {
   SendOtpModel,
   UserSignInRequestDto,
-} from 'src/app/proxy/soow-good/domain/service/models/user-info';
+} from 'src/app/api/soow-good/domain/service/models/user-info';
 import { TosterService } from 'src/app/shared/services/toster.service';
 import { UserManageAccountsService } from '../auth-service/user-manage-accounts.service';
-import { DoctorProfileService } from 'src/app/proxy/services';
+import { DoctorProfileService } from 'src/app/api/services';
 import { AuthService as Auth } from '../auth-service/auth.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
-// import { DoctorProfileDto, PatientProfileDto } from 'src/app/proxy/dto-models';
+// import { DoctorProfileDto, PatientProfileDto } from 'src/app/api/dto-models';
 export interface ExtendedLoginDto {
   userName: string;
   password: string;
