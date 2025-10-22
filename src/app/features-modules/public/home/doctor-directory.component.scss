@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.doctor-directory__pill-row {
+  @apply flex items-center gap-3 overflow-x-auto md:overflow-visible pb-2 -mx-1 px-1 no-scrollbar;
+}
+
+.doctor-directory__pill {
+  @apply whitespace-nowrap px-4 py-2 rounded-full border border-emerald-100 text-sm font-medium text-gray-600 bg-white transition-all shadow-sm hover:border-emerald-200 hover:text-emerald-600 hover:-translate-y-0.5;
+}
+
+.doctor-directory__pill--active {
+  @apply bg-emerald-600 text-white border-emerald-600 shadow-md hover:text-white;
+}
+
+.doctor-directory__card {
+  @apply bg-white border border-transparent rounded-3xl p-6 md:p-7 shadow-lg transition-all duration-300 relative overflow-hidden;
+}
+
+.doctor-directory__card::before {
+  content: '';
+  @apply absolute inset-x-0 top-0 h-1 rounded-t-3xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-600 opacity-0 transition-opacity duration-300;
+}
+
+.doctor-directory__card:hover {
+  @apply -translate-y-2 shadow-2xl border-emerald-200;
+}
+
+.doctor-directory__card:hover::before {
+  opacity: 1;
+}
+
+.doctor-directory__icon {
+  @apply inline-flex items-center justify-center w-9 h-9 rounded-full bg-emerald-50 text-emerald-600;
+}
