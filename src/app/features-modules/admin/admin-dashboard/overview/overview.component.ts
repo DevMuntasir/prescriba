@@ -7,7 +7,7 @@ import {
   MedicationUsage,
   PatientAgeDistribution,
 } from '../../services/admin.prescription.service';
-import { finalize } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
 
 type TrendDirection = 'up' | 'down' | 'steady';

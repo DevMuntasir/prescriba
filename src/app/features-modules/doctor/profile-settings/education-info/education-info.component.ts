@@ -1,10 +1,10 @@
-import { DegreeService } from '../../../../proxy/services/degree.service';
+import { DegreeService } from '../../../../api/services/degree.service';
 import { DegreeDialogComponentnt } from '../degree-dialog/degree-dialog.component';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DoctorDegreeService } from 'src/app/proxy/services';
+import { DoctorDegreeService } from 'src/app/api/services';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { DegreeDto, DoctorDegreeDto } from 'src/app/proxy/dto-models';
+import { DegreeDto, DoctorDegreeDto } from 'src/app/api/dto-models';
 
 @Component({
   selector: 'app-education-info',

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PatientProfileInputDto } from 'src/app/proxy/input-dto';
+import { PatientProfileInputDto } from 'src/app/api/input-dto';
 
 @Component({
   selector: 'app-patient-card',

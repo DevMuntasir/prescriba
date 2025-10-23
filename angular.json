@@ -15,12 +15,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
-          //"builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
+
           "options": {
-            "outputPath": "dist/cloudflare",
+            "outputPath": {
+              "base": "dist/cloudflare"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -30,34 +31,28 @@
               "src/assets",
               "src/sitemap.xml",
               "src/robots.txt",
-              "src/firebase-messaging-sw.js",
-              {
-                "glob": "**/*",
-                "input": "node_modules/@abp/ng.core/assets",
-                "output": "/assets"
-              }
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
-              "node_modules/swiper/swiper-bundle.min.css",
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "node_modules/@ngneat/hot-toast/src/styles/styles.css",
-              
+      
+
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "4mb"
+                  "maximumWarning": "250kb",
+                  "maximumError": "300kb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "500kb",
-                  "maximumError": "400kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
                 }
               ],
               "outputHashing": "all",
@@ -65,9 +60,7 @@
               "statsJson": true
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -117,4 +110,3 @@
     "analytics": "36d14921-83bb-4812-8dea-e78ace704267"
   }
 }
-

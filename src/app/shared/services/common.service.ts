@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { EnumExtension } from '../common/enum-extension';
-import { ListItem } from '../model/common-model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class CommonService {
 
   // Get Enum list
   public static getEnumList(en: any) {
-    let enumItemList: ListItem[] = [];
+    let enumItemList: any[] = [];
 
     //Get name-value pairs from Enum
     let enumList = EnumExtension.getNamesAndValues(en);

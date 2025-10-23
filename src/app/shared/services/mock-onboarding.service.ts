@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { DoctorProfileDto } from 'src/app/proxy/dto-models';
+import { DoctorProfileDto } from 'src/app/api/dto-models';
 
 export interface SignupPayload {
   mobileNo: string;

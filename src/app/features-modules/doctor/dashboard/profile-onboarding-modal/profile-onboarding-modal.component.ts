@@ -13,7 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { DoctorProfileDto } from 'src/app/proxy/dto-models';
+import { DoctorProfileDto } from 'src/app/api/dto-models';
 
 @Component({
   selector: 'app-profile-onboarding-modal',

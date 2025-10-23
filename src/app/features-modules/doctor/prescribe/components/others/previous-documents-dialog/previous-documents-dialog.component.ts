@@ -4,13 +4,13 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
-  inject,
   Inject,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import Swiper, { Navigation } from 'swiper';
+import Swiper from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
 @Component({
   selector: 'app-previous-documents-dialog',
   templateUrl: './previous-documents-dialog.component.html',
@@ -36,7 +36,7 @@ export class PreviousDocumentsDialogComponent implements AfterViewInit {
       spaceBetween: 0,
       slidesPerView: 1,
 
-      modules: [Navigation],
+      modules: [],
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',

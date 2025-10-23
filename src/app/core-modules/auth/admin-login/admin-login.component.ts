@@ -4,12 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { ApiResponse } from 'src/app/proxy/core/generic-models';
-import { LoginResponseDto } from 'src/app/proxy/dto-models';
-import { UserSignInRequestDto } from 'src/app/proxy/soow-good/domain/service/models/user-info';
+import { ApiResponse } from 'src/app/api/core/generic-models';
+import { LoginResponseDto } from 'src/app/api/dto-models';
+import { UserSignInRequestDto } from 'src/app/api/soow-good/domain/service/models/user-info';
 import { AuthService as SessionAuthService } from 'src/app/shared/services/auth.service';
 import { TosterService } from 'src/app/shared/services/toster.service';
-import { AuthService as AuthApiService } from '../../../proxy/services/auth.service';
+import { AuthService as AuthApiService } from '../../../api/services/auth.service';
 
 @Component({
   selector: 'app-admin-login',

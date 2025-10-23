@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { environment } from './../../../../../environments/environment';
-import { DoctorSpecializationService } from '../../../../proxy/services/doctor-specialization.service';
+import { DoctorSpecializationService } from '../../../../api/services/doctor-specialization.service';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { TosterService } from 'src/app/shared/services/toster.service';
-import { DoctorProfileService } from '../../../../proxy/services/doctor-profile.service';
-import { SpecializationService } from 'src/app/proxy/services';
+import { DoctorProfileService } from '../../../../api/services/doctor-profile.service';
+import { SpecializationService } from 'src/app/api/services';
 import { AuthService } from 'src/app/shared/services/auth.service';
 @Component({
   selector: 'app-specialization-dialog',

@@ -1,5 +1,5 @@
 import {
-  DoctorProfileService} from 'src/app/proxy/services';
+  DoctorProfileService} from 'src/app/api/services';
 
 import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';

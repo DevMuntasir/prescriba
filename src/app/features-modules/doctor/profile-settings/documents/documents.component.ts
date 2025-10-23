@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DocumentsAttachmentService } from 'src/app/proxy/services';
+import { DocumentsAttachmentService } from 'src/app/api/services';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { TosterService } from 'src/app/shared/services/toster.service';
 import { environment } from 'src/environments/environment';

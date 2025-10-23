@@ -3,7 +3,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AdminPrescriptionService } from '../services/admin.prescription.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
-
 interface SidebarLink {
   readonly label: string;
   readonly icon:

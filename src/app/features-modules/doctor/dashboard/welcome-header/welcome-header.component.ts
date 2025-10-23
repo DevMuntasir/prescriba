@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { format } from 'date-fns';
-import { DoctorProfileDto } from 'src/app/proxy/dto-models';
+import { DoctorProfileDto } from 'src/app/api/dto-models';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-state.service';
 

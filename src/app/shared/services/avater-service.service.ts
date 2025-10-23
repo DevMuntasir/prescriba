@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DocumentsAttachmentService } from 'src/app/proxy/services';
+import { DocumentsAttachmentService } from 'src/app/api/services';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

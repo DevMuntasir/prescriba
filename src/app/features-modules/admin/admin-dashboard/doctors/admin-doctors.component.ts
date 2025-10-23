@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DataFilterModel, DoctorProfileDto, FilterModel } from 'src/app/proxy/dto-models/models';
-import { DoctorProfileService } from 'src/app/proxy/services/doctor-profile.service';
+import { DataFilterModel, DoctorProfileDto, FilterModel } from 'src/app/api/dto-models/models';
+import { DoctorProfileService } from 'src/app/api/services/doctor-profile.service';
 
 interface DoctorListMetrics {
   readonly total: number;

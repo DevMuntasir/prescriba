@@ -1,21 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiResponse } from 'src/app/proxy/core/generic-models';
+import { ApiResponse } from 'src/app/api/core/generic-models';
 import {
   ResetPasswordInputDto,
   ResetPasswordResponseDto,
   SendOtpResponseDto,
   UserSignUpResultDto,
-} from 'src/app/proxy/dto-models';
-import { OtpRequestDto } from 'src/app/proxy/soow-good/domain/service/models/otp';
+} from 'src/app/api/dto-models';
+import { OtpRequestDto } from 'src/app/api/soow-good/domain/service/models/otp';
 import {
   OrganizationValidateRequestDto,
   OrganizationValidityDto,
   SendOtpModel,
   UserSignInReturnDto,
   UserSingupRequestDto,
-} from 'src/app/proxy/soow-good/domain/service/models/user-info';
+} from 'src/app/api/soow-good/domain/service/models/user-info';
 import { authenticationApi, environment } from 'src/environments/environment';
 
 @Injectable({

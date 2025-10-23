@@ -11,10 +11,7 @@ import { SpecializationInfoComponent } from './specialization-info/specializatio
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { InputModule } from 'src/app/shared/modules/input/input.module';
-import { LoaderModule } from 'src/app/shared/modules/loader/loader.module';
-import { MaterialModulesModule } from 'src/app/shared/modules/material-modules/material-modules.module';
-import { PictureDialogModule } from '../../../shared/modules/picture-dialog/picture-dialog.module';
+
 import { DocumentsComponent } from './documents/documents.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
@@ -63,12 +60,11 @@ const routes: Route[] = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    MaterialModulesModule,
-    InputModule,
-    LoaderModule,
+
+
     MatFormFieldModule,
     MatInputModule,
-    PictureDialogModule,
+
     MatCheckboxModule,
   ],
 

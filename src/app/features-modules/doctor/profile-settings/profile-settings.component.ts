@@ -2,7 +2,7 @@ import { LoaderService } from './../../../shared/services/loader.service';
 import {
   DoctorProfileService,
   DocumentsAttachmentService,
-} from 'src/app/proxy/services';
+} from 'src/app/api/services';
 
 import {
   Component,
@@ -12,9 +12,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { DoctorProfileInputDto } from 'src/app/proxy/input-dto';
+import { DoctorProfileInputDto } from 'src/app/api/input-dto';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { DoctorTitle } from 'src/app/proxy/enums';
+import { DoctorTitle } from 'src/app/api/enums';
 import { ListItem } from 'src/app/shared/model/common-model';
 import { Router } from '@angular/router';
 

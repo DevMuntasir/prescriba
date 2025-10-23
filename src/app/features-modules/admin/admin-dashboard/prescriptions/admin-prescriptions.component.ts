@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { PrescriptionMasterDto } from 'src/app/proxy/dto-models/models';
-import { PrescriptionMasterService } from 'src/app/proxy/services/prescription-master.service';
+import { PrescriptionMasterDto } from 'src/app/api/dto-models/models';
+import { PrescriptionMasterService } from 'src/app/api/services/prescription-master.service';
 
 interface PrescriptionSummary {
   readonly total: number;

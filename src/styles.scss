@@ -261,3 +261,24 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.toast-success .mdc-snackbar__surface {
+  background-color: rgb(0 171 7 / 100%);
+  color: #f1f1f1;
+}
+
+.toast-error .mdc-snackbar__surface {
+  background-color: rgb(255 0 0 / 100%);
+  color: #f1f1f1;
+}
+
+.toast-warning .mdc-snackbar__surface {
+  background-color: rgb(255 179 68 / 100%);
+  color: #483500;
+}
+
+.toast-success .mdc-button__label,
+.toast-error .mdc-button__label,
+.toast-warning .mdc-button__label {
+  color: inherit;
+}
