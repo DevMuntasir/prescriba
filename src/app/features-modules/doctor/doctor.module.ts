@@ -43,6 +43,15 @@ const routes: Route[] = [
           ),
       },
       {
+        path: 'appointments',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadChildren: () =>
+          import('./appointments/appointments.module').then(
+            (m) => m.AppointmentsModule
+          ),
+      },
+      {
         path: 'schedule',
         canActivate: [isAuth],
         data: { roles: ['doctor'] },

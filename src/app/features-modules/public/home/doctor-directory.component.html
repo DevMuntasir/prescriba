@@ -94,18 +94,6 @@
           </button>
         </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3 xl:ml-auto">
-          <label for="sort-by" class="text-sm font-medium text-gray-600">Sort by</label>
-          <select
-            id="sort-by"
-            [(ngModel)]="sortOption"
-            class="bg-white border border-emerald-100 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm transition-all min-w-[200px]"
-          >
-            <option value="rating">Highest Rated</option>
-            <option value="experience">Experience</option>
-            <option value="nextAvailable">Next Availability</option>
-          </select>
-        </div>
       </div>
     </div>
 
@@ -125,18 +113,15 @@
               </h3>
               <p class="text-emerald-600 font-medium">{{ doctor.specialization }}</p>
             </div>
-            <div class="flex items-center gap-3 bg-emerald-50 rounded-2xl px-4 py-3 self-start">
+            <div class="flex items-center gap-3  self-start">
               <div class="text-emerald-600">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/>
                 </svg>
               </div>
               <div>
-                <p class="text-lg font-semibold text-gray-900">
+                <p class="text-md font-semibold text-gray-900">
                   {{ doctor.rating | number: '1.1-1' }}
-                </p>
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Patient rating
                 </p>
               </div>
             </div>
@@ -190,7 +175,7 @@
           </ul>
         </div>
 
-        <footer class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-5 border-t border-emerald-50">
+        <footer class=" pt-5 border-t border-emerald-50">
           <a
             class="inline-flex items-center justify-center gap-2 w-full sm:flex-1 bg-emerald-600 text-white font-semibold py-3.5 rounded-2xl shadow-md transition-all hover:bg-emerald-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             [href]="createTelLink(doctor.phone)"
@@ -204,13 +189,10 @@
             </svg>
             <span>Call to Book</span>
           </a>
-          <div class="w-full sm:w-auto text-center sm:text-right">
-            <p class="text-sm text-gray-500">
+          <div class="w-full text-center">
+            <p class="text-sm text-gray-500 mt-2">
               Hotline:
               <span class="font-semibold text-gray-900">{{ doctor.phone }}</span>
-            </p>
-            <p class="text-xs text-gray-400 mt-1">
-              Mention MediScript for priority assistance
             </p>
           </div>
         </footer>
