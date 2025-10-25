@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
+import {
+  AdminPrescriptionService,
+  CompanyPerformanceSummary,
+  MedicationDivisionUsage,
+  MedicationUsage,
+  PatientAgeDistribution,
+} from '../../services/admin.prescription.service';
+import { finalize } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 type TrendDirection = 'up' | 'down' | 'steady';
 
@@ -26,6 +35,16 @@ interface AgeDistribution {
   readonly range: string;
   readonly patients: number;
   readonly percent: number;
+  readonly accentClass: string;
+}
+
+interface CompanyPerformanceCard {
+  readonly companyName: string;
+  readonly prescriptionCount: number;
+  readonly marketShare: number;
+  readonly topDistricts: string;
+  readonly trendDirection: TrendDirection;
+  readonly trendLabel: string;
   readonly accentClass: string;
 }
 
@@ -68,6 +87,7 @@ interface RecentUpdate {
 type PeriodKey = 'day' | 'week' | 'month';
 
 interface MedicinePerformance {
+  readonly medicationId: number;
   readonly name: string;
   readonly category: string;
   readonly prescriptions: number;
@@ -87,7 +107,15 @@ interface DoctorSummary {
   readonly newPatients: number;
   readonly repeatRate: string;
 }
-
+interface DemographicMetric {
+  readonly label: string;
+  readonly total: string;
+  readonly share: string;
+  readonly change: string;
+  readonly icon: 'female' | 'male' | 'family';
+  readonly accentClass: string;
+  readonly changeClass?: string;
+}
 interface DoctorDetail {
   readonly utilisation: string;
   readonly utilisationChange: string;
@@ -116,11 +144,368 @@ interface DoctorDetail {
 @Component({
   selector: 'app-admin-dashboard-overview',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
 })
 export class AdminDashboardOverviewComponent {
+  private readonly adminPrescriptionService = inject(AdminPrescriptionService);
+
+  readonly periodLabels: Record<PeriodKey, string> = {
+    day: 'Today',
+    week: 'This week',
+    month: 'This month',
+  };
+
+  readonly periodKeys: PeriodKey[] = ['day', 'week', 'month'];
+
+  topMedicationsLoading = false;
+  topMedicationsError: string | null = null;
+  prescriptionAnalyticsLoading = false;
+  prescriptionAnalyticsError: string | null = null;
+
+  selectedMedicinePeriod: PeriodKey = 'day';
+  medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
+    day: [],
+    week: [],
+    month: [],
+  };
+
+  medicineModalOpen = false;
+  selectedMedicine: MedicinePerformance | null = null;
+  divisionLoading = false;
+  divisionError: string | null = null;
+  divisionMetrics: MedicationDivisionUsage[] = [];
+  ageDistributionLoading = false;
+  ageDistributionError: string | null = null;
+  ageDistribution: AgeDistribution[] = [];
+  ageDistributionTotalPatients = 0;
+  companyPerformanceLoading = false;
+  companyPerformanceError: string | null = null;
+  companyPerformanceCards: CompanyPerformanceCard[] = [];
+
+  private readonly ageDistributionAccents = [
+    'from-sky-400 to-brand-primary-accent',
+    'from-brand-primary to-emerald-400',
+    'from-violet-500 to-fuchsia-400',
+    'from-amber-500 to-orange-400',
+    'from-rose-500 to-rose-400',
+  ];
+  private readonly companyAccentClasses = [
+    'from-brand-primary to-emerald-400',
+    'from-sky-400 to-brand-primary-accent',
+    'from-violet-500 to-fuchsia-400',
+    'from-amber-500 to-orange-400',
+    'from-rose-500 to-pink-400',
+    'from-indigo-500 to-sky-400',
+  ];
+
+  private readonly divisionCache = new Map<number, MedicationDivisionUsage[]>();
+
+  ngOnInit(): void {
+    this.loadTopMedications();
+    this.loadAgeDistribution();
+    this.loadCompanyPerformanceOverview();
+    // this.loadPrescriptionAnalytics();
+  }
+  private loadTopMedications(): void {
+    this.topMedicationsLoading = true;
+    this.topMedicationsError = null;
+
+    this.adminPrescriptionService
+      .getMostUsedMedications()
+      .pipe(finalize(() => (this.topMedicationsLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const items = response?.result ?? response?.results ?? [];
+
+          if (!items.length) {
+            this.medicinePerformance = { day: [], week: [], month: [] };
+            this.topMedicationsError = response?.message ?? 'No medication usage data available right now.';
+            return;
+          }
+
+          const totalUsage =
+            response?.totalCount && response.totalCount > 0
+              ? response.totalCount
+              : items.reduce((sum, item) => sum + item.usageCount, 0);
+
+          const mapped = items.map((item) => this.mapMedicationUsageToPerformance(item, totalUsage));
+
+          this.medicinePerformance = {
+            day: mapped,
+            week: [...mapped],
+            month: [...mapped],
+          };
+        },
+        error: () => {
+          this.topMedicationsError = 'Unable to load top prescribed medicines.';
+          this.medicinePerformance = { day: [], week: [], month: [] };
+        },
+      });
+  }
+
+  private loadAgeDistribution(): void {
+    this.ageDistributionLoading = true;
+    this.ageDistributionError = null;
+
+    this.adminPrescriptionService
+      .getPatientAgeDistribution()
+      .pipe(finalize(() => (this.ageDistributionLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const groups =
+            (response?.results ?? response?.result ?? []) as PatientAgeDistribution[];
+
+          if (!groups.length) {
+            this.ageDistribution = [];
+            this.ageDistributionTotalPatients = 0;
+            this.ageDistributionError =
+              response?.message ?? 'No age distribution data available right now.';
+            return;
+          }
+
+          const mapped = groups.map((group, index) => {
+            const patients =
+              typeof group.patientCount === 'number' && Number.isFinite(group.patientCount)
+                ? group.patientCount
+                : 0;
+            const percentValue =
+              typeof group.percentage === 'number' && Number.isFinite(group.percentage)
+                ? group.percentage
+                : Number(group.percentage ?? 0);
+            const percent = Number.isFinite(percentValue)
+              ? Number(percentValue.toFixed(2))
+              : 0;
+
+            return {
+              range: group.ageGroup?.trim() || 'Unknown',
+              patients,
+              percent,
+              accentClass:
+                this.ageDistributionAccents[index % this.ageDistributionAccents.length],
+            };
+          });
+
+          this.ageDistribution = mapped;
+          this.ageDistributionError = null;
+          this.ageDistributionTotalPatients = mapped.reduce(
+            (sum, item) => sum + item.patients,
+            0
+          );
+        },
+        error: () => {
+          this.ageDistributionError = 'Unable to load age distribution data.';
+          this.ageDistribution = [];
+          this.ageDistributionTotalPatients = 0;
+        },
+      });
+  }
+
+  private loadCompanyPerformanceOverview(): void {
+    this.companyPerformanceLoading = true;
+    this.companyPerformanceError = null;
+
+    this.adminPrescriptionService
+      .getCompanyPerformanceOverview(5)
+      .pipe(finalize(() => (this.companyPerformanceLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const companies =
+            (response?.results ?? response?.result ?? []) as CompanyPerformanceSummary[];
+
+          if (!companies.length) {
+            this.companyPerformanceCards = [];
+            this.companyPerformanceError =
+              response?.message ?? 'No company performance data available right now.';
+            return;
+          }
+
+          this.companyPerformanceCards = companies.map((company, index) =>
+            this.mapCompanyPerformanceToCard(company, index)
+          );
+          this.companyPerformanceError = null;
+        },
+        error: () => {
+          this.companyPerformanceError = 'Unable to load company performance data.';
+          this.companyPerformanceCards = [];
+        },
+      });
+  }
+
+  private mapMedicationUsageToPerformance(usage: MedicationUsage, total: number): MedicinePerformance {
+    const genericName = (usage.genericName || '').trim();
+    const manufacturer = (usage.manufacturer || '').trim();
+    const descriptorParts = [genericName, manufacturer].filter((part) => part);
+    const category = descriptorParts.length ? descriptorParts.join(' | ') : 'Not specified';
+    const shareValue = total > 0 ? (usage.usageCount / total) * 100 : 0;
+    const normalizedShare = Number.isFinite(shareValue) ? shareValue : 0;
+    const formattedShare =
+      normalizedShare === 0 ? '0' : normalizedShare.toFixed(1).replace(/\.0$/, '');
+
+    return {
+      medicationId: usage.medicationId,
+      name: usage.medicationName,
+      category,
+      prescriptions: usage.usageCount,
+      share: `${formattedShare}%`,
+      growth: '--',
+      trend: 'steady',
+    };
+  }
+
+  private mapCompanyPerformanceToCard(
+    company: CompanyPerformanceSummary,
+    index: number
+  ): CompanyPerformanceCard {
+    const prescriptionCount =
+      typeof company.prescriptionCount === 'number' && Number.isFinite(company.prescriptionCount)
+        ? company.prescriptionCount
+        : 0;
+
+    const marketShareValue =
+      typeof company.marketSharePercent === 'number' && Number.isFinite(company.marketSharePercent)
+        ? company.marketSharePercent
+        : Number(company.marketSharePercent ?? 0);
+    const marketShare = Number.isFinite(marketShareValue)
+      ? Number(marketShareValue.toFixed(2))
+      : 0;
+
+    const direction: TrendDirection =
+      company.trendDirection === 'up' || company.trendDirection === 'down' || company.trendDirection === 'steady'
+        ? company.trendDirection
+        : 'steady';
+
+    const trendPercentValue =
+      typeof company.trendPercent === 'number' && Number.isFinite(company.trendPercent)
+        ? company.trendPercent
+        : Number(company.trendPercent ?? 0);
+    const trendPercent = Number.isFinite(trendPercentValue)
+      ? Number(trendPercentValue.toFixed(1))
+      : 0;
+
+    const formattedTrend =
+      direction === 'steady'
+        ? 'Steady vs last month'
+        : `${trendPercent >= 0 ? '+' : ''}${trendPercent}% vs last month`;
+
+    const topDistricts = (company.topDistricts ?? [])
+      .map((district) => district?.trim())
+      .filter((district): district is string => !!district)
+      .slice(0, 3)
+      .join(', ');
+
+    return {
+      companyName: company.companyName?.trim() || 'Unnamed company',
+      prescriptionCount,
+      marketShare,
+      topDistricts: topDistricts || 'District data pending',
+      trendDirection: direction,
+      trendLabel: formattedTrend,
+      accentClass: this.companyAccentClasses[index % this.companyAccentClasses.length],
+    };
+  }
+
+  openMedicineModal(medicine: MedicinePerformance): void {
+    this.selectedMedicine = medicine;
+    this.medicineModalOpen = true;
+    this.divisionError = null;
+    this.divisionMetrics = [];
+
+    const medicationId = medicine.medicationId;
+    if (!medicationId) {
+      this.divisionError = 'Medication identifier is missing for this record.';
+      return;
+    }
+
+    const cached = this.divisionCache.get(medicationId);
+    if (cached) {
+      this.divisionMetrics = cached;
+      return;
+    }
+
+    this.divisionLoading = false;
+    const dummyMetrics = this.buildDummyDivisionMetrics(medicine);
+
+    if (dummyMetrics.length) {
+      this.divisionMetrics = dummyMetrics;
+      this.divisionCache.set(medicationId, dummyMetrics);
+    } else {
+      this.divisionError = 'Division-level data is not available for this medicine yet.';
+    }
+  }
+
+  closeMedicineModal(): void {
+    this.medicineModalOpen = false;
+    this.selectedMedicine = null;
+    this.divisionLoading = false;
+    this.divisionError = null;
+    this.divisionMetrics = [];
+  }
+
+  trackDivision(_index: number, metric: MedicationDivisionUsage): string {
+    return metric.divisionName ?? `${_index}`;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.medicineModalOpen) {
+      this.closeMedicineModal();
+    }
+  }
+
+  private buildDummyDivisionMetrics(
+    medicine: MedicinePerformance
+  ): MedicationDivisionUsage[] {
+    const divisions = [
+      'Dhaka',
+      'Chattogram',
+      'Rajshahi',
+      'Khulna',
+      'Sylhet',
+      'Barishal',
+      'Rangpur',
+      'Mymensingh',
+    ];
+
+    const templates: number[][] = [
+      [0.33, 0.19, 0.13, 0.12, 0.08, 0.06, 0.05, 0.04],
+      [0.28, 0.22, 0.16, 0.12, 0.1, 0.06, 0.04, 0.02],
+      [0.31, 0.21, 0.14, 0.1, 0.09, 0.07, 0.05, 0.03],
+    ];
+
+    const templateIndex =
+      Math.abs(medicine.medicationId ?? medicine.name.length) % templates.length;
+    const selectedTemplate = templates[templateIndex];
+    const totalPrescriptions =
+      medicine.prescriptions > 0 ? medicine.prescriptions : 100;
+
+    const metrics = divisions.map((division, index) => {
+      const share = selectedTemplate[index] ?? 0;
+      return {
+        divisionName: division,
+        totalPrescriptions: Math.max(
+          1,
+          Math.round(totalPrescriptions * share)
+        ),
+      };
+    });
+
+    const totalFromMetrics = metrics.reduce(
+      (sum, metric) => sum + metric.totalPrescriptions,
+      0
+    );
+
+    if (totalFromMetrics !== totalPrescriptions && metrics.length) {
+      const difference = totalPrescriptions - totalFromMetrics;
+      const adjusted =
+        metrics[0].totalPrescriptions + difference;
+      metrics[0].totalPrescriptions = Math.max(1, adjusted);
+    }
+
+    return metrics.filter((metric) => metric.totalPrescriptions > 0);
+  }
+
   readonly summaryStats: SummaryStat[] = [
     {
       label: 'Pending approvals',
@@ -188,33 +573,6 @@ export class AdminDashboardOverviewComponent {
       icon: 'family',
       accentClass:
         'bg-[linear-gradient(135deg,#38bdf8_0%,#60a5fa_100%)] shadow-[0_12px_28px_rgba(59,130,246,0.25)]',
-    },
-  ];
-
-  readonly ageDistribution: AgeDistribution[] = [
-    {
-      range: '18–25 years',
-      patients: 468,
-      percent: 22,
-      accentClass: 'from-sky-400 to-brand-primary-accent',
-    },
-    {
-      range: '26–40 years',
-      patients: 812,
-      percent: 38,
-      accentClass: 'from-brand-primary to-emerald-400',
-    },
-    {
-      range: '41–55 years',
-      patients: 512,
-      percent: 24,
-      accentClass: 'from-violet-500 to-fuchsia-400',
-    },
-    {
-      range: '56+ years',
-      patients: 268,
-      percent: 12,
-      accentClass: 'from-amber-500 to-orange-400',
     },
   ];
 
@@ -348,134 +706,7 @@ export class AdminDashboardOverviewComponent {
     },
   ];
 
-  readonly medicinePerformance: Record<PeriodKey, MedicinePerformance[]> = {
-    day: [
-      {
-        name: 'Azithromycin 500mg',
-        category: 'Antibiotic',
-        prescriptions: 124,
-        share: '18%',
-        growth: '+6.1%',
-        trend: 'up',
-      },
-      {
-        name: 'Omeprazole 20mg',
-        category: 'Gastrointestinal',
-        prescriptions: 98,
-        share: '14%',
-        growth: '+3.4%',
-        trend: 'up',
-      },
-      {
-        name: 'Montelukast 10mg',
-        category: 'Respiratory',
-        prescriptions: 86,
-        share: '12%',
-        growth: '+1.2%',
-        trend: 'steady',
-      },
-      {
-        name: 'Amlodipine 5mg',
-        category: 'Cardiac',
-        prescriptions: 79,
-        share: '11%',
-        growth: '-0.8%',
-        trend: 'down',
-      },
-      {
-        name: 'Paracetamol 500mg',
-        category: 'Analgesic',
-        prescriptions: 72,
-        share: '10%',
-        growth: '+4.3%',
-        trend: 'up',
-      },
-    ],
-    week: [
-      {
-        name: 'Azithromycin 500mg',
-        category: 'Antibiotic',
-        prescriptions: 612,
-        share: '16%',
-        growth: '+8.4%',
-        trend: 'up',
-      },
-      {
-        name: 'Amlodipine 5mg',
-        category: 'Cardiac',
-        prescriptions: 538,
-        share: '14%',
-        growth: '+2.6%',
-        trend: 'up',
-      },
-      {
-        name: 'Metformin 500mg',
-        category: 'Endocrine',
-        prescriptions: 504,
-        share: '13%',
-        growth: '+5.9%',
-        trend: 'up',
-      },
-      {
-        name: 'Montelukast 10mg',
-        category: 'Respiratory',
-        prescriptions: 452,
-        share: '12%',
-        growth: '+1.7%',
-        trend: 'steady',
-      },
-      {
-        name: 'Paracetamol 500mg',
-        category: 'Analgesic',
-        prescriptions: 436,
-        share: '11%',
-        growth: '-0.9%',
-        trend: 'down',
-      },
-    ],
-    month: [
-      {
-        name: 'Metformin 500mg',
-        category: 'Endocrine',
-        prescriptions: 2214,
-        share: '17%',
-        growth: '+10.2%',
-        trend: 'up',
-      },
-      {
-        name: 'Amlodipine 5mg',
-        category: 'Cardiac',
-        prescriptions: 1986,
-        share: '15%',
-        growth: '+4.4%',
-        trend: 'up',
-      },
-      {
-        name: 'Atorvastatin 20mg',
-        category: 'Cardiac',
-        prescriptions: 1820,
-        share: '14%',
-        growth: '+2.1%',
-        trend: 'up',
-      },
-      {
-        name: 'Losartan 50mg',
-        category: 'Cardiac',
-        prescriptions: 1742,
-        share: '13%',
-        growth: '+1.6%',
-        trend: 'steady',
-      },
-      {
-        name: 'Omeprazole 20mg',
-        category: 'Gastrointestinal',
-        prescriptions: 1655,
-        share: '12%',
-        growth: '-1.9%',
-        trend: 'down',
-      },
-    ],
-  };
+
 
   readonly doctorSummaries: DoctorSummary[] = [
     {
@@ -623,15 +854,9 @@ export class AdminDashboardOverviewComponent {
     },
   };
 
-  readonly periodLabels: Record<PeriodKey, string> = {
-    day: 'Today',
-    week: 'This week',
-    month: 'This month',
-  };
 
-  readonly periodKeys: PeriodKey[] = ['day', 'week', 'month'];
 
-  selectedMedicinePeriod: PeriodKey = 'day';
+
   selectedDoctorId: number = this.doctorSummaries[0]?.id ?? 0;
 
   get medicineLeaderboard(): MedicinePerformance[] {
@@ -687,6 +912,20 @@ export class AdminDashboardOverviewComponent {
 
     tables.push(
       this.buildTable(
+        'Company performance overview',
+        ['Company', 'Prescriptions', 'Market share', 'Top districts', 'Trend'],
+        this.companyPerformanceCards.map((company) => [
+          company.companyName,
+          company.prescriptionCount,
+          `${company.marketShare}%`,
+          company.topDistricts,
+          company.trendLabel,
+        ])
+      )
+    );
+
+    tables.push(
+      this.buildTable(
         'Regional performance deep dive',
         [
           'Region',
@@ -716,7 +955,7 @@ export class AdminDashboardOverviewComponent {
         'Top medicines',
         ['Period', 'Medicine', 'Category', 'Prescriptions', 'Share', 'Growth', 'Trend'],
         this.periodKeys.flatMap((period) =>
-          this.medicinePerformance[period].map((medicine) => [
+          this.medicinePerformance[period].map((medicine:any) => [
             this.periodLabels[period],
             medicine.name,
             medicine.category,
