@@ -1,10 +1,10 @@
 export const serviceBaseUrl = 'http://localhost:3000';
 export const USER_SECRATE = 'prescriba@@2024';
-const apiUrl = 'https://steady-grateful-farms-temp.trycloudflare.com';
+const apiUrl = 'https://permits-move-sacrifice-classics.trycloudflare.com';
 export const authenticationApi =
-  'https://cheaper-enter-losing-copied.trycloudflare.com';
+  'https://sarah-holmes-employees-therefore.trycloudflare.com';
 export const prescriptionApi =
-  'https://outcomes-deaths-society-mozilla.trycloudflare.com';
+  'https://dimension-compiler-fair-consequently.trycloudflare.com';
 
 export const environment = {
   production: false,
