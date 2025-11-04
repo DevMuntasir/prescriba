@@ -13,6 +13,9 @@ import {
   OverlayContainer,
 } from '@angular/cdk/overlay';
 import { AuthInterceptor } from './helper/auth.interceptor';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,6 +27,8 @@ import { AuthInterceptor } from './helper/auth.interceptor';
     BrowserAnimationsModule,
     AppRouting,
     MatSnackBarModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
   ],
   providers: [
     {
