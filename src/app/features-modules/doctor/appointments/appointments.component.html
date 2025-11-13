@@ -1,0 +1,127 @@
+<div class="appointments-page">
+  <div class="appointments-header">
+    <h1>Appointments</h1>
+    <button type="button" class="primary-btn" (click)="openCreateModal()">
+      Add Appointment
+    </button>
+  </div>
+
+  <div class="serial-message" *ngIf="lastGeneratedSerial">
+    Appointment created successfully. Serial:
+    <span class="serial-number">{{ lastGeneratedSerial }}</span>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Serial</th>
+          <th>Patient</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Contact</th>
+          <th>Date &amp; Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of appointments; trackBy: trackBySerial">
+          <td>{{ appointment.serial }}</td>
+          <td>{{ appointment.patientName }}</td>
+          <td>{{ appointment.age }}</td>
+          <td>{{ appointment.gender }}</td>
+          <td>{{ appointment.contactNumber }}</td>
+          <td>{{ appointment.appointmentDate }}</td>
+          <td>{{ appointment.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty-state" *ngIf="appointments.length === 0">
+      No appointments scheduled yet.
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal-backdrop"
+  *ngIf="showCreateModal"
+  (click)="closeCreateModal()"
+>
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Create Appointment</h2>
+      <button
+        type="button"
+        class="close-btn"
+        aria-label="Close"
+        (click)="closeCreateModal()"
+      >
+        &times;
+      </button>
+    </div>
+
+    <form [formGroup]="appointmentForm" (ngSubmit)="submitAppointment()">
+      <div class="form-field">
+        <label for="patientName">Patient Name</label>
+        <input
+          id="patientName"
+          type="text"
+          formControlName="patientName"
+          placeholder="Enter patient name"
+        />
+        <div class="error" *ngIf="appointmentForm.get('patientName')?.invalid && appointmentForm.get('patientName')?.touched">
+          Patient name is required.
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="age">Age</label>
+          <input
+            id="age"
+            type="number"
+            formControlName="age"
+            placeholder="Age"
+            min="0"
+            max="120"
+          />
+          <div class="error" *ngIf="appointmentForm.get('age')?.invalid && appointmentForm.get('age')?.touched">
+            Enter a valid age between 0 and 120.
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="gender">Gender</label>
+          <select id="gender" formControlName="gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="contactNumber">Contact Number</label>
+        <input
+          id="contactNumber"
+          type="tel"
+          formControlName="contactNumber"
+          placeholder="Enter contact number"
+        />
+        <div class="error" *ngIf="appointmentForm.get('contactNumber')?.invalid && appointmentForm.get('contactNumber')?.touched">
+          Contact number is required.
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" (click)="closeCreateModal()">
+          Cancel
+        </button>
+        <button type="submit" class="primary-btn">
+          Create Appointment
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

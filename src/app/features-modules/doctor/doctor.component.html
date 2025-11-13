@@ -1,0 +1,9 @@
+<div class="flex w-full h-screen overflow-hidden">
+  <div class=" relative h-full">
+    <app-dashboard-menu class=" w-fit sticky top-0" [menuList]="menuList"></app-dashboard-menu>
+  </div>
+  <div class=" flex-1 overflow-x-hidden overflow-y-auto custom-scrollbar ">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

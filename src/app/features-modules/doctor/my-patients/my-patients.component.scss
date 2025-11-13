@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+  background-color: #f3f4f6;
+  min-height: 100%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td,
+th {
+  vertical-align: middle;
+}
+
+button {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}

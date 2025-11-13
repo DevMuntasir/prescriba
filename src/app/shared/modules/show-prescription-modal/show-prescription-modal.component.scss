@@ -1,0 +1,38 @@
+// @media print {
+//     body * {
+//       display: none;
+//     }
+//     #printable-section, #printable-section * {
+//       display: block;
+//     }
+//   }
+
+//   .drug:last-child{
+//     border: none;
+//   }
+
+@media print {
+  body * {
+    display: none;
+  }
+  // #printable-section, #printable-section * {
+  //   display: block;
+  // }
+
+  #printable-section, #printable-section * {
+    visibility: visible; /* Show only the #pdf-content section */
+  }
+
+  #pdf-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  
+
+}
+
+.drug:last-child{
+  border: none;
+}

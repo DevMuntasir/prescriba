@@ -1,0 +1,98 @@
+<div class="flex items-center justify-left my-7">
+  <div class="w-full bg-white">
+    <div class="relative overflow-x-auto sm:rounded-lg">
+      <div
+        class="py-2 pl-5 pr-1 border-[1px] justify-between md:justify-start rounded-md flex gap-4 items-center"
+      >
+        <h1
+          class="dashbord-heading-text text-[15px] md:text-[18px] font-medium"
+        >
+          <i class="fa-solid fa-building-columns mr-1"></i>
+          Specializations
+        </h1>
+        <button class="btn-secondary-light" (click)="openDialog()">
+          <i class="fa-solid fa-plus mr-1"></i> Add Specialization
+        </button>
+      </div>
+
+      <div class="w-full mt-3">
+        <div class="relative overflow-x-auto shadow-md w-full sm:rounded-lg">
+          <div class="flex items-center justify-between pb-4 bg-white">
+            <table class="w-full text-sm text-left text-gray-500 border-[1px]">
+              <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3">ID</th>
+                  <th scope="col" class="px-6 py-3">Specialty</th>
+                  <th scope="col" class="px-6 py-3">Specialization</th>
+
+                  <th scope="col" class="px-6 py-3">Documents</th>
+
+                  <th scope="col" class="px-6 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="bg-white hover:bg-gray-50"
+                  *ngFor="let item of allSpecializations; index as i"
+                >
+                  <td class="w-4 p-4">
+                    {{ i + 1 }}
+                    <!--<div class="flex items-center">
+                      <label for="checkbox-table-search-3" class="sr-only">{{i+1}}</label>
+                    </div>-->
+                  </td>
+
+                  <td class="px-6 py-4">
+                    {{ item.specialityName }}
+                  </td>
+                  <td class="px-6 py-4">
+                    {{ item.specializationName }}
+                  </td>
+
+                  <td class="px-6 py-4">
+                    {{ item.documentName }}
+                  </td>
+
+                  <td class="px-6 py-4">
+                    <a
+                      class="font-medium text-blue-600 hover:underline"
+                      (click)="handleSpecializationEdit(item)"
+                      >Edit
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="py-2 pl-5 mt-5 pr-1 border-[1px] justify-between md:justify-start rounded-md flex gap-4 items-center"
+      >
+        <h1
+          class="dashbord-heading-text text-[15px] md:text-[18px] font-medium"
+        >
+          <i class="fa-solid fa-building-columns mr-1"></i>
+          Expertise
+        </h1>
+      </div>
+
+      <div class="w-full mt-3">
+        <div class="mb-3">
+          <textarea
+            [(ngModel)]="expertise"
+            for="expertise"
+            placeholder="Your expertise area "
+            type="text"
+            class="w-full h-[80px] rounded-md border border-[#e0e0e0] bg-white py-1.5 px-3 text-base font-normal text-[14px] text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+          >
+          </textarea>
+          <button class="btn-secondary-light" (click)="addExpertise()">
+            <i class="fa-solid fa-plus mr-1"></i> Add Expertise
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

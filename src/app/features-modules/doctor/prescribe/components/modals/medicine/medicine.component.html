@@ -1,0 +1,133 @@
+<div class="chief-complaint-dialog w-[850px]">
+  <div class="flex bg-gray-200 items-center pl-4 py-4">
+    <h2 class="h-fit font-Roboto text-[20px] !mb-0 whitespace-nowrap">
+      Medicine
+    </h2>
+    <form (ngSubmit)="addMedicine({label:searchControl.value || '',value: 0})"
+      class="search-section flex-1 w-full flex items-center space-x-2 rounded-lg overflow-hidden bg-white border-[1px] shadow-lg mx-10">
+      <div class="w-full h-fit">
+        <input #searchInput class="text-[16px] px-3 py-3 w-full outline-none border-none" type="text" matInput
+          [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Search medicine...">
+        <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete">
+          @for (medicine of filteredMedicines$| async; track medicine) {
+          <mat-option (click)="addMedicine(medicine)" [value]="medicine">
+            {{ medicine.label }}
+          </mat-option>
+          }
+        </mat-autocomplete>
+
+      </div>
+      <button class="bg-secondary text-white p-4" type="submit">
+        Add
+      </button>
+    </form>
+  </div>
+
+  <mat-dialog-content>
+    @if (loading.noDataFound && selectedMedicines.length==0) {
+    No bookmark found for history!
+    }
+    @if (loading.isSkelton) {
+    <app-skelton />
+    }@else {
+    <div class="medicine-chips flex flex-wrap gap-2 mb-4">
+      <mat-chip-listbox multiple>
+        @for (medicine of bookmarked; track medicine) {
+        <mat-chip-option [selected]="isMedicineSelected(medicine.label)"
+          (selectionChange)="toggleMedicine($event, medicine)">
+          {{ medicine.label }}
+        </mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
+    }
+
+
+    @if (selectedMedicines.length > 0) {
+    <div class="selected-section">
+      <table class="w-full text-left border border-gray-300 bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Medicine</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Duration</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Timing</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Meal</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Notes</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700 text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (medicine of selectedMedicines; track $index) {
+          <tr class="hover:bg-gray-50">
+            <!-- Medicine Name -->
+            <td class="p-2 border-b">
+              <input #medicineInput type="text" [(ngModel)]="medicine.name"
+                class="w-[200px] border border-gray-300 rounded-md px-3 py-2 bg-gray-100 text-sm focus:outline-none"
+                readonly (keydown.enter)="$event.preventDefault(); durationInput.focus()" />
+            </td>
+
+            <!-- Duration -->
+            <td class="p-2 border-b">
+              <input #durationInput cdkFocusInitial type="text" [(ngModel)]="medicine.duration" placeholder="3 days"
+                class="max-w-[100px] border border-gray-300 truncate rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                (keydown.enter)="$event.preventDefault(); timingInput.focus()" />
+            </td>
+
+            <!-- Timing (with autocomplete) -->
+            <td class="p-2 border-b">
+              <input placeholder="Timming" #timingInput type="text" [(ngModel)]="medicine.timming" placeholder="Timing"
+                [matAutocomplete]="auto"
+                class="max-w-[100px] border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                (keydown.enter)="$event.preventDefault(); mealSelect.focus()" />
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let combo of mealCombinations" [value]="combo">
+                  {{ combo }}
+                </mat-option>
+              </mat-autocomplete>
+            </td>
+
+            <!-- Meal (select) -->
+            <td class="p-2 border-b">
+              <input #mealSelect placeholder="Meal" type="text" [(ngModel)]="medicine.mealTime"
+                [matAutocomplete]="autoMeal"
+                class="max-w-[120px] border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                (keydown.enter)="$event.preventDefault(); notesInput.focus()" />
+
+              <mat-autocomplete #autoMeal="matAutocomplete">
+                <mat-option class="text-[14px]" *ngFor="let time of mealTimes" [value]="time">
+                  {{ time }}
+                </mat-option>
+              </mat-autocomplete>
+
+            </td>
+
+            <!-- Notes -->
+            <td class="p-2 border-b">
+              <input #notesInput type="text" [(ngModel)]="medicine.notes" placeholder="Add notes"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                (keydown.enter)="$event.preventDefault(); saveBtn.focus()" />
+            </td>
+
+            <!-- Delete Button -->
+            <td class="p-2 border-b text-center">
+              <button #removeButton type="button" (click)="removeMedicine(medicine)"
+                class="text-red-500 hover:text-red-700">
+                <app-bin></app-bin>
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="gap-2">
+    <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
+    <button class="btn-secondary bg-primary" (click)="searchInput.focus()">Add More</button>
+    <button #saveBtn class="btn-secondary" (click)="save()">Save</button>
+  </mat-dialog-actions>
+</div>

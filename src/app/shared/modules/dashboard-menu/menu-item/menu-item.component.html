@@ -1,0 +1,25 @@
+<a [routerLink]="href"
+  class="group relative flex items-center gap-3  font-medium rounded-[1.15rem] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+  [ngClass]="{
+    'bg-[linear-gradient(135deg,var(--brand-primary)_0%,var(--brand-primary-accent)_100%)] !text-white shadow-[0_18px_32px_rgba(6,180,139,0.22)]': active,
+    'hover:bg-brand-primary/10 hover:text-brand-neutral ': !active,
+    'justify-center  py-3 ': collapsed,
+    'px-4 py-3': !collapsed
+  }">
+  <span class="grid place-items-center rounded-xl ring-1 transition-all duration-200" [ngClass]="{
+      'h-12 w-12': collapsed,
+      'h-10 w-10': !collapsed,
+      'bg-white/20 text-white ring-white/30': active,
+      'bg-white/90 text-current ring-brand-primary/10': !active
+    }">
+    <span class="flex items-center justify-center" [innerHTML]="iconSvg"></span>
+  </span>
+
+  <span class="text-sm text-inherit transition-opacity duration-200" [class.hidden]="collapsed">{{ label }}</span>
+
+  <span *ngIf="count !== undefined" class="ml-auto rounded-full px-2 py-0.5 text-xs font-semibold" [ngClass]="{
+      'bg-white/30 text-white': active,
+      'bg-brand-primary/10 text-brand-primary': !active,
+      'hidden': collapsed
+    }">{{ count }}</span>
+</a>

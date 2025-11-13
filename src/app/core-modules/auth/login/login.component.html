@@ -1,0 +1,139 @@
+<div class="login-shell">
+    <div class="login-shell__glow"></div>
+    <div class="login-shell__panel">
+        <section class="login-intro">
+            <div class="login-intro__brand">
+                <span class="login-intro__badge">P</span>
+                <div>
+                    <p class="login-intro__eyebrow">Prescription Suite</p>
+                    <h1 class="login-intro__title">Prescriba Portal</h1>
+                </div>
+            </div>
+
+            <p class="login-intro__subtitle">
+                Deliver faster, safer prescriptions with a workspace designed for busy
+                care teams.
+            </p>
+
+            <ul class="login-intro__highlights">
+                <li><span class="dot"></span>Unified patient timeline & smart visit reminders</li>
+                <li><span class="dot"></span>Reusable treatment templates and e-prescriptions</li>
+                <li><span class="dot"></span>HIPAA inspired security & OTP backed sign-on</li>
+            </ul>
+
+            <div class="login-intro__card">
+                <div class="avatar">
+                    <img src="assets/illustrations/doctor-avatar.svg" alt="Doctor illustration" loading="lazy"
+                        onerror="this.style.display='none'" />
+                    <div class="avatar__pulse"></div>
+                </div>
+                <div>
+                    <p class="login-intro__card-eyebrow">Next visit</p>
+                    <p class="login-intro__card-title">10:30 AM - Follow up</p>
+                    <p class="login-intro__card-foot">3 new lab updates awaiting review</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="login-form__wrapper">
+
+
+            <header class="login-form__header">
+                <h2>Welcome back</h2>
+                <p>Sign in with your doctor credentials to access the prescription desk.</p>
+            </header>
+
+            <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+                <div class="form-field" [class.has-error]="
+            (formSubmitted || loginForm.get('mobileNo')?.touched) &&
+            loginForm.get('mobileNo')?.invalid
+          ">
+                    <label for="mobileNo">Mobile number</label>
+                    <div class="form-field__control !border-[1px] border-[#d1d1e9] rounded-md">
+                        <span class="form-field__prefix">+88</span>
+                        <input id="mobileNo" inputmode="numeric" maxlength="11" autocomplete="off"
+                            formControlName="mobileNo" placeholder="01800000000" required />
+                        <span class="form-field__icon" aria-hidden="true">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+                    </div>
+                    <mat-error *ngIf="loginForm.get('mobileNo')?.hasError('required')">
+                        Mobile number is required.
+                    </mat-error>
+                    <mat-error *ngIf="loginForm.get('mobileNo')?.hasError('pattern')">
+                        Enter an 11 digit Bangladeshi mobile number.
+                    </mat-error>
+                    <mat-error *ngIf="loginForm.get('mobileNo')?.hasError('customError')">
+                        {{ loginForm.get('mobileNo')?.getError('customError') }}
+                    </mat-error>
+                </div>
+
+                <div class="form-field" [class.has-error]="
+            (formSubmitted || loginForm.get('password')?.touched) &&
+            loginForm.get('password')?.invalid
+          ">
+                    <div class="form-field__label-row">
+                        <label for="password">Password</label>
+                        <button type="button" class="link" (click)="goToForgotPassword()">
+                            Forgot?
+                        </button>
+                    </div>
+                    <div class="form-field__control">
+                        <input id="password" autocomplete="off" formControlName="password" [type]="passwordFieldType"
+                            placeholder="Password123@*" />
+                        <button type="button" class="form-field__icon" (click)="passwordVisibility('password')"
+                            aria-label="Toggle password visibility">
+                            <i
+                                [class]="passwordFieldType === 'password' ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                        </button>
+                    </div>
+                    <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                        Password is required.
+                    </mat-error>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-login__google" (click)="signInWithGoogle()"
+                        [disabled]="googleAuthLoading">
+                        <span class="social-login__icon" aria-hidden="true">
+                            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#EA4335"
+                                    d="M24 9.5c3.34 0 6.34 1.15 8.71 3.4l6.52-6.52C35.23 2.69 29.98 0 24 0 14.6 0 6.51 5.42 2.55 13.26l7.59 5.89C12.3 12.59 17.7 9.5 24 9.5z" />
+                                <path fill="#4285F4"
+                                    d="M46.5 24.5c0-1.5-.13-2.95-.38-4.34H24v8.21h12.68c-.55 2.97-2.19 5.48-4.68 7.17l7.34 5.7C43.67 36.8 46.5 31.2 46.5 24.5z" />
+                                <path fill="#FBBC05"
+                                    d="M10.14 28.74a14.52 14.52 0 0 1-.77-4.74c0-1.65.28-3.26.77-4.74l-7.59-5.89A23.94 23.94 0 0 0 0 24c0 3.83.92 7.45 2.55 10.63l7.59-5.89z" />
+                                <path fill="#34A853"
+                                    d="M24 48c6.48 0 11.92-2.14 15.89-5.88l-7.34-5.7c-2.06 1.39-4.68 2.21-8.55 2.21-6.3 0-11.7-3.09-14.86-7.66l-7.59 5.89C6.51 42.58 14.6 48 24 48z" />
+                                <path fill="none" d="M0 0h48v48H0z" />
+                            </svg>
+                        </span>
+                        <span class="social-login__label" *ngIf="!googleAuthLoading">Sign in with Google</span>
+                        <span class="social-login__label" *ngIf="googleAuthLoading">Connecting…</span>
+                    </button>
+                </div>
+
+                <button type="submit" class="login-form__submit" [disabled]="btnLoading || loginForm.invalid">
+                    <ng-container *ngIf="!btnLoading; else loading">
+                        <span>Sign in</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </ng-container>
+                </button>
+
+                <ng-template #loading>
+                    <span class="loading loading-dots loading-md"></span>
+                </ng-template>
+
+                <p class="login-form__footer">
+                    Trouble logging in?
+                    <a class="link" routerLink="/contact-us">Chat with support</a>
+                </p>
+            </form>
+
+            <div *ngIf="otp().otpError" class="login-form__alert" role="alert">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                {{ otp().otpError }}
+            </div>
+        </section>
+    </div>
+</div>

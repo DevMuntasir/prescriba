@@ -1,0 +1,182 @@
+<div class="flex flex-col gap-8">
+  <header class="flex flex-col gap-2">
+    <span class="text-xs font-semibold uppercase tracking-[0.35em] text-brand-primary/70">Doctors</span>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold text-brand-neutral">Prescriber network directory</h1>
+        <p class="text-sm text-brand-neutral/60">
+          Review the doctors operating under the Prescriba network. Track activation status, online presence and contact
+          details to orchestrate the care team effectively.
+        </p>
+      </div>
+      <div class="relative">
+        <svg
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-neutral/40"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"></path>
+          <circle cx="11" cy="11" r="7"></circle>
+        </svg>
+        <input
+          type="search"
+          class="w-72 rounded-full border border-brand-primary/20 bg-white py-2 pl-9 pr-4 text-sm text-brand-neutral shadow-[0_12px_30px_rgba(6,180,139,0.12)] placeholder:text-brand-neutral/40 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+          placeholder="Search by name, phone or email"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+    </div>
+  </header>
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <article class="doctor-card">
+      <div class="doctor-card__icon doctor-card__icon--primary">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <p class="doctor-card__label">Total doctors</p>
+      <p class="doctor-card__value">{{ metrics().total }}</p>
+      <p class="doctor-card__hint">Profiles onboarded to date</p>
+    </article>
+    <article class="doctor-card">
+      <div class="doctor-card__icon doctor-card__icon--success">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 22a10 10 0 1 0-10-10 10 10 0 0 0 10 10Z"></path>
+        </svg>
+      </div>
+      <p class="doctor-card__label">Active licences</p>
+      <p class="doctor-card__value">{{ metrics().active }}</p>
+      <p class="doctor-card__hint">Cleared and prescribing</p>
+    </article>
+    <article class="doctor-card">
+      <div class="doctor-card__icon doctor-card__icon--accent">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 16v-5a3 3 0 0 0-3-3h-1"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 8H6a3 3 0 0 0-3 3v5"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 5a4 4 0 1 0-8 0"></path>
+        </svg>
+      </div>
+      <p class="doctor-card__label">Online now</p>
+      <p class="doctor-card__value">{{ metrics().online }}</p>
+      <p class="doctor-card__hint">Available for instant consults</p>
+    </article>
+  </section>
+
+  <section class="roster rounded-3xl border border-brand-primary/15 bg-white shadow-[0_26px_60px_rgba(6,180,139,0.12)]">
+    <header class="flex flex-wrap items-center justify-between gap-4 border-b border-brand-primary/10 px-6 py-4">
+      <div>
+        <h2 class="text-lg font-semibold text-brand-neutral">Doctor roster</h2>
+        <p class="text-xs text-brand-neutral/60">Live status of prescriber accounts.</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs font-semibold text-brand-neutral/60">
+        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-emerald-600">
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          Online
+        </span>
+        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+          <span class="h-2 w-2 rounded-full bg-slate-400"></span>
+          Offline
+        </span>
+      </div>
+    </header>
+
+    <ng-container *ngIf="isLoading(); else loadedDoctors">
+      <div class="loading-state" role="status" aria-live="polite">
+        <span class="loading-state__spinner" aria-hidden="true"></span>
+        <span>Loading prescriber records…</span>
+      </div>
+    </ng-container>
+
+    <ng-template #loadedDoctors>
+      <ng-container *ngIf="!loadError(); else doctorError">
+        <div class="roster__scroll">
+          <table class="roster__table divide-y divide-brand-primary/10">
+            <thead class="bg-brand-primary/5 text-left text-xs font-semibold uppercase tracking-wider text-brand-neutral/60">
+              <tr>
+                <th class="px-6 py-3">Doctor</th>
+                <th class="px-6 py-3">Speciality</th>
+                <th class="px-6 py-3">Contact</th>
+                <th class="px-6 py-3">Status</th>
+                <th class="px-6 py-3">Patient ID</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-primary/10 text-sm text-brand-neutral">
+              <tr
+                *ngFor="let doctor of doctors(); trackBy: trackById"
+                class="transition-colors hover:bg-brand-primary/5"
+              >
+                <td class="px-6 py-4">
+                  <div class="flex flex-col">
+                    <span class="font-semibold text-brand-neutral">{{ doctor.fullName || doctor.firstName || 'Pending' }}</span>
+                    <span class="text-xs text-brand-neutral/60">{{ doctor.doctorTitleName || '—' }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <div class="flex flex-col">
+                    <span class="font-semibold">{{ doctor.specialityName || 'Speciality TBD' }}</span>
+                    <span class="text-xs text-brand-neutral/60">{{ doctor.areaOfExperties || 'Expertise not submitted' }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <div class="flex flex-col gap-1">
+                    <span class="inline-flex items-center gap-2">
+                      <svg class="h-3.5 w-3.5 text-brand-primary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h2l3 7-1.5 1.5a11 11 0 0 0 5 5l1.5-1.5 7 3v2a1 1 0 0 1-1 1A17 17 0 0 1 3 6a1 1 0 0 1 0-1Z"></path>
+                      </svg>
+                      <span>{{ doctor.mobileNo || '—' }}</span>
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                      <svg class="h-3.5 w-3.5 text-brand-primary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4 4 8 8 8-8"></path>
+                      </svg>
+                      <span>{{ doctor.email || '—' }}</span>
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-col gap-1">
+                    <span
+                      class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                      [ngClass]="doctor.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'"
+                    >
+                      <span
+                        class="h-2 w-2 rounded-full"
+                        [ngClass]="doctor.isOnline ? 'bg-emerald-500' : 'bg-slate-400'"
+                      ></span>
+                      {{ doctor.isActive ? 'Active' : 'Pending' }}
+                    </span>
+                    <!-- <span class="text-xs text-brand-neutral/60">
+                      {{ doctor.isOnline ? 'Online' : 'Offline' }}
+                    </span> -->
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-brand-neutral/80">
+                  <span>{{doctor.id }}</span>
+                </td>
+              </tr>
+              <tr *ngIf="!doctors().length && !isLoading()">
+                <td colspan="5" class="px-6 py-8 text-center text-sm text-brand-neutral/60">
+                  No doctors match the current search.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+      <ng-template #doctorError>
+        <div class="px-6 py-10 text-center text-sm text-rose-500">
+          {{ loadError() }}
+        </div>
+      </ng-template>
+    </ng-template>
+  </section>
+</div>

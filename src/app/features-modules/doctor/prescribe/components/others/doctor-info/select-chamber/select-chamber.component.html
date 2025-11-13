@@ -1,0 +1,11 @@
+<div class="w-[500px]">
+    select chamber
+
+    @for (item of chamberList; track $index) {
+
+    <p> <mat-checkbox [disabled]="isDisabled(item)" [checked]="isSelected(item)"
+            (change)="onSelectChamber($event.checked, item)">
+            {{ item.chamberName }}
+        </mat-checkbox></p>
+    }
+</div>

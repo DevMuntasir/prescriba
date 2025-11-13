@@ -1,0 +1,26 @@
+<div class="grid grid-cols-6 px-6 py-4 border-b hover:bg-gray-50 transition-colors">
+
+    <div class="col-span-1 flex items-center">
+        <div class="flex items-center">
+            <div
+                [ngClass]="[randomBgClass, 'h-8', 'w-8', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-teal-500', 'font-medium', 'mr-3']">
+                {{ patient.patientName?.trim()?.charAt(0)?.toUpperCase() }}
+            </div>
+            <span class="text-gray-800 font-medium">{{patient.patientName}}</span>
+        </div>
+    </div>
+    <div class="col-span-1 flex items-center text-gray-600">{{patient.patientMobileNo}}</div>
+    <div class="col-span-1 flex items-center">
+        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{{patient.genderName}}</span>
+    </div>
+    <div class="col-span-1 flex items-center text-gray-600">{{patient.age}}</div>
+    <div class="col-span-1 flex items-center">
+        <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">{{patient.bloodGroup}}</span>
+    </div>
+    <div class="col-span-1 flex items-center space-x-2">
+        <button (click)="goToPatientProfile.emit(patient)"
+            class="p-1 rounded-full hover:bg-teal-50 text-teal-600 flex items-center gap-1">
+            View Profile
+        </button>
+    </div>
+</div>

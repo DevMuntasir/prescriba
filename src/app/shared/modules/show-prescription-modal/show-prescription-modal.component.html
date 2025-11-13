@@ -1,0 +1,260 @@
+<div *ngIf="prescriptionLoader">Loading...</div>
+
+@if (prescriptionInfo) {
+<div class="relative w-full lg:max-w-[800px] h-screen">
+  <div class="relative w-full overflow-y-auto custom-scrollbar h-[calc(100%-62px)]" id="printable-section">
+    <div id="element-to-print" #printableSection *ngIf="!prescriptionLoader"
+      class="lg:px-12 px-6 pt-6 bg-white relative pb-20 md:pb-10 h-full">
+      <!-- Doctor Info -->
+      <div class="flex justify-between mb-5">
+        <div>
+          <h1 class="text-xl lg:text-xl font-semibold">
+            {{ prescriptionInfo.doctorName }}
+          </h1>
+          <p class="text-[14px]">{{ prescriptionInfo.areaOfExperties }}</p>
+          <p class="text-[14px]">{{ prescriptionInfo.qualifications }}</p>
+        </div>
+        <div>
+          logo
+        </div>
+      </div>
+
+      <!-- Patient Info -->
+      <hr />
+      <div class="mt-1 mb-1 grid grid-cols-2 md:grid-cols-4 print:grid-cols-4 gap-4">
+        <div>
+          <label class="text-[14px] text-gray-600">Patient Name</label>
+          <p class="font-semibold text-[14px]">
+            {{ prescriptionInfo.patientName }}
+          </p>
+        </div>
+        <div>
+          <label class="text-[14px] text-gray-600">Age</label>
+          <p class="font-semibold text-[14px]">
+            {{ prescriptionInfo.patientAge }}Years
+          </p>
+        </div>
+        <div>
+          <label class="text-[14px] text-gray-600">Blood Group</label>
+          <p class="font-semibold text-[14px]">
+            {{ prescriptionInfo.patientBloodGroup }}
+          </p>
+        </div>
+        <div>
+          <label class="text-[14px] text-gray-600">Date & Time</label>
+          <p class="font-semibold text-[14px]">
+            {{ prescriptionInfo.appointmentDate | date }}
+          </p>
+        </div>
+      </div>
+      <hr />
+      <!-- Additional Information -->
+      <div class="grid grid-cols-1 lg:grid-cols-[2fr,10fr] print:grid-cols-[2fr,10fr]">
+        <div class="mb-2 py-3 lg:border-r-[1px] h-full">
+          <div class="mt-3 border-b-[1px] pb-3">
+            <h2 class="text-[16px] font-Roboto text-slate-800">
+              Patient History
+            </h2>
+            <ul>
+              @for (history of
+              prescriptionInfo.prescriptionPatientDiseaseHistory; track $index)
+              {
+
+              <li class="pl-2 text-[14px] font-poppins text-slate-800">
+                {{ history.diseaseName }}
+              </li>
+              }@empty {
+              <p class="text-[12px] ml-2">No history found!</p>
+              }
+            </ul>
+          </div>
+          <!-- <div class="mt-3 border-b-[1px] pb-3">
+          <h2 class="text-[16px] font-Roboto text-slate-800">
+            Additional Info
+          </h2>
+          @if (prescriptionInfo.patientAdditionalInfo) {
+          <p class="pl-2 text-[14px] font-poppins text-slate-800">
+            {{ prescriptionInfo.patientAdditionalInfo }}
+          </p>
+          }@else {
+          <p class="text-[12px] ml-2">No additional info found!</p>
+          }
+        </div> -->
+          <div class="mt-3 border-b-[1px] pb-3">
+            <h2 class="text-[16px] font-Roboto text-slate-800">
+              Doctor Findings
+            </h2>
+            <ul>
+              @for (findings of
+              prescriptionInfo.prescriptionFindingsObservations; track $index) {
+              <li class="pl-2 text-[14px] font-poppins text-slate-800">
+                {{ findings.observation }}
+              </li>
+              }@empty {
+              <p class="text-[12px] ml-2">No findings found!</p>
+              }
+            </ul>
+          </div>
+          <div class="mt-3 border-b-[1px] pb-3">
+            <h2 class="text-[16px] font-Roboto text-slate-800">Observation</h2>
+            <ul>
+              @for (complaints of prescriptionInfo.prescriptionMainComplaints;
+              track $index) {
+              <li class="pl-2 text-[14px] font-poppins text-slate-800">
+                <p class="w-[180px] inline-block">{{ complaints.symptom }}-</p>
+                <span class="text-[14px] mr-2">{{
+                  convertToBanglaDuration(complaints.duration)
+                  }}</span>
+              </li>
+              }@empty {
+              <p class="text-[12px] ml-2">No complaints found!</p>
+              }
+            </ul>
+          </div>
+          <div class="mt-3 border-b-[1px] pb-3">
+            <h2 class="text-[16px] font-Roboto text-slate-800">
+              Test Recommended
+            </h2>
+            <ul>
+              @for (test of prescriptionInfo.prescriptionMedicalCheckups; track
+              $index; let count = $count) {
+              <li class="pl-2 text-[14px] font-poppins text-slate-800">
+                {{ test.testName }}
+              </li>
+              }@empty {
+              <p class="text-[12px] ml-2">No test found!</p>
+
+              }
+            </ul>
+          </div>
+        </div>
+        <div class="mb-4 p-4">
+          <div>
+            <!-- <img
+            class="w-[25px] h-[25px] opacity-90"
+            ngSrc="/assets/rx.png"
+            width="100"
+            height="100"
+            alt="rx"
+          /> -->
+            <div class="mt-3 pl-3 pb-2 border-b-[1px] drug" *ngFor="
+                  let medicine of prescriptionInfo.prescriptionDrugDetails;
+                  let i = index
+                ">
+              <h1 class="font-Roboto text-[14px] text-slate-900">
+                {{ i + 1 }}. {{ medicine.drugName }}
+              </h1>
+              <div class="font-Roboto pl-4 py-2 text-[14px] text-slate-800">
+                <p class="w-[250px] inline-block">
+                  <!-- {{
+                  convertToBanglaText(
+                    medicine.drugName,
+                    medicine.drugDoseSchedule
+                  )
+                }} -->
+                  {{ medicine.drugDoseSchedule }}
+                </p>
+
+                <span class="ml-5 font-semibold">
+                  <!-- ( {{ convertToBanglaDuration(medicine.duration) }}) -->
+                  {{ medicine.duration }}
+                  {{ medicine.drugDoseScheduleDays }}
+                </span>
+              </div>
+              <!-- <p class="font-Roboto pl-4 text-[14px] text-slate-800">
+              {{ medicine.duration }}
+            </p> -->
+              @if (medicine.instruction !== '') {
+              <p class="font-Roboto pl-4 text-[14px] text-slate-800">
+                মন্তব্য: {{ medicine.instruction }}
+              </p>
+              }
+            </div>
+          </div>
+          <div class="grid grid-cols-1 mt-5 md:grid-cols-2 print:grid-cols-2 gap-3">
+            <div class="mt-3">
+              <h2 class="text-[16px] font-Roboto text-slate-800 border-b-[1px] pb-1">
+                Follow up
+              </h2>
+              <p class="text-[12px] mt-2">
+                {{
+                prescriptionInfo.followupDate
+                ? (prescriptionInfo.followupDate | date)
+                : "No need to followup"
+                }}
+              </p>
+            </div>
+            <!-- <div class="mt-3">
+                                    <h2 class="text-[16px] font-semibold font-Roboto text-slate-800">Refer to</h2>
+                                     <p>Dr. Sadia sultana</p>
+                               </div> -->
+            <div class="mt-3">
+              <h2 class="text-[16px] font-Roboto text-slate-800 border-b-[1px] pb-1">
+                Doctor Advice
+              </h2>
+              <p class="text-[12px] mt-2">
+                {{
+                prescriptionInfo.advice
+                ? prescriptionInfo.advice
+                : "No advice found!"
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="sticky bg-secondary z-50 bottom-20 md:bottom-0 lg:py-3 lg:px-4 py-2 w-full flex gap-1 sm:gap-2 justify-center sm:justify-start">
+    <button class="btn-secondary-light print:hidden flex" (click)="pdfSavePrint('print')">
+      <svg fill="#fbbf24" width="20px" height="20px" viewBox="0 0 32.00 32.00" version="1.1"
+        xmlns="http://www.w3.org/2000/svg" stroke="#fbbf24" stroke-width="0.00032" class="mr-1">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC"
+          stroke-width="0.128"></g>
+        <g id="SVGRepo_iconCarrier">
+          <title>print</title>
+          <path
+            d="M5.656 6.938l-0.344 2.688h11.781l-0.344-2.688c0-0.813-0.656-1.438-1.469-1.438h-8.188c-0.813 0-1.438 0.625-1.438 1.438zM1.438 11.094h19.531c0.813 0 1.438 0.625 1.438 1.438v8.563c0 0.813-0.625 1.438-1.438 1.438h-2.656v3.969h-14.219v-3.969h-2.656c-0.813 0-1.438-0.625-1.438-1.438v-8.563c0-0.813 0.625-1.438 1.438-1.438zM16.875 25.063v-9.281h-11.344v9.281h11.344zM15.188 18.469h-8.125c-0.188 0-0.344-0.188-0.344-0.375v-0.438c0-0.188 0.156-0.344 0.344-0.344h8.125c0.188 0 0.375 0.156 0.375 0.344v0.438c0 0.188-0.188 0.375-0.375 0.375zM15.188 21.063h-8.125c-0.188 0-0.344-0.188-0.344-0.375v-0.438c0-0.188 0.156-0.344 0.344-0.344h8.125c0.188 0 0.375 0.156 0.375 0.344v0.438c0 0.188-0.188 0.375-0.375 0.375zM15.188 23.656h-8.125c-0.188 0-0.344-0.188-0.344-0.375v-0.438c0-0.188 0.156-0.344 0.344-0.344h8.125c0.188 0 0.375 0.156 0.375 0.344v0.438c0 0.188-0.188 0.375-0.375 0.375z">
+          </path>
+        </g>
+      </svg>
+      Print
+    </button>
+
+    <button class="btn-secondary-light print:hidden flex gap-1" (click)="pdfSavePrint('save')">
+      <svg fill="#fbbf24" width="20px" height="20px" viewBox="0 0 32 32" version="1.1"
+        xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <title>save</title>
+          <path
+            d="M9.467 3.106h3.030c0.266 0 0.482 0.278 0.482 0.621v4.374c0 0.343-0.216 0.621-0.482 0.621h-3.030c-0.266 0-0.482-0.278-0.482-0.621v-4.374c0-0.343 0.216-0.621 0.482-0.621zM21.964 14.524l7.987 7.987h-3.993v7.987h-7.987v-7.987h-3.993l7.987-7.987zM17.422 24.768h-10.309c-0.276 0-0.499-0.223-0.499-0.499v-11.481c0-0.276 0.223-0.499 0.499-0.499h17.721c0.276 0 0.499 0.223 0.499 0.499v4.402l3.12 3.12v-13.262c0-0.276-4.216-4.493-4.493-4.493h-4.741c0.169 0.069 0.287 0.223 0.287 0.404v6.181c0 0.244-0.216 0.442-0.482 0.442h-10.594c-0.266 0-0.482-0.198-0.482-0.442v-6.181c0-0.18 0.118-0.335 0.287-0.404h-4.242c-0.277 0-0.499 0.223-0.499 0.499v23.961c0 0.277 0.223 0.499 0.499 0.499h13.429v-2.746zM26.506 22.903v4.611h1.449c0.277 0 0.499-0.223 0.499-0.499v-4.111l-1.948 0z">
+          </path>
+        </g>
+      </svg>
+      {{ saveLoader ? "Saving..." : "Save" }}
+    </button>
+    <button class="print:hidden btn-secondary-light flex gap-1" (click)="dialogRef.close()">
+      <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM8.96963 8.96965C9.26252 8.67676 9.73739 8.67676 10.0303 8.96965L12 10.9393L13.9696 8.96967C14.2625 8.67678 14.7374 8.67678 15.0303 8.96967C15.3232 9.26256 15.3232 9.73744 15.0303 10.0303L13.0606 12L15.0303 13.9696C15.3232 14.2625 15.3232 14.7374 15.0303 15.0303C14.7374 15.3232 14.2625 15.3232 13.9696 15.0303L12 13.0607L10.0303 15.0303C9.73742 15.3232 9.26254 15.3232 8.96965 15.0303C8.67676 14.7374 8.67676 14.2625 8.96965 13.9697L10.9393 12L8.96963 10.0303C8.67673 9.73742 8.67673 9.26254 8.96963 8.96965Z"
+            fill="#fbbf24"></path>
+        </g>
+      </svg>
+      Close
+    </button>
+  </div>
+</div>
+}@else {
+<div class="flex flex-col justify-center items-center h-screen px-14">
+  <p class="text-[16px] font-semibold">No prescription found!</p>
+  <button class="btn-primary mt-5" (click)="dialogRef.close()">Back</button>
+</div>
+}

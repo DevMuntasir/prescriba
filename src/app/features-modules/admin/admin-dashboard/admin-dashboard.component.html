@@ -1,0 +1,153 @@
+<div class="admin-shell min-h-screen bg-brand-surface">
+  <div class="admin-shell__inner mx-auto flex max-w-[1800px] gap-6 px-4 py-6 sm:px-6 lg:px-8">
+    <aside
+      class="admin-sidebar hidden h-[calc(100vh-3rem)] w-72 flex-shrink-0 flex-col rounded-3xl border border-brand-primary/15 bg-white/95 p-6 shadow-[0_28px_70px_rgba(6,180,139,0.12)] backdrop-blur lg:flex">
+      <div class="flex h-full flex-col gap-8">
+        <div class="space-y-1">
+          <p class="text-xs font-semibold uppercase tracking-[0.45em] text-brand-primary/60">
+            Prescriba
+          </p>
+          <h1 class="text-xl font-semibold text-brand-neutral">Admin Console</h1>
+          <p class="text-xs text-brand-neutral/50">
+            Manage prescriptions, people, and policy with confidence.
+          </p>
+        </div>
+        <nav class="flex-1">
+          <ul class="space-y-2">
+            <li *ngFor="let link of sidebarLinks">
+              <ng-container *ngIf="link.path; else disabledLink">
+                <a [routerLink]="link.path" routerLinkActive="sidebar-link--active"
+                  [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+                  <span class="sidebar-link__icon">
+                    <ng-container [ngSwitch]="link.icon">
+                      <svg *ngSwitchCase="'dashboard'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 21h8V11h-8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 3h8M13 7h8M3 17h8M3 21h8"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'prescriptions'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M6 3h9l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 3v7h7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19h3"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'doctors'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="8" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 21a6 6 0 0 1 12 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 3v8"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'patients'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 21a8 8 0 0 1 16 0"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'settings'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8.94-2.06a1 1 0 0 1 0 2.12l-1.42.33a7 7 0 0 1-.74 1.78l.8 1.3a1 1 0 0 1-1.7 1.06l-1.1-1a6.94 6.94 0 0 1-1.86.76l-.28 1.44a1 1 0 0 1-2-.02l-.28-1.42a7.06 7.06 0 0 1-1.84-.74l-1.12 1a1 1 0 0 1-1.7-1.06l.82-1.32a7 7 0 0 1-.72-1.78l-1.44-.34a1 1 0 0 1 0-2.12l1.44-.34c.16-.62.4-1.21.72-1.78l-.82-1.32a1 1 0 0 1 1.7-1.06l1.12 1c.58-.33 1.2-.58 1.84-.74l.28-1.42a1 1 0 0 1 2-.02l.28 1.44c.66.16 1.28.42 1.86.76l1.1-1a1 1 0 0 1 1.7 1.06l-.8 1.3c.32.57.56 1.16.74 1.78l1.42.33Z">
+                        </path>
+                      </svg>
+                      <svg *ngSwitchCase="'analytics'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m7 13 4-4 4 3 6-7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17h4"></path>
+                      </svg>
+                    </ng-container>
+                  </span>
+                  <span class="sidebar-link__content">
+                    <span class="sidebar-link__label">{{ link.label }}</span>
+                    <!-- <span class="sidebar-link__description">{{ link.description }}</span> -->
+                  </span>
+                  <span *ngIf="link.badge" class="sidebar-link__badge">{{ link.badge }}</span>
+                </a>
+              </ng-container>
+              <ng-template #disabledLink>
+                <button type="button" class="sidebar-link sidebar-link--disabled" >
+                  <span class="sidebar-link__icon">
+                    <ng-container [ngSwitch]="link.icon">
+                      <svg *ngSwitchCase="'dashboard'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 21h8V11h-8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 3h8M13 7h8M3 17h8M3 21h8"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'prescriptions'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M6 3h9l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 3v7h7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19h3"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'doctors'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="8" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 21a6 6 0 0 1 12 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 3v8"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'patients'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 21a8 8 0 0 1 16 0"></path>
+                      </svg>
+                      <svg *ngSwitchCase="'settings'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8.94-2.06a1 1 0 0 1 0 2.12l-1.42.33a7 7 0 0 1-.74 1.78l.8 1.3a1 1 0 0 1-1.7 1.06l-1.1-1a6.94 6.94 0 0 1-1.86.76l-.28 1.44a1 1 0 0 1-2-.02l-.28-1.42a7.06 7.06 0 0 1-1.84-.74l-1.12 1a1 1 0 0 1-1.7-1.06l.82-1.32a7 7 0 0 1-.72-1.78l-1.44-.34a1 1 0 0 1 0-2.12l1.44-.34c.16-.62.4-1.21.72-1.78l-.82-1.32a1 1 0 0 1 1.7-1.06l1.12 1c.58-.33 1.2-.58 1.84-.74l.28-1.42a1 1 0 0 1 2-.02l.28 1.44c.66.16 1.28.42 1.86.76l1.1-1a1 1 0 0 1 1.7 1.06l-.8 1.3c.32.57.56 1.16.74 1.78l1.42.33Z">
+                        </path>
+                      </svg>
+                      <svg *ngSwitchCase="'analytics'" class="h-5 w-5" fill="none" stroke="currentColor"
+                        stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m7 13 4-4 4 3 6-7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 17h4"></path>
+                      </svg>
+                    </ng-container>
+                  </span>
+                  <span class="sidebar-link__content">
+                    <span class="sidebar-link__label">{{ link.label }}</span>
+                    <!-- <span class="sidebar-link__description">{{ link.description }}</span> -->
+                  </span>
+                  <span *ngIf="link.badge" class="sidebar-link__badge">{{ link.badge }}</span>
+                </button>
+              </ng-template>
+            </li>
+          </ul>
+        </nav>
+        <!-- <div class="rounded-2xl bg-brand-primary/10 p-4 text-xs text-brand-neutral/70">
+          <p class="mb-2 font-semibold text-brand-primary">Need quick metrics?</p>
+          <p>Export the daily analytics report to share with regional leadership teams.</p>
+        </div>
+        <button
+          type="button"
+          (click)="onLogout()"
+          class="group inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-primary/20 bg-white/90 px-4 py-3 text-sm font-semibold text-brand-primary shadow-[0_14px_32px_rgba(6,180,139,0.18)] transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/40">
+          <svg
+            class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3"></path>
+          </svg>
+          <span>Log out</span>
+        </button>
+        -->
+      </div>
+    </aside>
+
+    <main class="flex-1">
+      <router-outlet/>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="flex items-center justify-left my-7">
+  <div class="w-full bg-white">
+    <div class="relative overflow-x-auto sm:rounded-lg">
+      <div
+        class="py-2 pl-5 pr-1 border-[1px] rounded-md flex gap-4 items-center justify-between md:justify-start"
+      >
+        <h1
+          class="dashbord-heading-text text-[15px] md:text-[18px] font-medium"
+        >
+          <i class="fa-solid fa-building-columns mr-1"></i> Education
+        </h1>
+        <button class="btn-secondary-light min-w-fit" (click)="openDialog()">
+          <i class="fa-solid fa-plus mr-1"></i> Add Degree
+        </button>
+      </div>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-x-4"
+      >
+        <div class="py-3" *ngFor="let item of educationList">
+          <app-degree-card
+            [degreeData]="item"
+            (editDegree)="handleDegreeEdit($event)"
+          ></app-degree-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

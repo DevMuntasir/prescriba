@@ -1,0 +1,66 @@
+<div class="overflow-auto doctor-dashboard_midcontent_container w-ful">
+  <div class="flex items-center justify-left">
+    <div class="w-full overflow-auto bg-white">
+      <div
+        class="relative overflow-x-auto overflow-y-auto sm:rounded-lg px-8 py-6"
+      >
+        <div
+          *ngIf="!isLoading.status"
+          class="px-4 h-[400px] overflow-y-auto custom-scrollbar"
+        >
+          <table
+            class="w-full text-sm text-left rounded-lg text-gray-500 border-[1px] table table-xs table-pin-rows table-pin-cols"
+          >
+            <thead
+              class="text-xs rounded-lg text-gray-800 uppercase bg-black/5"
+            >
+              <tr>
+                <th scope="col" class="px-6 py-3">Doctor's Name</th>
+                <th scope="col" class="px-6 py-3">Prescription Date</th>
+                <td class="px-6 py-4">Appointment Date</td>
+                <th scope="col" class="px-6 py-3">Prescription</th>
+                <td class="px-6 py-4">Followup Date</td>
+                <!-- <th scope="col" class="px-6 py-3">Advice</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let prescription of prescriptionListDetails"
+                class="bg-white hover:bg-gray-50"
+              >
+                <td class="px-6 py-4">Dr. {{ prescription.doctorName }}</td>
+
+                <td class="px-6 py-4">
+                  {{ prescription.prescriptionDate | date }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ prescription.appointmentDate | date }}
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    (click)="openPdfDialog(prescription.id)"
+                    class="py-1 px-4 border-secondary-dark/10 border-[1px] bg-secondary-light text-white rounded-md cursor-pointer"
+                    >View</span
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  {{ prescription.followupDate | date }}
+                </td>
+                <!-- <td class="px-6 py-4">
+                  {{ prescription.advice }}
+                </td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          *ngIf="isLoading.status"
+          class="flex w-full h-[300px] justify-center items-center"
+        >
+          {{ isLoading.message }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

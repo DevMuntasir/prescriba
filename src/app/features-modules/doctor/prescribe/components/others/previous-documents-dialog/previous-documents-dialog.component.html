@@ -1,0 +1,13 @@
+<swiper-container class="mySwiper" pagination="true" pagination-clickable="true" navigation="true" space-between="30"
+  loop="true">
+  @for (docSrc of docData; track $index) {
+  <swiper-slide class="swiper-slide !w-full h-full">
+    <ng-container *ngIf="docSrc">
+      <iframe *ngIf="isPdf(docSrc)" [src]="docSrc" width="100%" height="100%"></iframe>
+      <img class="w-full" *ngIf="!isPdf(docSrc)" [src]="docSrc" alt="selected file" />
+    </ng-container>
+  </swiper-slide>
+  }@empty {
+  <p class="py-10 font-poppins">No documents found!</p>
+  }
+</swiper-container>

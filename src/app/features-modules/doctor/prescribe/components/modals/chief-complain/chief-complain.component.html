@@ -1,0 +1,94 @@
+<div class="chief-complaint-dialog">
+  <div class="flex bg-gray-200 items-center pl-4 py-4">
+    <h2 class="h-fit font-Roboto text-[20px] !mb-0 whitespace-nowrap">
+      Chief Complaint
+    </h2>
+
+    <form (ngSubmit)="addComplaint({label:searchControl.value || '',value: 0})"
+      class="search-section flex-1 w-full flex items-center space-x-2 rounded-lg overflow-hidden bg-white border-[1px] shadow-lg mx-10">
+      <div class="w-full h-fit">
+        <input class="text-[16px] px-3 py-3 w-full outline-none border-none" type="text" matInput
+          [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Search complaints...">
+        <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete">
+          @for (complaint of filteredChiefComplaints | async; track complaint.value) {
+          <mat-option [value]="complaint">
+            {{ complaint.label }}
+          </mat-option>
+          }
+        </mat-autocomplete>
+
+      </div>
+      <button [disabled]="isAddComplients"
+        class="bg-blue-950 text-white p-4 disabled:bg-gray-200 disabled:text-gray-500" type="submit">
+        {{isAddComplients? 'Adding..': 'Add'}}
+      </button>
+    </form>
+  </div>
+
+  <mat-dialog-content>
+    @if (loading.noDataFound && selectedComplaints.length==0) {
+
+    No bookmark found for history!
+
+    }
+    @if (loading.isSkelton) {
+    <app-skelton />
+    }@else{
+    <div class="complaint-chips flex flex-wrap gap-2 mb-4">
+      <mat-chip-listbox multiple>
+        @for (complaint of bookmarkedComplaints; track complaint.value) {
+        <mat-chip-option class="bg-slate-200" [selected]="isComplaintSelected(complaint.label)"
+          (selectionChange)="toggleComplaint($event, complaint)">
+          {{ complaint.label }}
+        </mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
+    }
+    @if (selectedComplaints.length > 0) {
+    <div class="selected-section bg-white">
+      <table class="w-full text-left border border-gray-300 bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Complaint</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Duration</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700">Notes</th>
+            <th class="p-2 border-b text-sm font-semibold text-gray-700 text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (complaint of selectedComplaints; track i; let i = $index) {
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 border-b">
+              <input type="text" [(ngModel)]="complaint.name" readonly
+                class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 text-sm focus:outline-none" />
+            </td>
+            <td class="p-2 border-b">
+              <input #durationInput type="text" [(ngModel)]="complaint.duration" placeholder="e.g., 3 days"
+                (keydown.enter)="$event.preventDefault(); notesInput.focus()"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </td>
+            <td class="p-2 border-b">
+              <input #notesInput type="text" [(ngModel)]="complaint.notes" placeholder="Add notes"
+                (keydown.enter)="$event.preventDefault(); saveButton?.click()"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </td>
+            <td class="p-2 border-b text-center">
+              <button type="button" (click)="removeComplaint(i)" class="text-red-500 hover:text-red-700">
+                <app-bin></app-bin>
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="gap-2">
+    <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
+    <button #saveButton class="btn-secondary" (click)="saveComplaints()">Save</button>
+  </mat-dialog-actions>
+</div>

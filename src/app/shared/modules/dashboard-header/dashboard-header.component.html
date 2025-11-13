@@ -1,0 +1,300 @@
+<div
+  class="sticky top-0 z-50 w-full border-b-[1px] backdrop-blur-md bg-white h-[70px] flex px-5 lg:px-10 box-border justify-between lg:justify-end items-center"
+>
+  <div class="header-logo w-[170px] md:w-[200px] lg:hidden" routerLink="/">
+    RX
+  </div>
+
+  <div class="flex items-center">
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="flex">
+        <div class="relative mx-4 inline-flex items-center">
+          <svg
+            width="30px"
+            height="30px"
+            class="w-[30px] h-[30px]"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M8.35179 20.2418C9.19288 21.311 10.5142 22 12 22C13.4858 22 14.8071 21.311 15.6482 20.2418C13.2264 20.57 10.7736 20.57 8.35179 20.2418Z"
+                fill="#fbbf24"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M18.7491 9.7041V9C18.7491 5.13401 15.7274 2 12 2C8.27256 2 5.25087 5.13401 5.25087 9V9.7041C5.25087 10.5491 5.00972 11.3752 4.5578 12.0782L3.45036 13.8012C2.43882 15.3749 3.21105 17.5139 4.97036 18.0116C9.57274 19.3134 14.4273 19.3134 19.0296 18.0116C20.789 17.5139 21.5612 15.3749 20.5496 13.8012L19.4422 12.0782C18.9903 11.3752 18.7491 10.5491 18.7491 9.7041ZM12 5.25C12.4142 5.25 12.75 5.58579 12.75 6V10C12.75 10.4142 12.4142 10.75 12 10.75C11.5858 10.75 11.25 10.4142 11.25 10V6C11.25 5.58579 11.5858 5.25 12 5.25Z"
+                fill="#fbbf24"
+              ></path>
+            </g>
+          </svg>
+          @if (notificationCount > 0) {
+          <div
+            class="absolute inline-flex items-center justify-center w-4 h-4 md:w-5 md:h-5 text-xs font-bold text-white bg-red-500 rounded-full -top-1 md:-top-2 -end-1 md:-end-2 dark:border-gray-900"
+          >
+            {{ notificationCount }}
+          </div>
+          }
+        </div>
+      </label>
+      <ul
+        tabindex="0"
+        class="overflow-y-scroll bg-blue-50 custom-scrollbar max-h-[550px] border-secondary shadow-md dropdown-content mt-3 p-3 border-[1px] rounded-box w-[280px] lg:w-[350px]"
+      >
+        <h1 class="text-[20px] py-2 font-semibold text-slate-900">
+          Notifications
+        </h1>
+        @for (item of messageList; track $index) {
+        <div
+          class="mt-2 px-6 py-4 bg-white rounded-lg shadow w-full hover:shadow-md"
+        >
+          <div class="inline-flex items-center justify-between w-full">
+            <div class="inline-flex items-center">
+              <svg
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 128.5 128.5"
+                xml:space="preserve"
+                width="34px"
+                height="34px"
+                fill="#000000"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <g id="_x31_4">
+                    <g>
+                      <circle
+                        style="fill: #75d1f0"
+                        cx="64.25"
+                        cy="64.25"
+                        r="64.25"
+                      ></circle>
+                    </g>
+                    <g>
+                      <path
+                        style="fill: #f2f2f2"
+                        d="M87.805,28.975h0.618c7.083,0,12.878,5.795,12.878,12.879v48.345 c0,7.083-5.796,12.879-12.878,12.879h-0.618V47.287c2.704,0,4.896-2.192,4.896-4.896c0-2.703-2.191-4.895-4.896-4.895 C87.805,37.496,87.805,28.975,87.805,28.975z M40.696,28.975h47.109v8.521h-0.001c-2.703,0-4.896,2.192-4.896,4.895 c0,2.704,2.193,4.896,4.896,4.896h0.001v55.791H40.696V47.287c2.703,0,4.896-2.192,4.896-4.896c0-2.703-2.192-4.895-4.896-4.895 V28.975z M40.079,28.975h0.617v8.521c-2.704,0-4.896,2.192-4.896,4.895c0,2.704,2.192,4.896,4.896,4.896v55.791h-0.617 c-7.084,0-12.88-5.797-12.88-12.879V41.854C27.199,34.77,32.995,28.975,40.079,28.975z"
+                      ></path>
+                      <path
+                        style="fill: #afafaf"
+                        d="M40.696,25.422L40.696,25.422c1.046,0,1.902,0.856,1.902,1.902v13.165 c0,1.046-0.856,1.902-1.902,1.902h-0.001c-1.047,0-1.902-0.856-1.902-1.902V27.324C38.794,26.278,39.65,25.422,40.696,25.422z"
+                      ></path>
+                      <path
+                        style="fill: #afafaf"
+                        d="M87.805,25.422L87.805,25.422c1.047,0,1.902,0.856,1.902,1.902v13.165 c0,1.046-0.855,1.902-1.902,1.902h-0.001c-1.047,0-1.903-0.856-1.903-1.902V27.324C85.902,26.278,86.758,25.422,87.805,25.422z"
+                      ></path>
+                      <rect
+                        x="27.199"
+                        y="50.675"
+                        style="fill: #1ecefa"
+                        width="74.102"
+                        height="3.107"
+                      ></rect>
+                      <rect
+                        x="53.236"
+                        y="59.304"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="38.199"
+                        y="58.954"
+                        style="fill: #c9675b"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="68.727"
+                        y="59.304"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="83.088"
+                        y="59.304"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="53.586"
+                        y="72.996"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="69.077"
+                        y="72.996"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="83.088"
+                        y="73.346"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="53.586"
+                        y="87.327"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.439"
+                      ></rect>
+                      <rect
+                        x="38.373"
+                        y="72.996"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.453"
+                      ></rect>
+                      <rect
+                        x="38.373"
+                        y="87.327"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.439"
+                      ></rect>
+                      <rect
+                        x="68.727"
+                        y="87.677"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.439"
+                      ></rect>
+                      <rect
+                        x="83.088"
+                        y="87.677"
+                        style="fill: #efcb6c"
+                        width="9.584"
+                        height="8.439"
+                      ></rect>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+              <h3 class="font-bold text-base text-gray-800">New Appointment</h3>
+            </div>
+            <p class="text-xs text-gray-500">
+              <!-- {{ getNotificationTime(item.createdAt) }} -->
+            </p>
+          </div>
+          <p class="mt-1 text-sm">{{ item.message }}</p>
+        </div>
+
+        }
+      </ul>
+    </div>
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-ghost btn-circle avatar flex">
+        <div
+          class="w-8 rounded-full border-2 border-secondary relative bg-slate-700"
+        >
+          <img ngSrc="assets/auth/doctor.png" width="50" height="50" />
+        </div>
+      </label>
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content border-secondary p-4 bg-white border-[1px] shadow-md rounded-box w-[200px]"
+      >
+        <li (click)="goHome()">
+          <a class="font-Roboto text-slate-900 text-[16px] py-2">
+            <i class="fa-solid fa-border-none mr-1"></i> Home Page
+          </a>
+        </li>
+        <li *ngIf="authInfo?.userType">
+          <a
+            class="font-Roboto text-slate-900 text-[16px] py-2"
+            (click)="signOut()"
+          >
+            <i class="fa-solid fa-right-from-bracket mr-1"></i>Logout
+          </a>
+        </li>
+        @if (authInfo?.userType === 'patient') {
+
+        <li class="mt-2 border-t-2" (click)="onClickModal('change-password')">
+          <a class="font-Roboto text-slate-900 text-[16px] py-2">
+            <i class="fa-solid fa-right-from-bracket mr-1"></i>
+            Change password
+          </a>
+        </li>
+        <li (click)="onClickModal('delete-account')">
+          <a class="font-Roboto text-red-500 text-[16px] py-2">
+            <i class="fa-solid fa-right-from-bracket mr-1"></i>
+            Delete account
+          </a>
+        </li>
+
+        }
+      </ul>
+    </div>
+    <svg
+      (click)="onClickMobileMenu(isVisible)"
+      fill="#f4c1c8"
+      width="20px"
+      height="20px"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      class="mr-2 ml-2 lg:hidden cursor-pointer"
+    >
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></g>
+      <g id="SVGRepo_iconCarrier">
+        <path
+          d="M0 0h4v4H0V0zm0 6h4v4H0V6zm0 6h4v4H0v-4zM6 0h4v4H6V0zm0 6h4v4H6V6zm0 6h4v4H6v-4zm6-12h4v4h-4V0zm0 6h4v4h-4V6zm0 6h4v4h-4v-4z"
+          fill-rule="evenodd"
+        ></path>
+      </g>
+    </svg>
+
+    <!-- <svg
+      #toggleButton
+      (click)="onClickMobileMenu(isVisible)"
+      fill="#1ecefa"
+      class="menubar lg:hidden cursor-pointer"
+      width="22px"
+      height="22px"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      stroke="#1ecefa"
+    >
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></g>
+      <g id="SVGRepo_iconCarrier">
+        <path
+          d="M0 0h4v4H0V0zm0 6h4v4H0V6zm0 6h4v4H0v-4zM6 0h4v4H6V0zm0 6h4v4H6V6zm0 6h4v4H6v-4zm6-12h4v4h-4V0zm0 6h4v4h-4V6zm0 6h4v4h-4v-4z"
+          fill-rule="evenodd"
+        ></path>
+      </g>
+    </svg> -->
+  </div>
+</div>
+

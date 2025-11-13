@@ -1,0 +1,19 @@
+.app-loader {
+    position: absolute; 
+    z-index: 1000;
+    width: 100%;
+    background: #0202024b;
+    backdrop-filter: blur(2px);
+  }
+  #ngx-facebook-messenger {
+    .wrapper {
+      bottom: 36px;
+      right: 0;
+      left: 0;
+    }
+  
+    .wrapper-icon-text {
+      left: 12px;
+      background: #8278ff;
+    }
+  }

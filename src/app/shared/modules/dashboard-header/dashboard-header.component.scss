@@ -1,0 +1,16 @@
+.db-header{
+    background: #f1f;
+    backdrop-filter: blur(20px);
+}
+.sticky-header{
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;}
+
+    ::ng-deep .mt-header-menu.mat-mdc-menu-panel,
+    ::ng-deep .mt-header-menu.mat-mdc-menu-panel .mat-mdc-menu-content{
+      background-color: transparent;
+      border-radius: none;
+      padding: 0;
+      }
+      ::ng-deep .mat-mdc-menu-panel{
+        max-width: 100%!important;
+      }
