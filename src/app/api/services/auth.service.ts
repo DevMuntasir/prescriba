@@ -38,4 +38,15 @@ export class AuthService {
       input
     );
   }
+
+  /**
+   * Retrieve a user from backend by Firebase ID token.
+   * The API is expected to accept an object with the token and return user info.
+   */
+  getUserByFirebaseToken(token: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(
+      `${this.authBaseUrl}/firebase/verify`,
+      { token }
+    );
+  }
 }
