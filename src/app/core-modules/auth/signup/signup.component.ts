@@ -8,12 +8,17 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MockOnboardingService } from 'src/app/shared/services/mock-onboarding.service';
 import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-state.service';
+import { UserManageAccountsService } from '../auth-service/user-manage-accounts.service';
+import {
+  UserSignInRequestDto,
+  UserSingupRequestDto,
+} from 'src/app/api/soow-good/domain/service/models/user-info';
 @Component({
   selector: 'app-signup-component',
   templateUrl: './signup.component.html',
@@ -43,7 +48,8 @@ export class SignupComponent implements OnInit {
     private router: Router,
     private authStorage: AuthService,
     private onboardingService: MockOnboardingService,
-    private userInfoState: UserinfoStateService
+    private userInfoState: UserinfoStateService,
+    private UserManageAccountsService: UserManageAccountsService
   ) {}
 
   ngOnInit(): void {
@@ -81,23 +87,29 @@ export class SignupComponent implements OnInit {
     }
 
     const { mobileNo, password } = this.formGroup.value;
+    const signup_payload: UserSingupRequestDto = {
+      password,
+      userName: mobileNo,
+      email: 'user@gmail.com',
+      name: mobileNo,
+      surname: mobileNo,
+      phoneNumber: mobileNo,
+      roleId: 'doctor',
+    };
     this.loading.set(true);
 
-    this.onboardingService.signup({ mobileNo, password }).subscribe({
+    this.UserManageAccountsService.signupUserByRequest(
+      signup_payload
+    ).subscribe({
       next: (profile) => {
-        const authPayload = {
-          fullName: profile.fullName ?? 'Doctor',
-          userId: profile.userId,
-          id: profile.id,
-          userType: 'doctor',
-        };
+        console.log(profile);
 
-        this.authStorage.setAuthInfoInLocalStorage(authPayload);
-        this.userInfoState.sendData(profile);
-        this.loading.set(false);
-        this.router.navigate(['/doctor/dashboard'], {
-          state: { onboarding: true },
-        });
+        // this.authStorage.setAuthInfoInLocalStorage(authPayload);
+        // this.userInfoState.sendData(profile);
+        // this.loading.set(false);
+        // this.router.navigate(['/doctor/dashboard'], {
+        //   state: { onboarding: true },
+        // });
       },
       error: (error) => {
         console.error('Mock signup failed', error);

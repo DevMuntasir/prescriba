@@ -51,7 +51,11 @@ class AuthServiceGuard {
       return '/ps-admin';
     }
 
-    return '/login';
+    if (url.startsWith('/doctor')) {
+      return '/login';
+    }
+
+    return '/';
   }
 
   private dashboardRouteFor(role: string): string {

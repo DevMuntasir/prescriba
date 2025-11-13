@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, Inject, Input, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -17,19 +17,24 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgOtpInputModule } from 'ng-otp-input';
-import { LoginResponseDto, PatientProfileDto } from 'src/app/proxy/dto-models';
-import { OtpRequestDto } from 'src/app/proxy/soow-good/domain/service/models/otp';
+import { LoginResponseDto, PatientProfileDto } from 'src/app/api/dto-models';
+import { OtpRequestDto } from 'src/app/api/soow-good/domain/service/models/otp';
 import {
   SendOtpModel,
   UserSignInRequestDto,
-} from 'src/app/proxy/soow-good/domain/service/models/user-info';
+} from 'src/app/api/soow-good/domain/service/models/user-info';
 import { TosterService } from 'src/app/shared/services/toster.service';
 import { UserManageAccountsService } from '../auth-service/user-manage-accounts.service';
-import { DoctorProfileService } from 'src/app/proxy/services';
-import { AuthService as Auth } from '../auth-service/auth.service';
+import { DoctorProfileService } from 'src/app/api/services';
+import { AuthService as AuthApiService } from '../auth-service/auth.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import {
+  Auth as FirebaseAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from '@angular/fire/auth';
 
-// import { DoctorProfileDto, PatientProfileDto } from 'src/app/proxy/dto-models';
+// import { DoctorProfileDto, PatientProfileDto } from 'src/app/api/dto-models';
 export interface ExtendedLoginDto {
   userName: string;
   password: string;
@@ -84,6 +89,7 @@ export class LoginComponent implements OnInit {
     otpSuccess: '',
   });
   btnLoading: boolean = false;
+  googleAuthLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -92,13 +98,58 @@ export class LoginComponent implements OnInit {
     private NormalAuth: AuthService,
     private UserManageAccountsService: UserManageAccountsService,
     private TosterService: TosterService,
-    private Auth: Auth,
+    private authApi: AuthApiService,
     private DoctorProfileService: DoctorProfileService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    @Inject(FirebaseAuth) private firebaseAuth: FirebaseAuth
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  async signInWithGoogle(): Promise<void> {
+    if (this.googleAuthLoading) {
+      return;
+    }
+
+    this.googleAuthLoading = true;
+
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      const credential = await signInWithPopup(this.firebaseAuth, provider);
+      const user = credential.user;
+
+      if (!user) {
+        throw new Error('Google authentication did not return a user.');
+      }
+
+      const idToken = await user.getIdToken();
+      const authInfo = {
+        fullName: user.displayName || user.email || 'Google User',
+        userId: user.uid,
+        email: user.email,
+        photoURL: user.photoURL,
+        userType: 'google',
+      };
+
+      this.NormalAuth.setAuthInfoInLocalStorage(authInfo);
+      localStorage.setItem('access', JSON.stringify(idToken));
+      localStorage.setItem('refreshToken', JSON.stringify(user.refreshToken));
+      this.Router.navigate(['/doctor/dashboard']);
+      this.TosterService.customToast(
+        'Signed in with Google successfully.',
+        'success'
+      );
+    } catch (error: any) {
+      const message =
+        error?.message || 'Unable to complete Google sign-in. Please try again.';
+      this.TosterService.customToast(message, 'error');
+    } finally {
+      this.googleAuthLoading = false;
+    }
   }
 
   get formControl() {
@@ -153,7 +204,7 @@ export class LoginComponent implements OnInit {
 
     try {
       this.btnLoading = true;
-      this.Auth.loginApiByRequest(requestLogin).subscribe({
+      this.authApi.loginApiByRequest(requestLogin).subscribe({
         next: (userInfo) => {
           if (
             userInfo.is_success &&

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AppointmentsComponent } from './appointments.component';
 import { Route, RouterModule } from '@angular/router';
-import { AllAppointmentsModule } from 'src/app/shared/modules/all-appointments/all-appointments.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes: Route[] = [
   {
@@ -16,8 +16,8 @@ const routes: Route[] = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    AllAppointmentsModule,
     NgOptimizedImage,
+    ReactiveFormsModule,
   ],
 })
 export class AppointmentsModule {}

@@ -5,11 +5,11 @@ import { LoaderService } from './../../../../shared/services/loader.service';
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DoctorTitle, Gender, MaritalStatus } from 'src/app/proxy/enums';
+import { DoctorTitle, Gender, MaritalStatus } from 'src/app/api/enums';
 import {
   DoctorProfileService,
   SpecialityService,
-} from 'src/app/proxy/services';
+} from 'src/app/api/services';
 import { ListItem } from 'src/app/shared/model/common-model';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { CommonService } from 'src/app/shared/services/common.service';

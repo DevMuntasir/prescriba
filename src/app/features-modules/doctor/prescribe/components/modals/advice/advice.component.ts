@@ -29,16 +29,16 @@ import { MatListModule } from '@angular/material/list';
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
-  Observable,
+
   startWith,
-  switchMap,
-} from 'rxjs';
+
+} from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { AdviceService } from '../../../services/advice.service';
 import { PrescriptionService } from '../../../services/prescription.service';
 import { BinComponent } from '../../shared/dynamic-modal/icons/bin/bin.component';
 import { SkeltonComponent } from './../../others/skelton/skelton.component';
+import { Observable,  switchMap,map } from 'rxjs';
 
 @Component({
   selector: 'app-advice',
@@ -67,7 +67,7 @@ export class AdviceComponent {
   private PrescriptionService = inject(PrescriptionService);
   public dialogRef = inject(MatDialogRef<AdviceComponent>);
   private NormalAuth = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef);
+
 
   loading = {
     isSpinner: false,

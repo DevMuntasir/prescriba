@@ -1,11 +1,7 @@
 import { TosterService } from './../../services/toster.service';
-import { UserAccountsService } from './../../../proxy/services/user-accounts.service';
+import { UserAccountsService } from './../../../api/services/user-accounts.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CustomValidators } from '../../utils/auth-helper';
-import { MatDialogRef } from '@angular/material/dialog';
-import { DynamicDialogComponent } from '../dynamic-dialog/dynamic-dialog.component';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -25,7 +21,7 @@ export class ResetPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private UserAccountsService: UserAccountsService,
     private ToasterService: TosterService,
-    public dialogRef: MatDialogRef<DynamicDialogComponent>
+   
   ) {
     console.log('hello');
   }
@@ -37,17 +33,11 @@ export class ResetPasswordComponent implements OnInit {
       {
         newPassword: [
           '',
-          [
-            Validators.required,
-            // CustomValidators.startsWithUppercase,
-            CustomValidators.isAtLeast6Characters,
-            CustomValidators.includesSpecialCharacter,
-            CustomValidators.includesNumber,
-          ],
+          
         ],
         confirmPassword: ['', Validators.required],
       },
-      { validator: CustomValidators.matchValidator }
+      
     );
   }
   resetPassword() {}
@@ -79,25 +69,7 @@ export class ResetPasswordComponent implements OnInit {
     console.log(obj);
 
     this.resetLoading = true;
-    this.UserAccountsService.resetPasswordByInputDto(obj).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.ToasterService.customToast(String(res.message), 'success');
-          // this.resetModalShow = false;
-          this.resetLoading = false;
-          this.resetFormSubmitted = false;
-        } else {
-          this.ToasterService.customToast(String(res.message), 'error');
-          this.resetFormSubmitted = false;
-          this.resetLoading = false;
-        }
-      },
-      error: (err) => {
-        this.ToasterService.customToast(String(err.message), 'error');
-        this.resetFormSubmitted = false;
-        this.resetLoading = false;
-      },
-    });
+
   }
 
   passwordVisibility(field: string) {

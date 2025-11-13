@@ -92,6 +92,27 @@
                     </mat-error>
                 </div>
 
+                <div class="social-login">
+                    <button type="button" class="social-login__google" (click)="signInWithGoogle()"
+                        [disabled]="googleAuthLoading">
+                        <span class="social-login__icon" aria-hidden="true">
+                            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#EA4335"
+                                    d="M24 9.5c3.34 0 6.34 1.15 8.71 3.4l6.52-6.52C35.23 2.69 29.98 0 24 0 14.6 0 6.51 5.42 2.55 13.26l7.59 5.89C12.3 12.59 17.7 9.5 24 9.5z" />
+                                <path fill="#4285F4"
+                                    d="M46.5 24.5c0-1.5-.13-2.95-.38-4.34H24v8.21h12.68c-.55 2.97-2.19 5.48-4.68 7.17l7.34 5.7C43.67 36.8 46.5 31.2 46.5 24.5z" />
+                                <path fill="#FBBC05"
+                                    d="M10.14 28.74a14.52 14.52 0 0 1-.77-4.74c0-1.65.28-3.26.77-4.74l-7.59-5.89A23.94 23.94 0 0 0 0 24c0 3.83.92 7.45 2.55 10.63l7.59-5.89z" />
+                                <path fill="#34A853"
+                                    d="M24 48c6.48 0 11.92-2.14 15.89-5.88l-7.34-5.7c-2.06 1.39-4.68 2.21-8.55 2.21-6.3 0-11.7-3.09-14.86-7.66l-7.59 5.89C6.51 42.58 14.6 48 24 48z" />
+                                <path fill="none" d="M0 0h48v48H0z" />
+                            </svg>
+                        </span>
+                        <span class="social-login__label" *ngIf="!googleAuthLoading">Sign in with Google</span>
+                        <span class="social-login__label" *ngIf="googleAuthLoading">Connecting…</span>
+                    </button>
+                </div>
+
                 <button type="submit" class="login-form__submit" [disabled]="btnLoading || loginForm.invalid">
                     <ng-container *ngIf="!btnLoading; else loading">
                         <span>Sign in</span>
