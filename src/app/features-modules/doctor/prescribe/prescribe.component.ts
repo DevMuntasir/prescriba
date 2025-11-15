@@ -22,7 +22,7 @@ import {
   MatDatepickerInputEvent,
   MatDatepickerModule,
 } from '@angular/material/datepicker';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { forkJoin, map,  Subscription } from 'rxjs';
@@ -54,11 +54,12 @@ interface ExtendedAppointmentDto extends AppointmentDto {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    DynamicModalComponent,
     PatientInfoComponent,
     DoctorInfoComponent,
     ModalIconComponent,
     MatDatepickerModule,
-
+    MatDialogModule,
     BottomNavComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -267,6 +268,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
       // disableClose: true,
       panelClass: 'custom-modal',
       autoFocus: false,
+       
     });
   }
   get complaint() {

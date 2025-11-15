@@ -41,7 +41,7 @@ export class DoctorChamberService {
 
   getListByDoctorId(doctorProfileId: number): Observable<DoctorChamberDto[]> {
     return this.http.get<DoctorChamberDto[]>(
-      `${this.baseUrl}/api/app/doctor-chamber/by-doctor/${doctorProfileId}`
+      `${this.baseUrl}/api/app/doctor-chamber/doctor-chamber-list-by-doctor-id/${doctorProfileId}`
     );
   }
 }

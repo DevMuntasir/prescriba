@@ -90,6 +90,7 @@ export class ScheduleComponent implements OnInit {
   sessionDrafts: ScheduleSessionDraft[] = [];
   chambers: DoctorChamberDto[] = [];
   schedules: DoctorScheduleDto[] = [];
+  activeChamberId: number | null = null;
 
   isLoadingChambers = false;
   isLoadingSchedules = false;
@@ -123,8 +124,29 @@ export class ScheduleComponent implements OnInit {
     return this.schedules.length > 0;
   }
 
+  get activeChamberSchedules(): DoctorScheduleDto[] {
+    return this.getSchedulesByChamberId(this.activeChamberId ?? undefined);
+  }
+
   dayIsSelected(day: DayOfWeek): boolean {
     return this.selectedDays.has(day);
+  }
+
+  setActiveChamber(chamberId: number | null): void {
+    this.activeChamberId = chamberId ?? null;
+    if (chamberId === null || chamberId === undefined) {
+      return;
+    }
+    this.scheduleDetailsForm.patchValue({
+      doctorChamberId: chamberId,
+    });
+  }
+
+  isActiveChamber(chamberId: number | null | undefined): boolean {
+    if (chamberId === undefined) {
+      return false;
+    }
+    return (this.activeChamberId ?? null) === (chamberId ?? null);
   }
 
   toggleDay(day: DayOfWeek, checked: boolean): void {
@@ -242,14 +264,15 @@ export class ScheduleComponent implements OnInit {
       scheduleType: formValue.scheduleType,
       consultancyType: formValue.consultancyType,
       isActive: formValue.isActive ?? true,
-      id:1,
+      offDayFrom: null,
+  offDayTo: null,
+
       doctorScheduleDaySession: this.sessionDrafts.map((session) => ({
         scheduleDayofWeek: session.day,
         startTime: session.startTime,
         endTime: session.endTime,
         noOfPatients: session.noOfPatients ?? undefined,
         isActive: true,
-        id:1
       })),
       doctorFeesSetup: [],
     };
@@ -327,10 +350,13 @@ export class ScheduleComponent implements OnInit {
         next: (response) => {
           this.chambers = response ?? [];
           this.isLoadingChambers = false;
-          if (this.chambers.length === 1) {
-            this.scheduleDetailsForm.patchValue({
-              doctorChamberId: this.chambers[0].id ?? null,
-            });
+          if (this.chambers.length > 0) {
+            const fallbackId =
+              this.scheduleDetailsForm.value.doctorChamberId ??
+              this.activeChamberId ??
+              this.chambers[0].id ??
+              null;
+            this.setActiveChamber(fallbackId);
           }
         },
         error: () => {
@@ -370,7 +396,7 @@ export class ScheduleComponent implements OnInit {
 
   private resetFormsAfterSave(): void {
     const selectedChamber =
-      this.scheduleDetailsForm.value.doctorChamberId ?? null;
+      this.activeChamberId ?? this.scheduleDetailsForm.value.doctorChamberId ?? null;
 
     this.scheduleDetailsForm.reset({
       doctorChamberId: selectedChamber,

@@ -225,40 +225,44 @@ console.log(user);
 
   /** 🔹 Handle Doctor Profile after successful login */
   handleDoctorProfile(userInfo: LoginResponseDto) {
-    if (userInfo.userName) {
-      this.doctorProfileService.getByUserName(userInfo.userName).subscribe({
-        next: (patientDto: PatientProfileDto) => {
-          const saveLocalStorage = {
-            fullName: patientDto.fullName,
-            userId: patientDto.userId,
-            id: patientDto.id,
-            userType: userInfo.roleName[0].toLowerCase(),
-          };
-          this.normalAuth.setAuthInfoInLocalStorage(saveLocalStorage);
+    return
+    // if (userInfo.userName || userInfo.userEmail) {
+    //   const fetchProfile$ = userInfo.userName
+    //   ? this.doctorProfileService.getByUserName(userInfo.userName)
+    //   : this.doctorProfileService.getByUserEmail(userInfo.email);
+    //  fetchProfile$.subscribe({
+    //     next: (patientDto: PatientProfileDto) => {
+    //       const saveLocalStorage = {
+    //         fullName: patientDto.fullName,
+    //         userId: patientDto.userId,
+    //         id: patientDto.id,
+    //         userType: userInfo.roleName[0].toLowerCase(),
+    //       };
+    //       this.normalAuth.setAuthInfoInLocalStorage(saveLocalStorage);
 
-          localStorage.setItem('access', JSON.stringify(userInfo.accessToken));
-          localStorage.setItem(
-            'refreshToken',
-            JSON.stringify(userInfo.refreshToken)
-          );
-          const userType = userInfo.roleName[0].toLowerCase() + '/dashboard';
-          this.router.navigate([userType.toLowerCase()], {
-            state: { data: patientDto },
-          });
-          this.btnLoading = false;
-          this.otp.update((p) => ({ ...p, isLoading: false }));
-          this.normalAuth.setOtpLoader(false);
-        },
-        error: (err: any) => {
-          console.error(err);
-          this.btnLoading = false;
-        },
-      });
-    } else {
-      this.btnLoading = false;
-      this.otp.update((p) => ({ ...p, isLoading: false }));
-      this.toasterService.customToast('Username not found!', 'error');
-    }
+    //       localStorage.setItem('access', JSON.stringify(userInfo.accessToken));
+    //       localStorage.setItem(
+    //         'refreshToken',
+    //         JSON.stringify(userInfo.refreshToken)
+    //       );
+    //       const userType = userInfo.roleName[0].toLowerCase() + '/dashboard';
+    //       this.router.navigate([userType.toLowerCase()], {
+    //         state: { data: patientDto },
+    //       });
+    //       this.btnLoading = false;
+    //       this.otp.update((p) => ({ ...p, isLoading: false }));
+    //       this.normalAuth.setOtpLoader(false);
+    //     },
+    //     error: (err: any) => {
+    //       console.error(err);
+    //       this.btnLoading = false;
+    //     },
+    //   });
+    // } else {
+    //   this.btnLoading = false;
+    //   this.otp.update((p) => ({ ...p, isLoading: false }));
+    //   this.toasterService.customToast('Username not found!', 'error');
+    // }
   }
 
   /** 🔹 Password Visibility Toggle */

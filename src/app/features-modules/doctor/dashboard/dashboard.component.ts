@@ -82,7 +82,8 @@ export class DashboardComponent implements OnInit {
       Array.isArray(profile.doctorSpecialization) &&
       profile.doctorSpecialization.length > 0;
 
-    const isProfileStepCompleted = (profile.profileStep ?? 0) >= 4;
+    const isProfileStepCompleted = (profile.profileStep ?? 0) >= 3
+    ;
 
     return hasMissingBasics || !hasDegrees || !hasSpecializations || !isProfileStepCompleted;
   }

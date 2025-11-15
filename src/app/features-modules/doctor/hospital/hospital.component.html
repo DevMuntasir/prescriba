@@ -1,16 +1,19 @@
-<div class="min-h-full bg-slate-50">
-  <div class="mr-auto max-w-3xl space-y-8 px-6 py-10">
-      <h1 class="text-2xl font-bold text-slate-900">Hospital &amp; Chamber</h1>
-    
-
-
-    <section class="rounded-2xl bg-white px-6 py-8 shadow-sm ring-1 ring-slate-100">
-      <div class="flex items-center justify-between gap-4">
+<div class="min-h-screen bg-gradient-to-br from-brand-surface via-white to-brand-surfaceSoft">
+  <div class="mx-auto max-w-4xl space-y-8 px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4">
         <div>
-          <h2 class="text-xl font-semibold text-slate-900">Add new hospital</h2>
-          <p class="text-sm text-slate-600">Provide the location details where you see patients.</p>
+          <h1 class="text-3xl font-bold text-brand-neutral">Hospital &amp; Chamber</h1>
+          <p class="mt-1 text-base text-brand-neutralSoft">Manage your hospital and chamber locations</p>
         </div>
-        <button type="button" (click)="refresh()" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-brand-primary/50 hover:text-brand-primary" [disabled]="isLoadingList">
+      </div>
+
+    <section class="rounded-3xl bg-white px-6 py-8 shadow-md ring-1 ring-brand-border sm:px-8 sm:py-10">
+      <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h2 class="text-2xl font-bold text-brand-neutral">Add New Hospital</h2>
+          <p class="mt-1 text-sm text-brand-neutralSoft">Provide the location details where you see patients.</p>
+        </div>
+        <button type="button" (click)="refresh()" class="inline-flex items-center gap-2 rounded-xl border-2 border-brand-border bg-white px-4 py-2.5 text-sm font-semibold text-brand-primary transition hover:bg-brand-surface hover:border-brand-primary" [disabled]="isLoadingList">
           <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
               d="M4 4v6h6M20 20v-6h-6M5.1 12A7 7 0 0112 5a7 7 0 016.9 5.7M18.9 12A7 7 0 0112 19a7 7 0 01-6.9-5.7" />
@@ -19,68 +22,68 @@
         </button>
       </div>
 
-      <form class="mt-6 space-y-6" [formGroup]="chamberForm" (ngSubmit)="onSubmit()">
-        <div class="grid gap-6 md:grid-cols-2">
-          <label class="flex flex-col gap-2 text-sm font-medium text-slate-700">
-            Hospital / Chamber name
+      <form class="mt-8 space-y-6" [formGroup]="chamberForm" (ngSubmit)="onSubmit()">
+        <div class="grid gap-6 lg:grid-cols-2">
+          <label class="flex flex-col gap-3 text-sm font-semibold text-brand-neutral">
+            Hospital / Chamber Name
             <input type="text" formControlName="chamberName" placeholder="e.g. Apollo Hospitals, Dhanmondi"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base font-normal text-slate-900 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+              class="rounded-xl border-2 border-brand-border bg-white px-4 py-3 text-base font-normal text-brand-neutral placeholder-brand-neutralSoft/50 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
               [class.border-red-400]="hasError('chamberName')" [class.ring-1]="hasError('chamberName')"
               [class.ring-red-200]="hasError('chamberName')" />
-            <span *ngIf="hasError('chamberName')" class="text-sm text-red-500">{{ getErrorMessage('chamberName') }}</span>
+            <span *ngIf="hasError('chamberName')" class="text-xs font-medium text-red-600">{{ getErrorMessage('chamberName') }}</span>
           </label>
 
-          <label class="flex flex-col gap-2 text-sm font-medium text-slate-700">
+          <label class="flex flex-col gap-3 text-sm font-semibold text-brand-neutral">
             City
-            <input type="text" formControlName="city" placeholder="City"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base font-normal text-slate-900 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+            <input type="text" formControlName="city" placeholder="Enter city name"
+              class="rounded-xl border-2 border-brand-border bg-white px-4 py-3 text-base font-normal text-brand-neutral placeholder-brand-neutralSoft/50 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
               [class.border-red-400]="hasError('city')" [class.ring-1]="hasError('city')" [class.ring-red-200]="hasError('city')" />
-            <span *ngIf="hasError('city')" class="text-sm text-red-500">{{ getErrorMessage('city') }}</span>
+            <span *ngIf="hasError('city')" class="text-xs font-medium text-red-600">{{ getErrorMessage('city') }}</span>
           </label>
 
-          <label class="flex flex-col gap-2 text-sm font-medium text-slate-700 md:col-span-2">
-            Address
-            <input type="text" formControlName="address" placeholder="Street address, building and floor details"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base font-normal text-slate-900 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+          <label class="flex flex-col gap-3 text-sm font-semibold text-brand-neutral lg:col-span-2">
+            Street Address
+            <input type="text" formControlName="address" placeholder="Building number, street name, and floor details"
+              class="rounded-xl border-2 border-brand-border bg-white px-4 py-3 text-base font-normal text-brand-neutral placeholder-brand-neutralSoft/50 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
               [class.border-red-400]="hasError('address')" [class.ring-1]="hasError('address')"
               [class.ring-red-200]="hasError('address')" />
-            <span *ngIf="hasError('address')" class="text-sm text-red-500">{{ getErrorMessage('address') }}</span>
+            <span *ngIf="hasError('address')" class="text-xs font-medium text-red-600">{{ getErrorMessage('address') }}</span>
           </label>
 
-          <label class="flex flex-col gap-2 text-sm font-medium text-slate-700">
-            Zip / Postal code
+          <label class="flex flex-col gap-3 text-sm font-semibold text-brand-neutral">
+            Zip / Postal Code
             <input type="text" formControlName="zipCode" placeholder="Postal code"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base font-normal text-slate-900 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+              class="rounded-xl border-2 border-brand-border bg-white px-4 py-3 text-base font-normal text-brand-neutral placeholder-brand-neutralSoft/50 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
               [class.border-red-400]="hasError('zipCode')" [class.ring-1]="hasError('zipCode')"
               [class.ring-red-200]="hasError('zipCode')" />
-            <span *ngIf="hasError('zipCode')" class="text-sm text-red-500">{{ getErrorMessage('zipCode') }}</span>
+            <span *ngIf="hasError('zipCode')" class="text-xs font-medium text-red-600">{{ getErrorMessage('zipCode') }}</span>
           </label>
 
-          <label class="flex flex-col gap-2 text-sm font-medium text-slate-700">
+          <label class="flex flex-col gap-3 text-sm font-semibold text-brand-neutral">
             Country
-            <input type="text" formControlName="country" placeholder="Country"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-base font-normal text-slate-900 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+            <input type="text" formControlName="country" placeholder="Country name"
+              class="rounded-xl border-2 border-brand-border bg-white px-4 py-3 text-base font-normal text-brand-neutral placeholder-brand-neutralSoft/50 transition focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
               [class.border-red-400]="hasError('country')" [class.ring-1]="hasError('country')"
               [class.ring-red-200]="hasError('country')" />
-            <span *ngIf="hasError('country')" class="text-sm text-red-500">{{ getErrorMessage('country') }}</span>
+            <span *ngIf="hasError('country')" class="text-xs font-medium text-red-600">{{ getErrorMessage('country') }}</span>
           </label>
         </div>
 
-        <div class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-700 sm:flex-row sm:items-center sm:justify-between">
-          <label class="inline-flex items-center gap-2 font-medium text-slate-700">
+        <div class="rounded-2xl border-2 border-dashed border-brand-border bg-brand-surface/40 px-5 py-4 text-sm text-brand-neutral">
+          <label class="inline-flex items-center gap-3 font-semibold text-brand-neutral">
             <input type="checkbox" formControlName="isVisibleOnPrescription"
-              class="h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary/20">
+              class="h-5 w-5 rounded-lg border-2 border-brand-border bg-white accent-brand-primary focus:ring-brand-primary/20">
             Show this hospital on printed prescriptions
           </label>
-          <p class="text-xs text-slate-500">Toggle off if this location is for internal tracking only.</p>
+          <p class="mt-2 text-xs text-brand-neutralSoft">Toggle off if this location is for internal tracking only.</p>
         </div>
 
-        <div class="flex flex-wrap items-center justify-end gap-3">
+        <div class="flex flex-wrap items-center justify-end gap-3 pt-4">
           <button type="reset"
-            class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-400 hover:text-slate-700"
+            class="rounded-xl border-2 border-brand-border bg-white px-5 py-2.5 text-sm font-semibold text-brand-neutralSoft transition hover:border-brand-neutralSoft hover:text-brand-neutral"
             [disabled]="isSaving">Clear</button>
           <button type="submit"
-            class="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
+            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-primary to-brand-primaryAccent px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-primary/30 transition hover:shadow-brand-primary/40 disabled:cursor-not-allowed disabled:opacity-60"
             [disabled]="isSaving || chamberForm.disabled">
             <svg *ngIf="isSaving" class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 24 24">
@@ -88,24 +91,29 @@
               <path class="opacity-75" fill="currentColor"
                 d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
             </svg>
-            Save hospital
+            Save Hospital
           </button>
         </div>
       </form>
     </section>
 
-    <section class="rounded-2xl bg-white px-6 py-8 shadow-sm ring-1 ring-slate-100">
-      <div class="flex items-center justify-between gap-4">
+    <section class="rounded-3xl bg-white px-6 py-8 shadow-md ring-1 ring-brand-border sm:px-8 sm:py-10">
+      <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 class="text-xl font-semibold text-slate-900">Saved hospitals</h2>
-          <p class="text-sm text-slate-600">Manage the chambers you have already registered.</p>
+          <h2 class="text-2xl font-bold text-brand-neutral">Saved Hospitals</h2>
+          <p class="mt-1 text-sm text-brand-neutralSoft">Manage the chambers you have already registered.</p>
         </div>
-        <span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">{{ chambers.length }} saved</span>
+        <span class="inline-flex items-center gap-2 rounded-full bg-brand-surface px-4 py-2 text-sm font-bold text-brand-primary">
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+          </svg>
+          {{ chambers.length }} Saved
+        </span>
       </div>
 
-      <div class="mt-6 space-y-4">
-        <div *ngIf="isLoadingList" class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          <svg class="h-4 w-4 animate-spin text-brand-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
+      <div class="mt-8 space-y-4">
+        <div *ngIf="isLoadingList" class="flex items-center gap-3 rounded-2xl border-2 border-brand-border bg-brand-surface px-5 py-4 text-sm font-medium text-brand-primary">
+          <svg class="h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor"
@@ -114,49 +122,58 @@
           Loading your saved hospitals...
         </div>
 
-        <div *ngIf="!isLoadingList && loadError" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-          {{ loadError }}
+        <div *ngIf="!isLoadingList && loadError" class="rounded-2xl border-2 border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
+          <div class="flex gap-2">
+            <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 0v2m0-6h0m0 0h0"></path>
+            </svg>
+            {{ loadError }}
+          </div>
         </div>
 
         <div *ngIf="!isLoadingList && !loadError && !hasChambers"
-          class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-600">
-          You have not added any hospitals yet. Fill in the form above to create your first one.
+          class="rounded-2xl border-2 border-dashed border-brand-border bg-brand-surface/50 px-6 py-12 text-center">
+          <svg class="mx-auto h-12 w-12 text-brand-primary/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+          </svg>
+          <p class="mt-3 text-sm font-medium text-brand-neutral">No hospitals added yet</p>
+          <p class="mt-1 text-xs text-brand-neutralSoft">Fill in the form above to create your first hospital location.</p>
         </div>
 
         <div *ngIf="!isLoadingList && !loadError && hasChambers" class="space-y-4">
-          <article *ngFor="let chamber of chambers; trackBy: trackByChamber" class="rounded-xl border border-slate-200 px-5 py-4 shadow-sm">
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <h3 class="text-lg font-semibold text-slate-900">{{ chamber.chamberName }}</h3>
-                <p class="text-sm text-slate-600">{{ chamber.address }}</p>
-                <p class="text-sm text-slate-600">
+          <div *ngFor="let chamber of chambers; trackBy: trackByChamber" class="group rounded-2xl border-2 border-brand-border bg-white px-6 py-5 shadow-sm transition hover:shadow-md hover:border-brand-primary/50">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div class="min-w-0 flex-1">
+                <h3 class="text-lg font-bold text-brand-neutral truncate">{{ chamber.chamberName }}</h3>
+                <p class="mt-1 text-sm text-brand-neutralSoft truncate">{{ chamber.address }}</p>
+                <p class="text-xs text-brand-neutralSoft">
                   {{ chamber.city }}{{ chamber.zipCode ? ', ' + chamber.zipCode : '' }}{{ chamber.country ? ', ' +
                   chamber.country : '' }}
                 </p>
               </div>
-              <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+              <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold whitespace-nowrap"
                 [class.bg-emerald-100]="chamber.isVisibleOnPrescription"
                 [class.text-emerald-700]="chamber.isVisibleOnPrescription"
                 [class.bg-slate-100]="!chamber.isVisibleOnPrescription"
                 [class.text-slate-600]="!chamber.isVisibleOnPrescription">
                 <ng-container *ngIf="chamber.isVisibleOnPrescription; else hiddenBadgeIcon">
-                  <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                  <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                       d="M5 12l5 5L20 7"></path>
                   </svg>
                 </ng-container>
                 <ng-template #hiddenBadgeIcon>
-                  <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                  <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                       d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10 0-1.463.313-2.851.875-4.106m2.476-2.476A9.956 9.956 0 0112 3c5.523 0 10 4.477 10 10 0 1.463-.313 2.851-.875 4.106M3 3l18 18" />
                   </svg>
                 </ng-template>
-                {{ chamber.isVisibleOnPrescription ? 'Shown on prescription' : 'Hidden from prescription' }}
+                {{ chamber.isVisibleOnPrescription ? 'Shown' : 'Hidden' }}
               </span>
             </div>
-          </article>
+          </div>
         </div>
       </div>
     </section>

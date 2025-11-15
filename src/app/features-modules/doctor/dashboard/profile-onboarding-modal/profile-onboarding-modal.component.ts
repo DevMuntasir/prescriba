@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -15,11 +16,14 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  DegreeDto,
   DoctorDegreeDto,
   DoctorProfileDto,
   DoctorSpecializationDto,
+  SpecialityDto,
 } from 'src/app/api/dto-models';
 import { DoctorProfileInputDto } from 'src/app/api/input-dto';
+import { DegreeService, SpecialityService } from 'src/app/api/services';
 
 @Component({
   selector: 'app-profile-onboarding-modal',
@@ -28,7 +32,7 @@ import { DoctorProfileInputDto } from 'src/app/api/input-dto';
   templateUrl: './profile-onboarding-modal.component.html',
   styleUrls: ['./profile-onboarding-modal.component.scss'],
 })
-export class ProfileOnboardingModalComponent implements OnChanges {
+export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
   @Input() open = false;
   @Input() profile: DoctorProfileDto | null = null;
   @Input() saving = false;
@@ -38,13 +42,8 @@ export class ProfileOnboardingModalComponent implements OnChanges {
   currentStep = 0;
   readonly steps = ['Professional details', 'Education & specialization'];
   readonly countries = ['Bangladesh', 'India', 'Pakistan', 'Sri Lanka'];
-  readonly specialityOptions = [
-    'Medicine',
-    'Cardiology',
-    'Dermatology',
-    'Neurology',
-  ];
-  readonly degreeOptions = ['MBBS', 'FCPS', 'MD', 'MS', 'MRCP'];
+  specialityOptions: SpecialityDto[] = [];
+  degreeOptions: DegreeDto[] = [];
   readonly basicInfoLabels: Record<string, string> = {
     bmdcRegNo: 'BMDC Reg Number',
     bmdcRegExpiryDate: 'BMDC Exp. Date',
@@ -56,7 +55,11 @@ export class ProfileOnboardingModalComponent implements OnChanges {
     specialityName: 'Specialties *',
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private degreeService: DegreeService,
+    private specialityService: SpecialityService
+  ) {
     this.form = this.fb.group({
       basicInfo: this.fb.group({
         bmdcRegNo: ['', Validators.required],
@@ -71,6 +74,11 @@ export class ProfileOnboardingModalComponent implements OnChanges {
       degrees: this.fb.array([this.createDegreeGroup()]),
       specializations: this.fb.array([this.createSpecializationGroup()]),
     });
+  }
+
+  ngOnInit(): void {
+    this.loadDegreeOptions();
+    this.loadSpecialityOptions();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -111,6 +119,16 @@ export class ProfileOnboardingModalComponent implements OnChanges {
     this.removeOrReset(this.specializationsArray, index, () => this.createSpecializationGroup());
   }
 
+  onDegreeSelected(index: number): void {
+    const degreeGroup = this.degreesArray.at(index) as FormGroup;
+    this.applyDegreeMetadata(degreeGroup);
+  }
+
+  onSpecialitySelected(index: number): void {
+    const specialityGroup = this.specializationsArray.at(index) as FormGroup;
+    this.applySpecialityMetadata(specialityGroup);
+  }
+
   goToPreviousStep(): void {
     if (this.currentStep === 0) {
       return;
@@ -142,15 +160,30 @@ export class ProfileOnboardingModalComponent implements OnChanges {
     }) as DoctorProfileInputDto;
 
     const basicInfo = this.basicInfoGroup.getRawValue();
-    const formattedDegrees = this.degreesArray.getRawValue().map((degree: any) => ({
-      ...degree,
-      passingYear: degree.passingYear ? Number(degree.passingYear) : undefined,
-    }));
+    const formattedDegrees = this.degreesArray.getRawValue().map((degree: any) => {
+      const degreeId = this.sanitizeNumber(degree.degreeId);
+
+      return {
+        ...degree,
+        degreeId,
+        degreeName: this.resolveDegreeName(degreeId, degree.degreeName),
+        passingYear: degree.passingYear ? Number(degree.passingYear) : undefined,
+      };
+    });
     const formattedSpecializations = this.specializationsArray
       .getRawValue()
-      .map((spec: any) => ({
-        ...spec,
-      }));
+      .map((spec: any) => {
+        const specialityId = this.sanitizeNumber(spec.specialityId);
+
+        return {
+          ...spec,
+          specialityId,
+          specialityName: this.resolveSpecialityName(
+            specialityId,
+            spec.specialityName
+          ),
+        };
+      });
 
     const updatedProfile: DoctorProfileInputDto = {
       ...baseProfile,
@@ -185,6 +218,9 @@ export class ProfileOnboardingModalComponent implements OnChanges {
       profile.doctorSpecialization ?? [],
       (specialization) => this.createSpecializationGroup(specialization)
     );
+
+    this.syncDegreesWithOptions();
+    this.syncSpecializationsWithOptions();
   }
 
   resetStepperState(): void {
@@ -194,11 +230,11 @@ export class ProfileOnboardingModalComponent implements OnChanges {
   }
 
   private createDegreeGroup(data?: DoctorDegreeDto): FormGroup {
-    return this.fb.group({
+    const group = this.fb.group({
       id: [data?.id ?? null],
       doctorProfileId: [data?.doctorProfileId ?? null],
-      degreeId: [data?.degreeId ?? null],
-      degreeName: [data?.degreeName ?? '', Validators.required],
+      degreeId: [data?.degreeId ?? null, Validators.required],
+      degreeName: [data?.degreeName ?? ''],
       passingYear: [
         data?.passingYear ?? '',
         [Validators.required, Validators.pattern(/^(19|20)\d{2}$/)],
@@ -210,16 +246,19 @@ export class ProfileOnboardingModalComponent implements OnChanges {
         Validators.required,
       ],
     });
-  }
 
+    this.applyDegreeMetadata(group);
+
+    return group;
+  }
   private createSpecializationGroup(
     data?: DoctorSpecializationDto
   ): FormGroup {
-    return this.fb.group({
+    const group = this.fb.group({
       id: [data?.id ?? null],
       doctorProfileId: [data?.doctorProfileId ?? null],
-      specialityId: [data?.specialityId ?? null],
-      specialityName: [data?.specialityName ?? '', Validators.required],
+      specialityId: [data?.specialityId ?? null, Validators.required],
+      specialityName: [data?.specialityName ?? ''],
       specializationId: [data?.specializationId ?? null],
       specializationName: [
         data?.specializationName ?? '',
@@ -228,6 +267,154 @@ export class ProfileOnboardingModalComponent implements OnChanges {
       serviceDetails: [data?.serviceDetails ?? ''],
       documentName: [data?.documentName ?? ''],
     });
+
+    this.applySpecialityMetadata(group);
+
+    return group;
+  }
+
+  private loadDegreeOptions(): void {
+    this.degreeService.getList().subscribe({
+      next: (degrees) => {
+        this.degreeOptions = degrees ?? [];
+        this.syncDegreesWithOptions();
+      },
+      error: (error) => {
+        console.error('Failed to load degree options', error);
+      },
+    });
+  }
+
+  private loadSpecialityOptions(): void {
+    this.specialityService.getList().subscribe({
+      next: (specialities) => {
+        this.specialityOptions = specialities ?? [];
+        this.syncSpecializationsWithOptions();
+      },
+      error: (error) => {
+        console.error('Failed to load speciality options', error);
+      },
+    });
+  }
+
+  private syncDegreesWithOptions(): void {
+    this.degreesArray.controls.forEach((control) =>
+      this.applyDegreeMetadata(control as FormGroup)
+    );
+  }
+
+  private syncSpecializationsWithOptions(): void {
+    this.specializationsArray.controls.forEach((control) =>
+      this.applySpecialityMetadata(control as FormGroup)
+    );
+  }
+
+  private applyDegreeMetadata(group: FormGroup): void {
+    const degreeId = this.sanitizeNumber(group.get('degreeId')?.value);
+
+    if (degreeId !== undefined) {
+      const match = this.degreeOptions.find((degree) => degree.id === degreeId);
+
+      if (match?.degreeName) {
+        group.patchValue(
+          {
+            degreeId: match.id ?? degreeId ?? null,
+            degreeName: match.degreeName,
+          },
+          { emitEvent: false }
+        );
+      }
+
+      return;
+    }
+
+    const degreeName = group.get('degreeName')?.value as string | undefined;
+
+    if (!degreeName) {
+      return;
+    }
+
+    const matchByName = this.degreeOptions.find(
+      (degree) =>
+        degree.degreeName?.toLowerCase() === degreeName.toLowerCase()
+    );
+
+    if (matchByName) {
+      group.patchValue(
+        {
+          degreeId: matchByName.id ?? null,
+          degreeName: matchByName.degreeName ?? degreeName,
+        },
+        { emitEvent: false }
+      );
+    }
+  }
+
+  private applySpecialityMetadata(group: FormGroup): void {
+    const specialityId = this.sanitizeNumber(group.get('specialityId')?.value);
+
+    if (specialityId !== undefined) {
+      const match = this.specialityOptions.find(
+        (speciality) => speciality.id === specialityId
+      );
+
+      if (match?.specialityName) {
+        group.patchValue(
+          {
+            specialityId: match.id ?? specialityId ?? null,
+            specialityName: match.specialityName,
+          },
+          { emitEvent: false }
+        );
+      }
+
+      return;
+    }
+
+    const specialityName = group.get('specialityName')?.value as string | undefined;
+
+    if (!specialityName) {
+      return;
+    }
+
+    const matchByName = this.specialityOptions.find(
+      (speciality) =>
+        speciality.specialityName?.toLowerCase() === specialityName.toLowerCase()
+    );
+
+    if (matchByName) {
+      group.patchValue(
+        {
+          specialityId: matchByName.id ?? null,
+          specialityName: matchByName.specialityName ?? specialityName,
+        },
+        { emitEvent: false }
+      );
+    }
+  }
+
+  private resolveDegreeName(id?: number, fallback?: string): string {
+    if (id === undefined) {
+      return fallback ?? '';
+    }
+
+    return (
+      this.degreeOptions.find((degree) => degree.id === id)?.degreeName ??
+      fallback ??
+      ''
+    );
+  }
+
+  private resolveSpecialityName(id?: number, fallback?: string): string {
+    if (id === undefined) {
+      return fallback ?? '';
+    }
+
+    return (
+      this.specialityOptions.find((speciality) => speciality.id === id)?.specialityName ??
+      fallback ??
+      ''
+    );
   }
 
   private setFormArray<T>(
@@ -296,10 +483,4 @@ export class ProfileOnboardingModalComponent implements OnChanges {
     return Number.isNaN(parsed) ? undefined : parsed;
   }
 }
-
-
-
-
-
-
 

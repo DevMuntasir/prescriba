@@ -23,6 +23,7 @@ export class HospitalComponent {
   private readonly doctorChamberService = inject(DoctorChamberService);
   private readonly authService = inject(AuthService);
   private readonly toaster = inject(TosterService);
+  private doctorProfileId: number | null = null;
 
   readonly chamberForm = this.formBuilder.nonNullable.group({
     chamberName: ['', [Validators.required, Validators.maxLength(120)]],
@@ -37,7 +38,6 @@ export class HospitalComponent {
   isLoadingList = false;
   isSaving = false;
   loadError?: string;
-  private doctorProfileId: number | null = null;
 
   constructor() {
     const authInfo = this.authService.authInfo();
@@ -95,7 +95,7 @@ export class HospitalComponent {
     }
 
     const payload: DoctorChamberInputDto = {
-      id: this.doctorProfileId,
+      doctorProfileId: this.doctorProfileId,
       ...this.chamberForm.getRawValue(),
     };
 

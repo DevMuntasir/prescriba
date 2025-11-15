@@ -175,13 +175,14 @@
                   <div>
                     <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Degree</label>
                     <select
-                      formControlName="degreeName"
+                      formControlName="degreeId"
+                      (change)="onDegreeSelected(idx)"
                       class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                     >
                       <option value="" disabled>Select Degree</option>
-                      <option *ngFor="let degreeName of degreeOptions" [ngValue]="degreeName">{{ degreeName }}</option>
+                      <option *ngFor="let degree of degreeOptions" [ngValue]="degree?.id">{{ degree?.degreeName }}</option>
                     </select>
-                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('degreeName')?.touched && degree.get('degreeName')?.invalid">
+                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('degreeId')?.touched && degree.get('degreeId')?.invalid">
                       Degree is required.
                     </p>
                   </div>
@@ -290,13 +291,14 @@
                   <div class="md:col-span-1">
                     <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Speciality</label>
                     <select
-                      formControlName="specialityName"
+                      formControlName="specialityId"
+                      (change)="onSpecialitySelected(idx)"
                       class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                     >
                       <option value="" disabled>Select speciality</option>
-                      <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality">{{ speciality }}</option>
+                      <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality?.id">{{ speciality?.specialityName }}</option>
                     </select>
-                    <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specialityName')?.touched && specialization.get('specialityName')?.invalid">
+                    <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specialityId')?.touched && specialization.get('specialityId')?.invalid">
                       Speciality is required.
                     </p>
                   </div>
@@ -379,7 +381,3 @@
     </ng-template>
   </div>
 </div>
-
-
-
-

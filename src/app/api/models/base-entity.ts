@@ -1,5 +1,5 @@
 export interface EntityDto<TKey = number> {
-  id: TKey;
+  id?: TKey;
 }
 
 export interface AuditedEntityDto<TKey = number> extends EntityDto<TKey> {

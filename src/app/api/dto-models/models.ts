@@ -491,11 +491,12 @@ export interface DoctorScheduleInputDto extends FullAuditedEntityDto<number> {
   consultancyType?: ConsultancyType;
   doctorChamberId?: number;
   isActive?: boolean;
-  offDayFrom?: string;
-  offDayTo?: string;
+  offDayFrom?: string | null;
+  offDayTo?: string | null;
   doctorScheduleDaySession: DoctorScheduleDaySessionInputDto[];
   doctorFeesSetup: DoctorFeesSetupInputDto[];
   scheduleName?: string;
+  
 }
 
 export interface DoctorSpecializationDto extends FullAuditedEntityDto<number> {

@@ -1,14 +1,15 @@
 <div class="schedule-page">
-  <div class="schedule-page__container">
-    <section class="schedule-section">
-      <header class="schedule-section__header">
+  <div class="">
+    <!-- <section class="schedule-panel schedule-panel--existing">
+      <header class="panel-header">
         <div>
-          <h1>Chamber Schedules</h1>
-          <p>
-            Manage every location where you consult patients. Create flexible day and time combinations for each chamber so your availability always stays accurate.
-          </p>
+          <p class="panel-kicker">Saved schedules</p>
+          <h1>Review your availability</h1>
+          <p>Pick a chamber to inspect the sessions you have already configured.
+            Everything stays grouped by location so it is easier to maintain.</p>
         </div>
-        <button type="button" class="btn btn-light" (click)="refreshSchedules()" [disabled]="isLoadingSchedules">
+        <button type="button" class="btn btn-light" (click)="refreshSchedules()"
+          [disabled]="isLoadingSchedules">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
               d="M4 4v6h6M20 20v-6h-6M5.1 12A7 7 0 0 1 12 5a7 7 0 0 1 6.9 5.7M18.9 12A7 7 0 0 1 12 19a7 7 0 0 1-6.9-5.7" />
@@ -21,26 +22,114 @@
         {{ loadError }}
       </div>
 
-      <div class="schedule-grid" [class.schedule-grid--disabled]="scheduleDetailsForm.disabled">
-        <form [formGroup]="scheduleDetailsForm" class="card card--form" (ngSubmit)="saveSchedule()">
-          <h2>New schedule</h2>
-          <div class="form-grid">
+      <div class="panel-body">
+        <div *ngIf="isLoadingChambers" class="info-card">
+          Loading chamber information...
+        </div>
+
+        <div *ngIf="!isLoadingChambers && chambers.length === 0" class="info-card info-card--muted">
+          Add a chamber to start organising schedules for your visits.
+        </div>
+
+        <ng-container *ngIf="!isLoadingChambers && chambers.length > 0">
+          <div class="chamber-tabs" role="tablist">
+            <button type="button" class="chamber-tabs__item"
+              *ngFor="let chamber of chambers"
+              [class.chamber-tabs__item--active]="isActiveChamber(chamber.id ?? null)"
+              (click)="setActiveChamber(chamber.id ?? null)">
+              <span>{{ chamber.chamberName }}</span>
+              <small>{{ getSchedulesByChamberId(chamber.id).length }} schedules</small>
+            </button>
+          </div>
+
+          <div class="existing-state" *ngIf="isLoadingSchedules">
+            Loading schedules...
+          </div>
+
+          <div class="existing-state existing-state--error" *ngIf="scheduleLoadError">
+            {{ scheduleLoadError }}
+          </div>
+
+          <div class="existing-state" *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length === 0">
+            No schedules saved for this chamber yet.
+          </div>
+
+          <div class="saved-cards"
+            *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length > 0">
+            <article *ngFor="let schedule of activeChamberSchedules" class="saved-card">
+              <header>
+                <div>
+                  <h3>{{ schedule.scheduleName || 'Untitled schedule' }}</h3>
+                  <p>
+                    {{ schedule.scheduleTypeName || schedule.scheduleType }} �
+                    {{ schedule.consultancyTypeName || schedule.consultancyType }}
+                  </p>
+                </div>
+                <span class="badge" [class.badge--inactive]="schedule.isActive === false">
+                  {{ schedule.isActive === false ? 'Inactive' : 'Active' }}
+                </span>
+              </header>
+
+              <ul class="session-pill-list">
+                <li *ngFor="let session of schedule.doctorScheduleDaySession">
+                  <span>{{ getDayLabel(session.scheduleDayofWeek || '') }}</span>
+                  <strong>{{ formatTimeLabel(session.startTime) }} -
+                    {{ formatTimeLabel(session.endTime) }}</strong>
+                  <small *ngIf="session.noOfPatients">
+                    {{ session.noOfPatients }} patients
+                  </small>
+                </li>
+              </ul>
+
+              <footer *ngIf="schedule.remarks">
+                {{ schedule.remarks }}
+              </footer>
+            </article>
+          </div>
+        </ng-container>
+      </div>
+    </section> -->
+
+    <section class="schedule-panel schedule-panel--builder">
+      <header class="panel-header">
+        <div>
+          <p class="panel-kicker">Create or update</p>
+          <h2>Build a new schedule</h2>
+          <p>Work through the steps to capture the basics, mark the active days and
+            then add one or more sessions.</p>
+        </div>
+      </header>
+
+      <form [formGroup]="scheduleDetailsForm" class="builder-form" (ngSubmit)="saveSchedule()"
+        [class.builder-form--disabled]="scheduleDetailsForm.disabled">
+        <div class="builder-card">
+          <div class="builder-card__heading">
+            <span class="step-indicator">Step 1</span>
+            <div>
+              <h3>Schedule basics</h3>
+              <p>Choose chamber, add labels and define overall type.</p>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--two">
             <label>
               <span>Select chamber</span>
               <select formControlName="doctorChamberId" [disabled]="isLoadingChambers">
-                <option value="" disabled selected>Select a chamber</option>
+                <option value="" disabled>Select a chamber</option>
                 <option *ngFor="let chamber of chambers" [ngValue]="chamber.id ?? null">
                   {{ chamber.chamberName }}
                 </option>
               </select>
-              <small *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched">
+              <small
+                *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched">
                 Chamber selection is required.
               </small>
             </label>
 
-            <label>
+            <!-- <label>
               <span>Schedule name (optional)</span>
-              <input type="text" formControlName="scheduleName" maxlength="150" placeholder="e.g. Evening shift" />
+              <input type="text" formControlName="scheduleName" maxlength="150"
+                placeholder="e.g. Evening shift" />
               <small *ngIf="scheduleDetailsForm.controls.scheduleName.invalid && scheduleDetailsForm.controls.scheduleName.touched">
                 Schedule name can be up to 150 characters.
               </small>
@@ -62,21 +151,26 @@
                   {{ option.name }}
                 </option>
               </select>
-            </label>
+            </label> -->
           </div>
 
-          <div class="toggle-row">
-            <label class="toggle">
-              <input type="checkbox" formControlName="isActive" />
-              <span>Keep this schedule active</span>
-            </label>
+          <label class="toggle">
+            <input type="checkbox" formControlName="isActive" />
+            <span>Keep this schedule active</span>
+          </label>
+        </div>
+
+        <div class="builder-card">
+          <div class="builder-card__heading">
+            <span class="step-indicator">Step 2</span>
+            <div>
+              <h3>Sessions</h3>
+              <p>Select the days that share the same session and add the time
+                range with capacity.</p>
+            </div>
           </div>
 
-          <div class="divider"></div>
-
-          <h3>Days &amp; time</h3>
-
-          <div class="day-selector">
+          <div class="day-selector day-selector--wrap">
             <button type="button" class="day-selector__item" *ngFor="let day of daysOfWeek"
               [class.day-selector__item--selected]="dayIsSelected(day.value)"
               (click)="toggleDay(day.value, !dayIsSelected(day.value))">
@@ -85,7 +179,7 @@
           </div>
           <p class="helper-text">You can select multiple days at once.</p>
 
-          <div [formGroup]="sessionForm" class="session-grid">
+          <div [formGroup]="sessionForm" class="session-grid session-grid--compact">
             <label>
               <span>Start time</span>
               <input type="time" formControlName="startTime" />
@@ -119,112 +213,43 @@
             No sessions added yet. Use the controls above to add day and time combinations.
           </div>
 
-          <ul *ngIf="hasSessions" class="session-list">
-            <li *ngFor="let session of sessionDrafts">
-              <div class="session-list__content">
-                <span class="session-list__day">{{ getDayLabel(session.day) }}</span>
-                <strong>{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</strong>
-                <span *ngIf="session.noOfPatients" class="session-list__meta">
-                  {{ session.noOfPatients }} patients
-                </span>
-              </div>
-              <button type="button" class="session-list__remove" (click)="removeSession(session.id)" aria-label="Remove">
-                &times;
-              </button>
-            </li>
-          </ul>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || scheduleDetailsForm.disabled">
-              <svg *ngIf="isSubmitting" class="spinner" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" stroke-width="4" />
-                <path stroke-linecap="round" d="M4 12a8 8 0 018-8" stroke-width="4" />
-              </svg>
-              Save schedule
-            </button>
+          <div *ngIf="hasSessions" class="session-table-wrapper">
+            <table class="session-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>Capacity</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let session of sessionDrafts">
+                  <td>{{ getDayLabel(session.day) }}</td>
+                  <td>{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</td>
+                  <td>{{ session.noOfPatients || '�' }}</td>
+                  <td>
+                    <button type="button" class="session-list__remove" (click)="removeSession(session.id)"
+                      aria-label="Remove">
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </form>
-
-        <aside class="card card--info">
-          <h2>Chambers</h2>
-          <div *ngIf="isLoadingChambers" class="info-message">
-            Loading chamber details...
-          </div>
-          <div *ngIf="!isLoadingChambers && chambers.length === 0" class="info-message">
-            No chambers found. Add a hospital or chamber first to create schedules.
-          </div>
-          <ul *ngIf="!isLoadingChambers && chambers.length > 0" class="chamber-list">
-            <li *ngFor="let chamber of chambers" [class.chamber-list__item--selected]="scheduleDetailsForm.value.doctorChamberId === (chamber.id ?? null)"
-              (click)="scheduleDetailsForm.patchValue({ doctorChamberId: chamber.id ?? null })">
-              <strong>{{ chamber.chamberName }}</strong>
-              <span>{{ chamber.address }}</span>
-            </li>
-          </ul>
-        </aside>
-      </div>
-    </section>
-
-    <section class="schedule-section">
-      <header class="schedule-section__header">
-        <div>
-          <h2>Saved schedules</h2>
-          <p>Review every schedule you have created, grouped by chamber.</p>
         </div>
-      </header>
 
-      <div *ngIf="isLoadingSchedules" class="card card--list">
-        Loading schedules...
-      </div>
-
-      <div *ngIf="scheduleLoadError" class="alert alert-error">
-        {{ scheduleLoadError }}
-      </div>
-
-      <div *ngIf="!isLoadingSchedules && !scheduleLoadError && !hasSchedules" class="card card--list">
-        No schedules yet.
-      </div>
-
-      <div *ngIf="!isLoadingSchedules && hasSchedules" class="schedule-list">
-        <article *ngFor="let chamber of chambers" class="schedule-list__group" [hidden]="getSchedulesByChamberId(chamber.id).length === 0">
-          <header>
-            <h3>{{ chamber.chamberName }}</h3>
-            <span>{{ chamber.address }}</span>
-          </header>
-          <div class="schedule-list__items">
-            <div *ngFor="let schedule of getSchedulesByChamberId(chamber.id)" class="schedule-card">
-              <div class="schedule-card__header">
-                <h4>{{ schedule.scheduleName || 'Untitled schedule' }}</h4>
-                <span class="badge" [class.badge--inactive]="schedule.isActive === false">
-                  {{ schedule.isActive === false ? 'Inactive' : 'Active' }}
-                </span>
-              </div>
-
-              <dl class="schedule-card__meta">
-                <div>
-                  <dt>Schedule type</dt>
-                  <dd>{{ schedule.scheduleTypeName || schedule.scheduleType }}</dd>
-                </div>
-                <div>
-                  <dt>Consultancy</dt>
-                  <dd>{{ schedule.consultancyTypeName || schedule.consultancyType }}</dd>
-                </div>
-              </dl>
-
-              <ul class="schedule-card__sessions">
-                <li *ngFor="let session of schedule.doctorScheduleDaySession">
-                  <span>{{ getDayLabel(session.scheduleDayofWeek || '') }}</span>
-                  <strong>{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</strong>
-                  <span *ngIf="session.noOfPatients">({{ session.noOfPatients }} patients)</span>
-                </li>
-              </ul>
-
-              <footer *ngIf="schedule.remarks" class="schedule-card__footer">
-                {{ schedule.remarks }}
-              </footer>
-            </div>
-          </div>
-        </article>
-      </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || scheduleDetailsForm.disabled">
+            <svg *ngIf="isSubmitting" class="spinner" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke-width="4" />
+              <path stroke-linecap="round" d="M4 12a8 8 0 018-8" stroke-width="4" />
+            </svg>
+            Save schedule
+          </button>
+        </div>
+      </form>
     </section>
   </div>
 </div>
