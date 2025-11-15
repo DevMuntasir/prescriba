@@ -1,255 +1,262 @@
-<div class="schedule-page">
-  <div class="">
-    <!-- <section class="schedule-panel schedule-panel--existing">
-      <header class="panel-header">
-        <div>
-          <p class="panel-kicker">Saved schedules</p>
-          <h1>Review your availability</h1>
-          <p>Pick a chamber to inspect the sessions you have already configured.
-            Everything stays grouped by location so it is easier to maintain.</p>
-        </div>
-        <button type="button" class="btn btn-light" (click)="refreshSchedules()"
-          [disabled]="isLoadingSchedules">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+<div class="min-h-screen bg-brand-surface py-10">
+  <div class="max-w-6xl mx-auto px-4 space-y-8">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div class="space-y-2">
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary font-semibold">Schedules</p>
+        <h1 class="text-3xl font-bold text-slate-900">Your weekly availability</h1>
+        <p class="text-slate-600 max-w-3xl text-base">
+          Review every chamber at a glance. Switch tabs to inspect saved sessions or create a new schedule whenever you need.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button type="button" class="px-4 py-2 rounded-xl bg-emerald-50 text-brand-primary font-semibold flex items-center gap-2"
+          (click)="refreshSchedules()" [disabled]="isLoadingSchedules">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" fill="none"
               d="M4 4v6h6M20 20v-6h-6M5.1 12A7 7 0 0 1 12 5a7 7 0 0 1 6.9 5.7M18.9 12A7 7 0 0 1 12 19a7 7 0 0 1-6.9-5.7" />
           </svg>
           Refresh
         </button>
-      </header>
+        <button type="button" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
+          (click)="openBuilderSheet()" [disabled]="scheduleDetailsForm.disabled">
+          + New schedule
+        </button>
+      </div>
+    </header>
 
-      <div *ngIf="loadError" class="alert alert-error">
+    <section class="bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50 p-8 space-y-6">
+      <div *ngIf="loadError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
         {{ loadError }}
       </div>
 
-      <div class="panel-body">
-        <div *ngIf="isLoadingChambers" class="info-card">
-          Loading chamber information...
-        </div>
-
-        <div *ngIf="!isLoadingChambers && chambers.length === 0" class="info-card info-card--muted">
-          Add a chamber to start organising schedules for your visits.
-        </div>
-
-        <ng-container *ngIf="!isLoadingChambers && chambers.length > 0">
-          <div class="chamber-tabs" role="tablist">
-            <button type="button" class="chamber-tabs__item"
-              *ngFor="let chamber of chambers"
-              [class.chamber-tabs__item--active]="isActiveChamber(chamber.id ?? null)"
-              (click)="setActiveChamber(chamber.id ?? null)">
-              <span>{{ chamber.chamberName }}</span>
-              <small>{{ getSchedulesByChamberId(chamber.id).length }} schedules</small>
-            </button>
-          </div>
-
-          <div class="existing-state" *ngIf="isLoadingSchedules">
-            Loading schedules...
-          </div>
-
-          <div class="existing-state existing-state--error" *ngIf="scheduleLoadError">
-            {{ scheduleLoadError }}
-          </div>
-
-          <div class="existing-state" *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length === 0">
-            No schedules saved for this chamber yet.
-          </div>
-
-          <div class="saved-cards"
-            *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length > 0">
-            <article *ngFor="let schedule of activeChamberSchedules" class="saved-card">
-              <header>
-                <div>
-                  <h3>{{ schedule.scheduleName || 'Untitled schedule' }}</h3>
-                  <p>
-                    {{ schedule.scheduleTypeName || schedule.scheduleType }} �
-                    {{ schedule.consultancyTypeName || schedule.consultancyType }}
-                  </p>
-                </div>
-                <span class="badge" [class.badge--inactive]="schedule.isActive === false">
-                  {{ schedule.isActive === false ? 'Inactive' : 'Active' }}
-                </span>
-              </header>
-
-              <ul class="session-pill-list">
-                <li *ngFor="let session of schedule.doctorScheduleDaySession">
-                  <span>{{ getDayLabel(session.scheduleDayofWeek || '') }}</span>
-                  <strong>{{ formatTimeLabel(session.startTime) }} -
-                    {{ formatTimeLabel(session.endTime) }}</strong>
-                  <small *ngIf="session.noOfPatients">
-                    {{ session.noOfPatients }} patients
-                  </small>
-                </li>
-              </ul>
-
-              <footer *ngIf="schedule.remarks">
-                {{ schedule.remarks }}
-              </footer>
-            </article>
-          </div>
-        </ng-container>
+      <div *ngIf="isLoadingChambers" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+        Loading chamber information...
       </div>
-    </section> -->
 
-    <section class="schedule-panel schedule-panel--builder">
-      <header class="panel-header">
-        <div>
-          <p class="panel-kicker">Create or update</p>
-          <h2>Build a new schedule</h2>
-          <p>Work through the steps to capture the basics, mark the active days and
-            then add one or more sessions.</p>
+      <div *ngIf="!isLoadingChambers && chambers.length === 0" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+        Add a chamber or hospital first to start defining schedules.
+      </div>
+
+      <ng-container *ngIf="!isLoadingChambers && chambers.length > 0">
+        <div class="flex flex-wrap gap-3" role="tablist">
+          <button type="button" class="px-4 py-2 rounded-full border text-left min-w-[160px] transition"
+            [ngClass]="isActiveChamber(chamber.id ?? null)
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'border-slate-200 text-slate-600'"
+            *ngFor="let chamber of chambers" (click)="setActiveChamber(chamber.id ?? null)">
+            <span class="block font-semibold text-slate-900">{{ chamber.chamberName }}</span>
+            <small class="text-xs text-slate-500">{{ getSchedulesByChamberId(chamber.id).length }} schedules</small>
+          </button>
         </div>
+
+        <div *ngIf="isLoadingSchedules" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          Loading schedules...
+        </div>
+
+        <div *ngIf="scheduleLoadError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ scheduleLoadError }}
+        </div>
+
+        <div *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length === 0"
+          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+          No schedules saved for this chamber yet.
+        </div>
+
+        <div *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length > 0" class="space-y-4">
+          <article *ngFor="let schedule of activeChamberSchedules" class="border border-slate-200 rounded-2xl p-6 bg-slate-50">
+            <header class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900">{{ schedule.scheduleName || 'Untitled schedule' }}</h3>
+                <p class="text-sm text-slate-600">
+                  {{ schedule.scheduleTypeName || schedule.scheduleType }} �
+                  {{ schedule.consultancyTypeName || schedule.consultancyType }}
+                </p>
+              </div>
+              <span
+                class="px-3 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="schedule.isActive === false ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'">
+                {{ schedule.isActive === false ? 'Inactive' : 'Active' }}
+              </span>
+            </header>
+
+            <ul class="mt-4 space-y-2">
+              <li *ngFor="let session of schedule.doctorScheduleDaySession" class="flex flex-wrap items-center gap-3 text-sm text-slate-700">
+                <span class="font-semibold text-brand-primary">{{ getDayLabel(session.scheduleDayofWeek || '') }}</span>
+                <strong class="text-slate-900">{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</strong>
+                <small *ngIf="session.noOfPatients" class="text-slate-500">{{ session.noOfPatients }} patients</small>
+              </li>
+            </ul>
+
+            <footer *ngIf="schedule.remarks" class="mt-3 text-sm text-slate-600 border-t border-slate-200 pt-3">
+              {{ schedule.remarks }}
+            </footer>
+          </article>
+        </div>
+      </ng-container>
+    </section>
+  </div>
+
+  <div class="fixed  inset-0 z-40" *ngIf="isBuilderOpen">
+    <div class="absolute inset-0 bg-slate-900/40" (click)="closeBuilderSheet()"></div>
+    <div class="absolute right-0 top-0 h-full w-full max-w-3xl bg-white shadow-2xl flex flex-col">
+      <header class="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+        <div>
+          <p class="text-sm uppercase tracking-[0.4em] text-brand-primary font-semibold">Create schedule</p>
+          <h2 class="text-2xl font-bold text-slate-900">Build availability</h2>
+        </div>
+        <button type="button" class="px-3 py-1 rounded-full bg-emerald-50 text-brand-primary font-semibold"
+          (click)="closeBuilderSheet()">Close</button>
       </header>
 
-      <form [formGroup]="scheduleDetailsForm" class="builder-form" (ngSubmit)="saveSchedule()"
-        [class.builder-form--disabled]="scheduleDetailsForm.disabled">
-        <div class="builder-card">
-          <div class="builder-card__heading">
-            <span class="step-indicator">Step 1</span>
+      <form [formGroup]="scheduleDetailsForm" class="flex-1 overflow-y-auto px-6 pb-8 pt-6 space-y-6" (ngSubmit)="saveSchedule()">
+        <!-- <section class="rounded-2xl border border-slate-100 bg-slate-50 p-5 space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="h-9 w-9 rounded-full bg-emerald-100 flex items-center justify-center text-brand-primary font-bold">1</div>
             <div>
-              <h3>Schedule basics</h3>
-              <p>Choose chamber, add labels and define overall type.</p>
+              <h3 class="font-semibold text-slate-900">Schedule basics</h3>
+              <p class="text-sm text-slate-600">Choose chamber, add labels and define overall type.</p>
             </div>
           </div>
 
-          <div class="form-grid form-grid--two">
-            <label>
-              <span>Select chamber</span>
-              <select formControlName="doctorChamberId" [disabled]="isLoadingChambers">
+          <div class="grid gap-4 md:grid-cols-2">
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Select chamber</span>
+              <select formControlName="doctorChamberId" [disabled]="isLoadingChambers"
+                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
                 <option value="" disabled>Select a chamber</option>
                 <option *ngFor="let chamber of chambers" [ngValue]="chamber.id ?? null">
                   {{ chamber.chamberName }}
                 </option>
               </select>
-              <small
-                *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched">
-                Chamber selection is required.
-              </small>
+              <small *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched"
+                class="text-xs text-red-600">Chamber selection is required.</small>
             </label>
 
-            <!-- <label>
-              <span>Schedule name (optional)</span>
-              <input type="text" formControlName="scheduleName" maxlength="150"
-                placeholder="e.g. Evening shift" />
-              <small *ngIf="scheduleDetailsForm.controls.scheduleName.invalid && scheduleDetailsForm.controls.scheduleName.touched">
-                Schedule name can be up to 150 characters.
-              </small>
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Schedule name (optional)</span>
+              <input type="text" formControlName="scheduleName" maxlength="150" placeholder="e.g. Evening shift"
+                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900" />
+              <small *ngIf="scheduleDetailsForm.controls.scheduleName.invalid && scheduleDetailsForm.controls.scheduleName.touched"
+                class="text-xs text-red-600">Schedule name can be up to 150 characters.</small>
             </label>
 
-            <label>
-              <span>Schedule type</span>
-              <select formControlName="scheduleType">
-                <option *ngFor="let option of scheduleTypeChoices" [ngValue]="option.value">
-                  {{ option.name }}
-                </option>
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Schedule type</span>
+              <select formControlName="scheduleType" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
+                <option *ngFor="let option of scheduleTypeChoices" [ngValue]="option.value">{{ option.name }}</option>
               </select>
             </label>
 
-            <label>
-              <span>Consultancy type</span>
-              <select formControlName="consultancyType">
-                <option *ngFor="let option of consultancyTypeChoices" [ngValue]="option.value">
-                  {{ option.name }}
-                </option>
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Consultancy type</span>
+              <select formControlName="consultancyType" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
+                <option *ngFor="let option of consultancyTypeChoices" [ngValue]="option.value">{{ option.name }}</option>
               </select>
-            </label> -->
+            </label>
           </div>
 
-          <label class="toggle">
-            <input type="checkbox" formControlName="isActive" />
-            <span>Keep this schedule active</span>
+          <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-900">
+            <input type="checkbox" formControlName="isActive" class="h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary" />
+            Keep this schedule active
           </label>
-        </div>
+        </section> -->
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Select chamber</span>
+              <select formControlName="doctorChamberId" [disabled]="isLoadingChambers"
+                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
+                <option value="" disabled>Select a chamber</option>
+                <option *ngFor="let chamber of chambers" [ngValue]="chamber.id ?? null">
+                  {{ chamber.chamberName }}
+                </option>
+              </select>
+              <small *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched"
+                class="text-xs text-red-600">Chamber selection is required.</small>
+            </label>
 
-        <div class="builder-card">
-          <div class="builder-card__heading">
-            <span class="step-indicator">Step 2</span>
-            <div>
-              <h3>Sessions</h3>
-              <p>Select the days that share the same session and add the time
-                range with capacity.</p>
-            </div>
-          </div>
+<div>
+              <span class="font-medium text-slate-900">Select session</span>
+        <section class="rounded-2xl border border-slate-100 bg-slate-50 p-5 space-y-4">
 
-          <div class="day-selector day-selector--wrap">
-            <button type="button" class="day-selector__item" *ngFor="let day of daysOfWeek"
-              [class.day-selector__item--selected]="dayIsSelected(day.value)"
+          <div class="flex flex-wrap gap-2">
+            <button type="button"
+              class="px-3 py-1.5 rounded-full border text-sm font-semibold"
+              *ngFor="let day of daysOfWeek"
+              [ngClass]="dayIsSelected(day.value) ? 'bg-brand-primary text-white border-brand-primary' : 'border-slate-200 text-slate-700'"
               (click)="toggleDay(day.value, !dayIsSelected(day.value))">
               {{ day.label }}
             </button>
           </div>
-          <p class="helper-text">You can select multiple days at once.</p>
+          <p class="text-xs text-slate-500">You can select multiple days at once.</p>
 
-          <div [formGroup]="sessionForm" class="session-grid session-grid--compact">
-            <label>
-              <span>Start time</span>
-              <input type="time" formControlName="startTime" />
-              <small *ngIf="sessionForm.controls.startTime.invalid && sessionForm.controls.startTime.touched">
-                Start time is required.
-              </small>
+          <div [formGroup]="sessionForm" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Start time</span>
+              <input type="time" formControlName="startTime" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base" />
+              <small *ngIf="sessionForm.controls.startTime.invalid && sessionForm.controls.startTime.touched"
+                class="text-xs text-red-600">Start time is required.</small>
             </label>
 
-            <label>
-              <span>End time</span>
-              <input type="time" formControlName="endTime" />
-              <small *ngIf="sessionForm.controls.endTime.invalid && sessionForm.controls.endTime.touched">
-                End time is required.
-              </small>
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">End time</span>
+              <input type="time" formControlName="endTime" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base" />
+              <small *ngIf="sessionForm.controls.endTime.invalid && sessionForm.controls.endTime.touched"
+                class="text-xs text-red-600">End time is required.</small>
             </label>
 
-            <label>
-              <span>Patient capacity (optional)</span>
-              <input type="number" min="1" max="999" formControlName="noOfPatients" placeholder="e.g. 15" />
-              <small *ngIf="sessionForm.controls.noOfPatients.invalid && sessionForm.controls.noOfPatients.touched">
-                Patient capacity must be between 1 and 999.
-              </small>
+            <label class="flex flex-col gap-1 text-sm text-slate-700">
+              <span class="font-medium text-slate-900">Patient capacity (optional)</span>
+              <input type="number" min="1" max="999" formControlName="noOfPatients" placeholder="e.g. 15"
+                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base" />
+              <small *ngIf="sessionForm.controls.noOfPatients.invalid && sessionForm.controls.noOfPatients.touched"
+                class="text-xs text-red-600">Patient capacity must be between 1 and 999.</small>
             </label>
 
-            <div class="session-grid__cta">
-              <button type="button" class="btn btn-secondary" (click)="addSession()">Add session</button>
+            <div class="flex items-end">
+              <button type="button" class="px-4 py-2 rounded-xl bg-emerald-100 text-brand-primary font-semibold"
+                (click)="addSession()">Add session</button>
             </div>
           </div>
 
-          <div *ngIf="!hasSessions" class="empty-state">
+          <div *ngIf="!hasSessions" class="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-sm text-slate-500">
             No sessions added yet. Use the controls above to add day and time combinations.
           </div>
 
-          <div *ngIf="hasSessions" class="session-table-wrapper">
-            <table class="session-table">
-              <thead>
+          <div *ngIf="hasSessions" class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="text-left bg-slate-100 text-slate-600">
                 <tr>
-                  <th>Day</th>
-                  <th>Time</th>
-                  <th>Capacity</th>
+                  <th class="py-2 px-3 font-semibold">Day</th>
+                  <th class="py-2 px-3 font-semibold">Time</th>
+                  <th class="py-2 px-3 font-semibold">Capacity</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let session of sessionDrafts">
-                  <td>{{ getDayLabel(session.day) }}</td>
-                  <td>{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</td>
-                  <td>{{ session.noOfPatients || '�' }}</td>
-                  <td>
-                    <button type="button" class="session-list__remove" (click)="removeSession(session.id)"
-                      aria-label="Remove">
-                      Remove
-                    </button>
+                <tr *ngFor="let session of sessionDrafts" class="border-b border-slate-100">
+                  <td class="py-2 px-3">{{ getDayLabel(session.day) }}</td>
+                  <td class="py-2 px-3">{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</td>
+                  <td class="py-2 px-3">{{ session.noOfPatients || '�' }}</td>
+                  <td class="py-2 px-3 text-right">
+                    <button type="button" class="text-sm font-semibold text-red-600" (click)="removeSession(session.id)">Remove</button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
+</div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || scheduleDetailsForm.disabled">
-            <svg *ngIf="isSubmitting" class="spinner" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke-width="4" />
-              <path stroke-linecap="round" d="M4 12a8 8 0 018-8" stroke-width="4" />
+        <div class="flex justify-end">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold flex items-center gap-2"
+            [disabled]="isSubmitting || scheduleDetailsForm.disabled">
+            <svg *ngIf="isSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" fill="none" class="opacity-30" />
+              <path stroke-linecap="round" stroke="currentColor" stroke-width="4" d="M4 12a8 8 0 018-8" />
             </svg>
             Save schedule
           </button>
         </div>
       </form>
-    </section>
+    </div>
   </div>
 </div>

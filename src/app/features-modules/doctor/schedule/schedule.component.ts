@@ -116,6 +116,11 @@ export class ScheduleComponent implements OnInit {
     this.fetchSchedules();
   }
 
+  isBuilderOpen = false;
+  openBuilderSheet(): void {
+    if (this.scheduleDetailsForm.disabled) { return; }
+    this.isBuilderOpen = true;
+  } closeBuilderSheet(): void { this.isBuilderOpen = false; }
   get hasSessions(): boolean {
     return this.sessionDrafts.length > 0;
   }
@@ -265,7 +270,7 @@ export class ScheduleComponent implements OnInit {
       consultancyType: formValue.consultancyType,
       isActive: formValue.isActive ?? true,
       offDayFrom: null,
-  offDayTo: null,
+      offDayTo: null,
 
       doctorScheduleDaySession: this.sessionDrafts.map((session) => ({
         scheduleDayofWeek: session.day,
@@ -283,6 +288,7 @@ export class ScheduleComponent implements OnInit {
         this.toaster.customToast('Schedule saved successfully.', 'success');
         this.schedules = [createdSchedule, ...this.schedules];
         this.resetFormsAfterSave();
+        this.closeBuilderSheet();
         this.isSubmitting = false;
       },
       error: () => {
@@ -421,3 +427,8 @@ export class ScheduleComponent implements OnInit {
     return start < end;
   }
 }
+
+
+
+
+

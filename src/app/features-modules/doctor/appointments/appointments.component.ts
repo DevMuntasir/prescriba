@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 interface Appointment {
   serial: string;
@@ -13,11 +18,13 @@ interface Appointment {
 
 @Component({
   selector: 'app-appointments',
+  // standalone: true,
+  // imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.scss'],
-
 })
-export class AppointmentsComponent implements OnInit {
+export class AppointmentsComponent {
+  private readonly fb = inject(FormBuilder);
 
   appointments: Appointment[] = [
     {
@@ -57,40 +64,30 @@ export class AppointmentsComponent implements OnInit {
       status: 'Pending',
     },
   ];
-  appointmentForm: FormGroup;
-  showCreateModal = false;
+
+  readonly appointmentForm = this.fb.nonNullable.group({
+    patientName: ['', [Validators.required, Validators.maxLength(80)]],
+    age: [
+      null as number | null,
+      [Validators.required, Validators.min(0), Validators.max(120)],
+    ],
+    gender: ['Male', Validators.required],
+    contactNumber: [
+      '',
+      [Validators.required, Validators.pattern(/^[0-9+\-\s]{6,20}$/)],
+    ],
+  });
+
   lastGeneratedSerial: string | null = null;
+  isFormOpen = false;
   private serialCounter = 5;
 
-  constructor(
-    private formBuilder: FormBuilder,
-  ) {
-    this.appointmentForm = this.formBuilder.group({
-      patientName: ['', [Validators.required, Validators.maxLength(80)]],
-      age: [
-        null,
-        [Validators.required, Validators.min(0), Validators.max(120)],
-      ],
-      gender: ['Male', Validators.required],
-      contactNumber: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^[0-9+\-\s]{6,20}$/),
-        ],
-      ],
-    });
+  openForm(): void {
+    this.isFormOpen = true;
   }
 
-  ngOnInit(): void {
-  }
-
-  openCreateModal(): void {
-    this.showCreateModal = true;
-  }
-
-  closeCreateModal(): void {
-    this.showCreateModal = false;
+  closeForm(): void {
+    this.isFormOpen = false;
     this.appointmentForm.reset({
       gender: 'Male',
     });
@@ -103,22 +100,20 @@ export class AppointmentsComponent implements OnInit {
     }
 
     const serial = this.generateSerial();
-    const formValue = this.appointmentForm.value;
-    const ageValue = Number(formValue.age);
-    const genderValue = formValue.gender ?? 'Other';
+    const formValue = this.appointmentForm.getRawValue();
     const newAppointment: Appointment = {
       serial,
-      patientName: formValue.patientName ?? '',
-      age: Number.isFinite(ageValue) ? ageValue : 0,
-      gender: genderValue,
-      contactNumber: formValue.contactNumber ?? '',
+      patientName: formValue.patientName,
+      age: formValue.age ?? 0,
+      gender: formValue.gender,
+      contactNumber: formValue.contactNumber,
       appointmentDate: new Date().toLocaleString(),
       status: 'Pending',
     };
 
     this.appointments = [...this.appointments, newAppointment];
     this.lastGeneratedSerial = serial;
-    this.closeCreateModal();
+    this.closeForm();
   }
 
   trackBySerial(_index: number, appointment: Appointment): string {

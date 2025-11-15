@@ -23,7 +23,7 @@ export class HospitalComponent {
   private readonly doctorChamberService = inject(DoctorChamberService);
   private readonly authService = inject(AuthService);
   private readonly toaster = inject(TosterService);
-  private doctorProfileId: number | null = null;
+  private doctorProfileId: number | null = null;  isFormOpen = false;
 
   readonly chamberForm = this.formBuilder.nonNullable.group({
     chamberName: ['', [Validators.required, Validators.maxLength(120)]],
@@ -44,12 +44,9 @@ export class HospitalComponent {
     this.doctorProfileId = authInfo?.id ?? null;
 
     if (!this.doctorProfileId) {
-      this.chamberForm.disable();
-      this.loadError =
-        'Doctor profile not found. Please log in again to manage your chambers.';
-    } else {
-      this.loadChambers();
-    }
+         this.chamberForm.disable();      this.loadError =
+      'Doctor profile not found. Please log in again to manage your chambers.';
+    } else {      this.loadChambers();  } 
   }
 
   get hasChambers(): boolean {
@@ -80,7 +77,7 @@ export class HospitalComponent {
     return null;
   }
 
-  onSubmit(): void {
+  openForm(): void { if (this.chamberForm.disabled) { return; } this.isFormOpen = true; } closeForm(): void { this.isFormOpen = false; } onSubmit(): void {
     if (!this.doctorProfileId) {
       this.toaster.customToast(
         'Cannot detect doctor profile. Please refresh and try again.',
@@ -114,8 +111,7 @@ export class HospitalComponent {
           country: payload.country,
           isVisibleOnPrescription: true,
         });
-        this.chambers = [chamber, ...this.chambers];
-        this.isSaving = false;
+        this.chambers = [chamber, ...this.chambers];         this.isSaving = false;         this.closeForm();
       },
       error: () => {
         this.isSaving = false;
@@ -158,3 +154,4 @@ export class HospitalComponent {
       });
   }
 }
+
