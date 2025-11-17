@@ -1,0 +1,85 @@
+:host {
+  display: block;
+}
+
+.section-card {
+  border-radius: 10px;
+  padding: 1.25rem;
+  background: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.section-card:hover {
+  border-color: rgba(6, 180, 139, 0.6);
+  transform: translateY(-2px);
+}
+
+.section-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-card__title {
+  font-weight: 600;
+  color: var(--brand-neutral);
+}
+
+.section-card__meta {
+  font-size: 0.85rem;
+  color: var(--brand-neutral-soft);
+}
+
+.section-card__action {
+  border: none;
+  background: var(--brand-white);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--brand-primary);
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  border: 1px solid rgba(6, 180, 139, 0.3);
+}
+
+.section-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.section-card__list li {
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: var(--brand-white);
+  border: 1px dashed var(--brand-border);
+  font-size: 0.9rem;
+  color: var(--brand-neutral);
+}
+
+.section-card__examination {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--brand-neutral);
+}
+
+.section-card__empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--brand-neutral-soft);
+  font-size: 0.9rem;
+}
+
+.section-card--examination {
+  background: linear-gradient(160deg, var(--brand-surface), #fff);
+}

@@ -1,13 +1,13 @@
 import { TosterService } from 'src/app/shared/services/toster.service';
-import { DoctorProfileService } from '../../../../proxy/services/doctor-profile.service';
-import { DoctorSpecializationDto } from '../../../../proxy/dto-models/models';
+import { DoctorProfileService } from '../../../../api/services/doctor-profile.service';
+import { DoctorSpecializationDto } from '../../../../api/dto-models/models';
 import { Component, OnInit } from '@angular/core';
 import {
   DoctorSpecializationService,
   DocumentsAttachmentService,
   SpecialityService,
   SpecializationService,
-} from 'src/app/proxy/services';
+} from 'src/app/api/services';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { SubSink } from 'subsink';
 import { MatDialog } from '@angular/material/dialog';

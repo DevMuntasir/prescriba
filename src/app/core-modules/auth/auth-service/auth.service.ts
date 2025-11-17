@@ -2,13 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ApiResponse } from 'src/app/proxy/core/generic-models';
-import { LoginResponseDto } from 'src/app/proxy/dto-models';
+import { ApiResponse } from 'src/app/api/core/generic-models';
+import { LoginResponseDto } from 'src/app/api/dto-models';
 import {
   RefreshTokenInput,
   VerifyAccessTokenInput,
-} from 'src/app/proxy/input-dto';
-import { UserSignInRequestDto } from 'src/app/proxy/soow-good/domain/service/models/user-info';
+} from 'src/app/api/input-dto';
+import { UserSignInRequestDto } from 'src/app/api/soow-good/domain/service/models/user-info';
 import { authenticationApi } from 'src/environments/environment';
 
 @Injectable({
@@ -16,6 +16,7 @@ import { authenticationApi } from 'src/environments/environment';
 })
 export class AuthService {
   private authBaseUrl = `${authenticationApi}/api/app/auth`;
+  private base = `${authenticationApi}/api`;
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +28,16 @@ export class AuthService {
       request
     );
   }
+    loginApiByGoogleToken(
+    request: string
+  ): Observable<ApiResponse<LoginResponseDto>> {
+    return this.http.post<ApiResponse<LoginResponseDto>>(
+      `${this.base}/firebase/verify`,
+      {
+        idToken: request
+      }
+    );
+  }
 
   refreshTokenByInput(
     input: RefreshTokenInput
@@ -36,6 +47,7 @@ export class AuthService {
       input
     );
   }
+
 
   verifyAccessTokenByInput(
     input: VerifyAccessTokenInput

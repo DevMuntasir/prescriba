@@ -1,18 +1,118 @@
-<!-- <div class="overflow-hidden" class="doctor-dashboard_midcontent_container">
-  <div class="doctor-dashboard_midcontent_container w-ful">
-    <div class="flex items-center justify-left">
-      <div class="w-full bg-[#f1f3ff]">
-        <div class="relative overflow-x-auto sm:rounded-lg">
-          <div class="w-full">
-            <app-all-appointments
-              [id]="doctorId"
-              [user]="'doctor'"
-            ></app-all-appointments>
-          </div>
+<div class="min-h-screen bg-brand-surface py-10">
+  <div class="max-w-6xl mx-auto px-4 space-y-8">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div class="space-y-2">
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary font-semibold">Appointments</p>
+        <h1 class="text-3xl font-bold text-slate-900">Today�s queue</h1>
+        <p class="text-slate-600 max-w-2xl text-base">Monitor every appointment at a glance and quickly add walk-in patients when needed.</p>
+      </div>
+      <button type="button" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
+        (click)="openForm()">
+        + New appointment
+      </button>
+    </header>
+
+    <div *ngIf="lastGeneratedSerial" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+      Appointment created successfully. Serial: <span class="font-semibold">{{ lastGeneratedSerial }}</span>
+    </div>
+
+    <section class="bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-slate-700">
+          <thead class="text-left bg-slate-100 text-slate-600">
+            <tr>
+              <th class="py-3 px-4 font-semibold">Serial</th>
+              <th class="py-3 px-4 font-semibold">Patient</th>
+              <th class="py-3 px-4 font-semibold">Age</th>
+              <th class="py-3 px-4 font-semibold">Gender</th>
+              <th class="py-3 px-4 font-semibold">Contact</th>
+              <th class="py-3 px-4 font-semibold">Date &amp; Time</th>
+              <th class="py-3 px-4 font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appointment of appointments; trackBy: trackBySerial" class="border-b border-slate-100">
+              <td class="py-3 px-4 font-semibold text-slate-900">{{ appointment.serial }}</td>
+              <td class="py-3 px-4">{{ appointment.patientName }}</td>
+              <td class="py-3 px-4">{{ appointment.age }}</td>
+              <td class="py-3 px-4">{{ appointment.gender }}</td>
+              <td class="py-3 px-4">{{ appointment.contactNumber }}</td>
+              <td class="py-3 px-4">{{ appointment.appointmentDate }}</td>
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
+                  [ngClass]="{
+                    'bg-emerald-100 text-emerald-700': appointment.status === 'Confirmed',
+                    'bg-blue-100 text-blue-700': appointment.status === 'Checked In',
+                    'bg-amber-100 text-amber-700': appointment.status === 'Pending'
+                  }">
+                  {{ appointment.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="appointments.length === 0" class="px-6 py-12 text-center text-sm text-slate-500">
+          No appointments scheduled yet.
         </div>
       </div>
+    </section>
+  </div>
+
+  <div class="fixed inset-0 z-40" *ngIf="isFormOpen">
+    <div class="absolute inset-0 bg-slate-900/40" (click)="closeForm()"></div>
+    <div class="absolute right-0 top-0 h-full w-full max-w-xl bg-white shadow-2xl flex flex-col">
+      <header class="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+        <div>
+          <p class="text-sm uppercase tracking-[0.4em] text-brand-primary font-semibold">New appointment</p>
+          <h2 class="text-2xl font-bold text-slate-900">Add patient details</h2>
+          <p class="text-slate-600 text-sm">Capture essential information to generate the next serial.</p>
+        </div>
+        <button type="button" class="px-3 py-1 rounded-full bg-emerald-50 text-brand-primary font-semibold" (click)="closeForm()">Close</button>
+      </header>
+
+      <form [formGroup]="appointmentForm" class="flex-1 overflow-y-auto px-6 pb-8 pt-6 space-y-5" (ngSubmit)="submitAppointment()">
+        <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+          Patient Name
+          <input type="text" formControlName="patientName" placeholder="Enter patient name"
+            class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
+            [class.border-red-400]="appointmentForm.get('patientName')?.invalid && appointmentForm.get('patientName')?.touched" />
+          <span *ngIf="appointmentForm.get('patientName')?.invalid && appointmentForm.get('patientName')?.touched" class="text-xs font-medium text-red-600">Patient name is required.</span>
+        </label>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+            Age
+            <input type="number" formControlName="age" min="0" max="120" placeholder="Age"
+              class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
+              [class.border-red-400]="appointmentForm.get('age')?.invalid && appointmentForm.get('age')?.touched" />
+            <span *ngIf="appointmentForm.get('age')?.invalid && appointmentForm.get('age')?.touched" class="text-xs font-medium text-red-600">Enter a valid age between 0 and 120.</span>
+          </label>
+
+          <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+            Gender
+            <select formControlName="gender" class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+          Contact Number
+          <input type="tel" formControlName="contactNumber" placeholder="Enter contact number"
+            class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
+            [class.border-red-400]="appointmentForm.get('contactNumber')?.invalid && appointmentForm.get('contactNumber')?.touched" />
+          <span *ngIf="appointmentForm.get('contactNumber')?.invalid && appointmentForm.get('contactNumber')?.touched" class="text-xs font-medium text-red-600">Contact number is required.</span>
+        </label>
+
+        <div class="flex justify-end">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold">
+            Create appointment
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-</div> -->
-
-<app-all-appointments [id]="doctorId" [user]="'doctor'"></app-all-appointments>
+</div>

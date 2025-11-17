@@ -2,14 +2,13 @@ import { MenuService } from 'src/app/shared/services/menu.service';
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import * as signalR from '@microsoft/signalr';
+
 import { formatDistanceStrict } from 'date-fns';
-import { NotificationDto } from 'src/app/proxy/dto-models';
+import { NotificationDto } from 'src/app/api/dto-models';
 import { environment } from 'src/environments/environment';
-import { NotificationService } from '../../../proxy/services';
+import { NotificationService } from '../../../api/services';
 import { AuthService } from '../../services/auth.service';
-import { DynamicDialogComponent } from '../dynamic-dialog/dynamic-dialog.component';
-import { PatientComponent } from './../../../features-modules/patient/patient.component';
+
 @Component({
   selector: 'app-dashboard-header',
   templateUrl: './dashboard-header.component.html',
@@ -20,8 +19,8 @@ export class DashboardHeaderComponent {
   isVisible!: boolean;
   notificationCount!: any;
   messageList: NotificationDto[] = [];
-  @ViewChild(PatientComponent, { static: false })
-  PatientComponent!: PatientComponent;
+
+
 
   constructor(
     private NormalAuth: AuthService,
@@ -72,11 +71,7 @@ export class DashboardHeaderComponent {
     this.Router.navigate(['/']);
   }
   onClickModal(component: string) {
-    this.dialog.open(DynamicDialogComponent, {
-      maxWidth: 600,
-      minWidth: 450,
-      data: component,
-    });
+    
   }
 
   //getNotificationCount() {
@@ -92,14 +87,7 @@ export class DashboardHeaderComponent {
   //}
 
   getNotification() {
-    console.log(this.authInfo.userType);
-    this.notificationService
-      .getListByUserId(this.authInfo.id, this.authInfo.userType)
-      .subscribe((messages) => {
-        console.log(messages);
-        this.messageList = messages;
-        this.notificationCount = this.messageList.length;
-      });
+   
   }
 
   getNotificationTime = (createAt: any) => {

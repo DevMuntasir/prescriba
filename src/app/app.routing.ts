@@ -3,17 +3,16 @@ import { Route, RouterModule } from '@angular/router';
 import { routerGuard } from './auth-gurd/router.guard';
 import { LoginComponent } from './core-modules/auth/login/login.component';
 import { AdminLoginComponent } from './core-modules/auth/admin-login/admin-login.component';
+import { SignupComponent } from './core-modules/auth/signup/signup.component';
 import { DoctorLayoutComponent } from './layout-module/doctor-layout.component';
 import { isAuth } from './auth-gurd/auth.service';
 
 export const appRoutes: Route[] = [
   {
     path: '',
-    canActivate: [isAuth],
-    data: { roles: ['doctor'] },
-    loadChildren: () =>
-      import('../app/features-modules/doctor/doctor.module').then(
-        (m) => m.DoctorModule
+    loadComponent: () =>
+      import('./features-modules/public/home/home.component').then(
+        (c) => c.HomeComponent
       ),
   },
   {
@@ -35,9 +34,9 @@ export const appRoutes: Route[] = [
         canActivate: [isAuth],
         data: { roles: ['admin'] },
         loadChildren: () =>
-          import('./features-modules/admin/admin-dashboard/admin-dashboard.module').then(
-            (m) => m.AdminDashboardModule
-          ),
+          import(
+            './features-modules/admin/admin-dashboard/admin-dashboard.module'
+          ).then((m) => m.AdminDashboardModule),
       },
     ],
   },
@@ -45,11 +44,7 @@ export const appRoutes: Route[] = [
   {
     path: 'signup',
     //canActivate:[routerGuard],
-    loadChildren: () =>
-      import('./core-modules/auth/signup-o/signup.module').then(
-        (m) => m.SignupModule
-      ),
-    // component: SignupComponent,
+    component: SignupComponent,
   },
   {
     path: 'doctor',
@@ -86,4 +81,3 @@ export const appRoutes: Route[] = [
   exports: [RouterModule],
 })
 export class AppRouting {}
-

@@ -74,7 +74,7 @@ module.exports = {
     },
   },
   plugins: [
-    require("daisyui"),
+    // require("daisyui"),
     ({ addBase }) => {
       addBase({
         ":root": {

@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { DoctorProfileService } from 'src/app/proxy/services';
+import { DoctorProfileService } from 'src/app/api/services';
 
 @Injectable({
   providedIn: 'root',

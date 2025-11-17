@@ -2,11 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Route, RouterModule } from '@angular/router';
-import { DashboardMenuModule } from 'src/app/shared/modules/dashboard-menu/dashboard-menu.module';
+import { isAuth } from 'src/app/auth-gurd/auth.service';
+import { DashboardMenuComponent } from 'src/app/shared/modules/dashboard-menu/dashboard-menu.component';
 import { DoctorComponent } from './doctor.component';
 import { DoctorsPrescriptionsComponent } from './doctors-prescriptions/doctors-prescriptions.component';
-import { PrescribeComponent } from './prescribe/prescribe.component';
-import { isAuth } from 'src/app/auth-gurd/auth.service';
 import { MyPatientsComponent } from './my-patients/my-patients.component';
 
 const routes: Route[] = [
@@ -29,10 +28,56 @@ const routes: Route[] = [
         loadChildren: () =>
           import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
-
+      {
+        path: 'e-chamber',
+        canActivate: [isAuth],
+        canActivateChild: [isAuth],
+        data: { roles: ['doctor'] },
+        children: [
+          {
+            path: '',
+            data: { roles: ['doctor'] },
+            loadComponent: () =>
+              import('./e-chamber/e-chamber.component').then((c) => c.EChamberComponent),
+          },
+          {
+            path: 'room/:sessionId',
+            data: { roles: ['doctor'] },
+            loadComponent: () =>
+              import('./e-chamber/room/room.component').then((c) => c.RoomComponent),
+          },
+        ],
+      },
       {
         path: 'patients',
         component: MyPatientsComponent,
+      },
+      {
+        path: 'hospital',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadComponent: () =>
+          import('./hospital/hospital.component').then(
+            (c) => c.HospitalComponent
+          ),
+      },
+      {
+        path: 'appointments',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadChildren: () =>
+          import('./appointments/appointments.module').then(
+            (m) => m.AppointmentsModule
+          ),
+      },
+      {
+        path: 'schedule',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadComponent: () =>
+          import('./schedule/schedule.component').then(
+            (c) => c.ScheduleComponent
+          ),
       },
       // {
       //   path: 'hospital-schedule',
@@ -60,12 +105,15 @@ const routes: Route[] = [
       //       (m) => m.VideoConsultationModule
       //     ),
       // },
+      
       {
         path: 'build-prescription',
         canActivate: [isAuth],
         data: { roles: ['doctor'] },
-        component: PrescribeComponent,
+        loadComponent: () =>
+      import('./prescribe/prescribe.component').then(c => c.PrescribeComponent)
       },
+      
       {
         path: 'prescriptions',
         canActivate: [isAuth],
@@ -80,10 +128,10 @@ const routes: Route[] = [
   declarations: [DoctorComponent],
   imports: [
     CommonModule,
-    DashboardMenuModule,
     MatSidenavModule,
     RouterModule.forChild(routes),
     DoctorsPrescriptionsComponent,
+    DashboardMenuComponent,
   ],
   // providers: [
   //   { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import {
   AdminPrescriptionService,
   CompanyMarketShareSegment,

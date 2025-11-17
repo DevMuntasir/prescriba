@@ -1,9 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 //import { OAuthService } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
-import { UserInfoDto } from 'src/app/proxy/dto-models';
 
 @Injectable({
   providedIn: 'root',
@@ -11,27 +9,8 @@ import { UserInfoDto } from 'src/app/proxy/dto-models';
 export class AuthService {
   private _authenticated: boolean = false;
   isOtpLoading = signal(false);
-  //   authUser = signal({
-  //     agentMasterId
-  // : 0
-  // fullName
-  // :
-  // ""
-  // id
-  // :
-  // 0
-  // userId
-  // :
-  // "f4c88123-8d1d-a51b-8460-3a14146ddfb7"
-  // userType
-  // :
-  // "agent
-  //   })
-  constructor(
-    //private oAuthService: OAuthService,
-    private _router: Router,
-    private HttpClient: HttpClient
-  ) {}
+
+  constructor(private _router: Router) {}
 
   setAuthInfoInLocalStorage(data: any): void {
     localStorage.removeItem('auth');

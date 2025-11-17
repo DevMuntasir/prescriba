@@ -1,39 +1,39 @@
-@if (title !=='Examination') {
-<div class="mb-4 pr-2">
-    <button
-        class="flex bg-gray-200 max-w-[70%] py-2 px-4 text-slate-900 justify-between rounded-md items-center gap-3 font-poppins"
-        (click)="buttonClick.emit()">
-        {{ title }} <app-modal-icon />
-    </button>
-    <ul class="list-disc pl-5 py-2">
-        <li class="font-poppinsLight" *ngFor="let item of items">
-            {{ formatItem(item) }}
-        </li>
-    </ul>
-</div>
-}
-@if (title ==='Examination') {
-<div class="mb-4 pr-2">
-    <button
-        class="flex bg-gray-200 max-w-[70%] py-2 px-4 text-slate-900 justify-between rounded-md items-center gap-3 font-poppins"
-        (click)="buttonClick.emit()">
-        {{ title }} <app-modal-icon />
-    </button>
-
-    <div class="grid grid-cols-2 gap-x-4 px-4 py-2 box-border">
-        @if (items.length > 0) {
-        @for (item of items; track $index) {
-        <span class="capitalize"> <b>systolic </b> : {{item.systolic}}</span>
-        <span class="capitalize"> <b>diastolic </b> : {{item.diastolic}}</span>
-        <span class="capitalize"> <b>pulse </b> : {{item.pulse}}</span>
-        <span class="capitalize"> <b>temperature </b> : {{item.temperature}}</span>
-        <span class="capitalize"> <b>weight</b> : {{item.weight}}</span>
-        <span class="capitalize"> <b>height </b> : {{item.heightFeet}}.{{item.heightInches}} </span>
-        }
-        }
+<div class="section-card" [class.section-card--examination]="title === 'Examination'">
+  <div class="section-card__header">
+    <div>
+      <p class="section-card__title">{{ title }}</p>
+      <p class="section-card__meta">{{ items?.length || 0 }} {{ items?.length === 1 ? 'entry' : 'entries' }}</p>
     </div>
+    <button type="button" class="section-card__action" (click)="buttonClick.emit()">
+      Manage
+      <app-modal-icon />
+    </button>
+  </div>
 
-
-
+  @if (title === 'Examination') {
+    @if (items.length > 0) {
+      <div class="section-card__examination">
+        @for (item of items; track $index) {
+          <span><strong>Systolic</strong> {{ item.systolic }}</span>
+          <span><strong>Diastolic</strong> {{ item.diastolic }}</span>
+          <span><strong>Pulse</strong> {{ item.pulse }}</span>
+          <span><strong>Temperature</strong> {{ item.temperature }}</span>
+          <span><strong>Weight</strong> {{ item.weight }}</span>
+          <span><strong>Height</strong> {{ item.heightFeet }}.{{ item.heightInches }}</span>
+        }
+      </div>
+    } @else {
+      <p class="section-card__empty">No vitals recorded yet.</p>
+    }
+  } @else {
+    <ul class="section-card__list">
+      @for (item of items; track $index) {
+        <li>
+          {{ formatItem(item) }}
+        </li>
+      } @empty {
+        <li class="section-card__empty">No data added yet.</li>
+      }
+    </ul>
+  }
 </div>
-}

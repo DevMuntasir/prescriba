@@ -1,7 +1,6 @@
 import { TosterService } from './../../services/toster.service';
-import { PrescriptionMasterService } from './../../../proxy/services/prescription-master.service';
+import { PrescriptionMasterService } from './../../../api/services/prescription-master.service';
 import { Component, OnInit } from '@angular/core';
-import { PrescriptionMasterDto } from 'src/app/proxy/dto-models';
 import { ShowPrescriptionModalComponent } from '../show-prescription-modal/show-prescription-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth.service';

@@ -1,10 +1,15 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
-import { AppAuthService } from '../../../auth-services/app-auth.service';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MenuItemComponent } from './menu-item/menu-item.component';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-dashboard-menu',
-  templateUrl: './dashboard-menu.component.html'
+  templateUrl: './dashboard-menu.component.html',
+  imports: [CommonModule, RouterModule, FormsModule, MenuItemComponent],
+  standalone: true,
 })
 export class DashboardMenuComponent implements OnInit {
   @Input() menuList: any = [];
@@ -13,7 +18,7 @@ export class DashboardMenuComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
-    private readonly authService: AppAuthService,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +51,6 @@ export class DashboardMenuComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
+    this.authService.signOut().subscribe();
   }
 }
