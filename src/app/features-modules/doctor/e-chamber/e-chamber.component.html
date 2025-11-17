@@ -1,0 +1,157 @@
+<div class="space-y-6 max-w-6xl mx-auto py-10 w-full">
+
+  <!-- Current Time Display -->
+  <div class="rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-sm">
+    <div class="p-6 flex items-center justify-between">
+      <div>
+        <p class="opacity-90">{{ currentTime | date:'EEEE, MMMM d, y' }}</p>
+        <p class="text-4xl font-Roboto mt-2">{{ currentTime | date:'hh:mm:ss a' }}</p>
+      </div>
+
+      <!-- Clock Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+    <!-- Waiting Patients -->
+    <div class="rounded-xl border bg-white shadow-sm">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2 font-semibold">
+        <svg class="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24">
+          <path d="M17 20v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M7 20v-2a4 4 0 0 1 3-3.87"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        Waiting Patients
+      </div>
+      <div class="px-4 pb-4">
+        <p class="text-3xl text-teal-600">{{ stats.waitingPatients }}</p>
+      </div>
+    </div>
+
+    <!-- Today's Prescriptions -->
+    <div class="rounded-xl border bg-white shadow-sm">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2 font-semibold">
+        <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <path d="M14 2v6h6"></path>
+          <path d="M16 13H8"></path>
+          <path d="M16 17H8"></path>
+        </svg>
+        Today's Prescriptions
+      </div>
+      <div class="px-4 pb-4">
+        <p class="text-3xl text-blue-600">{{ stats.todayPrescriptions }}</p>
+      </div>
+    </div>
+
+    <!-- Completed -->
+    <div class="rounded-xl border bg-white shadow-sm">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2 font-semibold">
+        <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24">
+          <path d="M17 20v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M7 20v-2a4 4 0 0 1 3-3.87"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        Completed
+      </div>
+      <div class="px-4 pb-4">
+        <p class="text-3xl text-green-600">{{ stats.completedToday }}</p>
+      </div>
+    </div>
+
+    <!-- Total Appointments -->
+    <div class="rounded-xl border bg-white shadow-sm">
+      <div class="px-4 pt-4 pb-2 flex items-center gap-2 font-semibold">
+        <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        Total Appointments
+      </div>
+      <div class="px-4 pb-4">
+        <p class="text-3xl text-purple-600">{{ stats.totalAppointments }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Schedule -->
+  <div class="rounded-xl border bg-white shadow-sm">
+    <div class="px-4 pt-4 pb-2 flex items-center gap-2 font-semibold">
+      <svg class="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      Today's Schedule
+    </div>
+
+    <div class="px-4 pb-4 space-y-3">
+
+      <div
+        *ngFor="let s of schedule; trackBy: trackById"
+        class="p-4 rounded-lg border-2 transition-all"
+        [ngClass]="{
+          'border-teal-500 bg-teal-50': s.isActive,
+          'border-slate-200 bg-slate-50 opacity-60': s.isPast,
+          'border-blue-200 bg-blue-50': !s.isActive && !s.isPast
+        }"
+      >
+        <div class="flex items-center justify-between">
+
+          <!-- Time + Name -->
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <!-- Clock SVG -->
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path stroke-linecap="round" stroke-width="2" d="M12 6v6l4 2"></path>
+              </svg>
+              {{ s.startTime }} - {{ s.endTime }}
+            </div>
+
+            <div class="px-3 py-1 bg-white rounded-full">
+              {{ s.sessionName }}
+            </div>
+          </div>
+
+          <!-- Right side -->
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <p class="text-slate-600">Patients</p>
+              <p>{{ s.patientCount }}</p>
+            </div>
+
+            <!-- Active -->
+            <div *ngIf="s.isActive" class="px-3 py-1 bg-teal-600 text-white rounded-full flex items-center gap-2">
+              <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+              Active Now
+            </div>
+
+            <!-- Upcoming -->
+            <div *ngIf="!s.isActive && !s.isPast" class="px-3 py-1 bg-blue-600 text-white rounded-full">
+              Upcoming
+            </div>
+
+            <!-- Completed -->
+            <div *ngIf="s.isPast" class="px-3 py-1 bg-slate-400 text-white rounded-full">
+              Completed
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

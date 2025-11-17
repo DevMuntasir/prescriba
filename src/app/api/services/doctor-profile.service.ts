@@ -82,6 +82,14 @@ export class DoctorProfileService {
       }
     );
   }
+   getByUserEmail(email: string): Observable<DoctorProfileDto> {
+    return this.http.get<DoctorProfileDto>(
+      `${this.baseUrl}/api/app/doctor-profile/by-user-email`,
+      {
+        params: new HttpParams().set('userEmail', email),
+      }
+    );
+  }
 
   getCurrentlyOnlineDoctorList(): Observable<DoctorProfileDto[]> {
     return this.http.get<DoctorProfileDto[]>(

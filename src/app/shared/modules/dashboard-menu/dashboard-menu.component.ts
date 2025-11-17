@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MenuItemComponent } from './menu-item/menu-item.component';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-dashboard-menu',
@@ -15,7 +16,10 @@ export class DashboardMenuComponent implements OnInit {
   collapsed = false;
   private autoCollapsed = false;
 
-  constructor(private readonly router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.updateCollapseState(window.innerWidth);
@@ -46,5 +50,7 @@ export class DashboardMenuComponent implements OnInit {
     }
   }
 
-  logout(): void {}
+  logout(): void {
+    this.authService.signOut().subscribe();
+  }
 }

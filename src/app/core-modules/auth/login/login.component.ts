@@ -99,12 +99,27 @@ export class LoginComponent implements OnInit {
 
       const credential = await signInWithPopup(this.firebaseAuth, provider);
       const user = credential.user;
-console.log(user);
+      console.log(user);
 
       if (!user) throw new Error('Google authentication failed.');
 
       const idToken = await user.getIdToken();
+      this.authApi.loginApiByGoogleToken(idToken).subscribe({
+        next: (response) => {
+          console.log(response);
 
+          if (!response) throw new Error('Google authentication failed.');
+          this.handleDoctorProfile(response.results);
+        },
+        error: (error) => {
+          throw new Error('Google authentication failed.');
+        }
+      })
+
+
+
+
+      return
       const authInfo = {
         fullName: user.displayName || user.email || 'Google User',
         name: user.displayName || 'Google User',
@@ -114,27 +129,27 @@ console.log(user);
         userType: 'doctor',
         password: 'Coppa@123',
       };
-// email
-// : 
-// "user.@soowgood.com"
-// name
-// : 
-// "Muntasir Udoy"
-// password
-// : 
-// "Coppa@123"
-// phoneNumber
-// : 
-// "01877332323"
-// roleId
-// : 
-// "Doctor"
-// surname
-// : 
-// "default"
-// userName
-// : 
-// "01877332323"
+      // email
+      // : 
+      // "user.@soowgood.com"
+      // name
+      // : 
+      // "Muntasir Udoy"
+      // password
+      // : 
+      // "Coppa@123"
+      // phoneNumber
+      // : 
+      // "01877332323"
+      // roleId
+      // : 
+      // "Doctor"
+      // surname
+      // : 
+      // "default"
+      // userName
+      // : 
+      // "01877332323"
 
 
 
@@ -225,44 +240,44 @@ console.log(user);
 
   /** 🔹 Handle Doctor Profile after successful login */
   handleDoctorProfile(userInfo: LoginResponseDto) {
-    return
-    // if (userInfo.userName || userInfo.userEmail) {
-    //   const fetchProfile$ = userInfo.userName
-    //   ? this.doctorProfileService.getByUserName(userInfo.userName)
-    //   : this.doctorProfileService.getByUserEmail(userInfo.email);
-    //  fetchProfile$.subscribe({
-    //     next: (patientDto: PatientProfileDto) => {
-    //       const saveLocalStorage = {
-    //         fullName: patientDto.fullName,
-    //         userId: patientDto.userId,
-    //         id: patientDto.id,
-    //         userType: userInfo.roleName[0].toLowerCase(),
-    //       };
-    //       this.normalAuth.setAuthInfoInLocalStorage(saveLocalStorage);
 
-    //       localStorage.setItem('access', JSON.stringify(userInfo.accessToken));
-    //       localStorage.setItem(
-    //         'refreshToken',
-    //         JSON.stringify(userInfo.refreshToken)
-    //       );
-    //       const userType = userInfo.roleName[0].toLowerCase() + '/dashboard';
-    //       this.router.navigate([userType.toLowerCase()], {
-    //         state: { data: patientDto },
-    //       });
-    //       this.btnLoading = false;
-    //       this.otp.update((p) => ({ ...p, isLoading: false }));
-    //       this.normalAuth.setOtpLoader(false);
-    //     },
-    //     error: (err: any) => {
-    //       console.error(err);
-    //       this.btnLoading = false;
-    //     },
-    //   });
-    // } else {
-    //   this.btnLoading = false;
-    //   this.otp.update((p) => ({ ...p, isLoading: false }));
-    //   this.toasterService.customToast('Username not found!', 'error');
-    // }
+    if (userInfo.userName || userInfo.userEmail) {
+      const fetchProfile$ = userInfo.userName
+        ? this.doctorProfileService.getByUserName(userInfo.userName)
+        : this.doctorProfileService.getByUserEmail(userInfo.userEmail);
+      fetchProfile$.subscribe({
+        next: (patientDto: PatientProfileDto) => {
+          const saveLocalStorage = {
+            fullName: patientDto.fullName,
+            userId: patientDto.userId,
+            id: patientDto.id,
+            userType: userInfo.roleName[0].toLowerCase(),
+          };
+          this.normalAuth.setAuthInfoInLocalStorage(saveLocalStorage);
+
+          localStorage.setItem('access', JSON.stringify(userInfo.accessToken));
+          localStorage.setItem(
+            'refreshToken',
+            JSON.stringify(userInfo.refreshToken)
+          );
+          const userType = userInfo.roleName[0].toLowerCase() + '/dashboard';
+          this.router.navigate([userType.toLowerCase()], {
+            state: { data: patientDto },
+          });
+          this.btnLoading = false;
+          this.otp.update((p) => ({ ...p, isLoading: false }));
+          this.normalAuth.setOtpLoader(false);
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.btnLoading = false;
+        },
+      });
+    } else {
+      this.btnLoading = false;
+      this.otp.update((p) => ({ ...p, isLoading: false }));
+      this.toasterService.customToast('Username not found!', 'error');
+    }
   }
 
   /** 🔹 Password Visibility Toggle */

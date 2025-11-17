@@ -587,10 +587,11 @@ export interface LoginDto {
 }
 
 export interface LoginResponseDto {
-  accessToken?: string;
+  accessToken: string;
   refreshToken?: string;
-  userId?: string;
-  userName?: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
   roleName: string[];
   success: boolean;
   message?: string;

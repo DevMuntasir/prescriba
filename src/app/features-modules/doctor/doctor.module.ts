@@ -28,6 +28,13 @@ const routes: Route[] = [
         loadChildren: () =>
           import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
+      {
+        path: 'e-chamber',
+        canActivate: [isAuth],
+        data: { roles: ['doctor'] },
+        loadComponent: () =>
+          import('./e-chamber/e-chamber.component').then((c) => c.EChamberComponent),
+      },
 
       {
         path: 'patients',

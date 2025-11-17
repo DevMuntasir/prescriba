@@ -16,6 +16,7 @@ import { authenticationApi } from 'src/environments/environment';
 })
 export class AuthService {
   private authBaseUrl = `${authenticationApi}/api/app/auth`;
+  private base = `${authenticationApi}/api`;
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +28,16 @@ export class AuthService {
       request
     );
   }
+    loginApiByGoogleToken(
+    request: string
+  ): Observable<ApiResponse<LoginResponseDto>> {
+    return this.http.post<ApiResponse<LoginResponseDto>>(
+      `${this.base}/firebase/verify`,
+      {
+        idToken: request
+      }
+    );
+  }
 
   refreshTokenByInput(
     input: RefreshTokenInput
@@ -36,6 +47,7 @@ export class AuthService {
       input
     );
   }
+
 
   verifyAccessTokenByInput(
     input: VerifyAccessTokenInput

@@ -46,7 +46,7 @@
 
   <section class="relative z-10 flex w-full flex-1 flex-col" [ngClass]="collapsed ? 'gap-4' : 'gap-6'">
 
-    <ul class="flex flex-1 flex-col gap-2" role="list">
+    <ul class="flex flex-1 flex-col " role="list">
       @for (item of menuList; track $index) {
       <li>
         <app-menu-item [href]="item.route" [iconSvg]="item.icon" [label]="item.menuName" [active]="isActive(item.route)"
