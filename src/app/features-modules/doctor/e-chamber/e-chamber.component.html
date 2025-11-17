@@ -99,7 +99,11 @@
 
       <div
         *ngFor="let s of schedule; trackBy: trackById"
-        class="p-4 rounded-lg border-2 transition-all"
+        class="p-4 rounded-lg border-2 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500"
+        [routerLink]="['room', s.id]"
+        role="button"
+        tabindex="0"
+        title="Go to {{ s.sessionName }} room"
         [ngClass]="{
           'border-teal-500 bg-teal-50': s.isActive,
           'border-slate-200 bg-slate-50 opacity-60': s.isPast,

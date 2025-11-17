@@ -1,0 +1,570 @@
+﻿<div class="space-y-6">
+  <!-- Chamber Header -->
+  <div class="bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl p-6 shadow-lg">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <h2 class="text-white">Dr. Sarah Mitchell's Chamber</h2>
+        <p class="text-teal-100 mt-1">Cardiology Department - Room 302</p>
+        <div class="flex items-center gap-6 mt-3">
+          <div class="flex items-center gap-2">
+            <!-- Clock Icon -->
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 3"></path>
+            </svg>
+            <span>{{ currentTime | date: 'mediumTime' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Users Icon -->
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"
+              ></path>
+              <circle cx="9" cy="7" r="3"></circle>
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              ></path>
+              <path
+                d="M16 3.13a3 3 0 0 1 0 5.75"
+              ></path>
+            </svg>
+            <span>{{ waitingCount }} Patients Waiting</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        (click)="handleCallNext()"
+        [disabled]="waitingCount === 0 || inConsultation"
+        class="inline-flex items-center justify-center rounded-md bg-white text-teal-700 hover:bg-teal-50 hover:text-teal-800 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium shadow"
+      >
+        <!-- DoorOpen Icon -->
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 21h18"
+          ></path>
+          <path
+            d="M14 3H9a2 2 0 0 0-2 2v16"
+          ></path>
+          <path
+            d="M18 21V7a2 2 0 0 0-1.4-1.9L14 4"
+          ></path>
+          <circle cx="13" cy="12" r="1"></circle>
+        </svg>
+        Call Next Patient
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Consultation Room -->
+    <div class="lg:col-span-2 space-y-6">
+      <div class="overflow-hidden border-2 border-teal-200 shadow-xl rounded-xl bg-white">
+        <div class="bg-gradient-to-r from-teal-50 to-teal-100 border-b-2 border-teal-200 px-4 py-3">
+          <div class="flex items-center gap-2 text-teal-900 font-semibold">
+            <!-- DoorOpen Icon -->
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 21h18"
+              ></path>
+              <path
+                d="M14 3H9a2 2 0 0 0-2 2v16"
+              ></path>
+              <path
+                d="M18 21V7a2 2 0 0 0-1.4-1.9L14 4"
+              ></path>
+              <circle cx="13" cy="12" r="1"></circle>
+            </svg>
+            <span>Consultation Room</span>
+          </div>
+        </div>
+        <div class="p-0">
+          <div class="relative bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 p-8 min-h-[700px]">
+            <div class="relative h-full">
+              <!-- Floor -->
+              <div class="absolute inset-0 opacity-10">
+                <div class="grid grid-cols-8 h-full">
+                  <div class="border-r border-slate-300" *ngFor="let _ of [1,2,3,4,5,6,7,8]"></div>
+                </div>
+              </div>
+
+              <!-- Door -->
+              <div class="absolute top-0 left-0 w-20 h-40 bg-gradient-to-b from-amber-800 to-amber-900 rounded-b-lg shadow-xl border-4 border-amber-950">
+                <div class="absolute top-20 right-2 w-3 h-3 bg-yellow-600 rounded-full"></div>
+              </div>
+
+              <!-- Window -->
+              <div class="absolute top-8 right-4 w-48 h-32 bg-gradient-to-br from-sky-200 to-sky-300 rounded-lg border-4 border-white shadow-xl">
+                <div class="grid grid-cols-2 h-full">
+                  <div class="border-r-2 border-white"></div>
+                  <div></div>
+                </div>
+                <div class="absolute top-1/2 left-0 right-0 h-0.5 bg-white transform -translate-y-1/2"></div>
+                <div class="absolute top-4 left-6 w-8 h-4 bg-white/60 rounded-full blur-sm"></div>
+                <div class="absolute top-8 right-6 w-6 h-3 bg-white/60 rounded-full blur-sm"></div>
+              </div>
+
+              <!-- Wall Decorations -->
+              <div class="absolute top-32 left-8 w-32 h-24 bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg border-4 border-white shadow-lg flex items-center justify-center">
+                <div class="text-center">
+                  <p class="text-slate-500 text-xs">Medical</p>
+                  <p class="text-slate-600">Certificate</p>
+                </div>
+              </div>
+              <div class="absolute top-32 left-48 w-24 h-24 bg-gradient-to-br from-green-100 to-green-200 rounded-lg border-4 border-white shadow-lg flex items-center justify-center">
+                <span class="text-green-600 text-5xl">🌿</span>
+              </div>
+
+              <!-- Medical Cabinet -->
+              <div class="absolute bottom-8 right-8 w-32 h-48 bg-gradient-to-br from-slate-300 to-slate-400 rounded-lg shadow-2xl border-2 border-slate-500">
+                <div class="absolute top-4 left-4 right-4 h-8 bg-slate-200 rounded border border-slate-400"></div>
+                <div class="absolute top-16 left-4 right-4 h-8 bg-slate-200 rounded border border-slate-400"></div>
+                <div class="absolute top-28 left-4 right-4 h-8 bg-slate-200 rounded border border-slate-400"></div>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-full bg-slate-500"></div>
+              </div>
+
+              <!-- Doctor's Desk -->
+              <div class="absolute bottom-32 right-32 bg-gradient-to-br from-amber-900 to-amber-950 rounded-2xl p-8 shadow-2xl w-80 h-40">
+                <div class="bg-amber-800 h-3 w-full mb-6 rounded shadow-inner"></div>
+                <div class="bg-amber-700 h-2 w-3/4 rounded shadow-inner mb-3"></div>
+                <div class="absolute bottom-4 right-4 w-12 h-16 bg-slate-300 rounded shadow-lg flex items-center justify-center">
+                  <span class="text-slate-600 text-xs">📋</span>
+                </div>
+                <div class="absolute bottom-4 left-4 w-8 h-8 bg-blue-900 rounded-full shadow-lg flex items-center justify-center">
+                  <span class="text-white text-xs">🖊️</span>
+                </div>
+              </div>
+
+              <!-- Doctor Avatar -->
+              <div class="absolute bottom-44 right-44 z-20">
+                <div class="relative">
+                  <div class="w-24 h-24 bg-gradient-to-br from-teal-600 to-teal-700 rounded-full flex items-center justify-center text-white text-3xl shadow-2xl border-4 border-white ring-4 ring-teal-200">
+                    👨‍⚕️
+                  </div>
+                  <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-teal-600 text-white text-sm px-4 py-2 rounded-full whitespace-nowrap shadow-lg">
+                    Dr. Mitchell
+                  </div>
+                </div>
+              </div>
+
+              <!-- Patient Chair Area -->
+              <div class="absolute bottom-32 left-32">
+                <ng-container *ngIf="inConsultation; else emptyChair">
+                  <div class="relative">
+                    <div class="w-32 h-32 bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl flex items-center justify-center shadow-2xl relative border-4 border-blue-800">
+                      <!-- Armchair Icon -->
+                      <svg
+                        class="w-16 h-16 text-white opacity-20 absolute"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M4 13a3 3 0 0 1 6 0v6H4z"
+                        ></path>
+                        <path
+                          d="M14 13a3 3 0 0 1 6 0v6h-6z"
+                        ></path>
+                        <path
+                          d="M4 13h16"
+                        ></path>
+                      </svg>
+                      <div class="w-20 h-20 bg-gradient-to-br from-blue-800 to-blue-900 rounded-full flex items-center justify-center text-white text-2xl border-4 border-white shadow-2xl z-10">
+                        {{ inConsultation?.name?.charAt(0) }}
+                      </div>
+                    </div>
+                    <div class="absolute -bottom-24 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-2xl p-4 min-w-[240px] border-2 border-blue-300">
+                      <p class="text-center text-blue-900">{{ inConsultation?.name }}</p>
+                      <p class="text-center text-slate-600 text-sm mt-1">
+                        Token: {{ inConsultation?.token }}
+                      </p>
+                      <p class="text-center text-slate-500 text-xs mt-1">
+                        {{ inConsultation?.age }}y | {{ inConsultation?.gender }}
+                      </p>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-template #emptyChair>
+                  <div class="relative">
+                    <div class="w-32 h-32 bg-gradient-to-br from-slate-300 to-slate-400 rounded-3xl flex items-center justify-center shadow-2xl opacity-40 border-4 border-slate-500">
+                      <!-- Armchair Icon -->
+                      <svg
+                        class="w-16 h-16 text-slate-600"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M4 13a3 3 0 0 1 6 0v6H4z"
+                        ></path>
+                        <path
+                          d="M14 13a3 3 0 0 1 6 0v6h-6z"
+                        ></path>
+                        <path
+                          d="M4 13h16"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-slate-400 text-sm whitespace-nowrap bg-white px-4 py-2 rounded-lg shadow-md">
+                      Waiting for patient...
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+
+              <!-- Consultation Status -->
+              <div
+                *ngIf="inConsultation"
+                class="absolute top-8 left-8 right-8"
+              >
+                <div class="bg-white/95 backdrop-blur-sm border-2 border-teal-300 shadow-2xl rounded-xl">
+                  <div class="p-5">
+                    <div class="flex items-center justify-between mb-4">
+                      <div>
+                        <p class="text-teal-900 flex items-center gap-2">
+                          <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                          Consultation in Progress
+                        </p>
+                        <p class="text-slate-600 text-sm mt-1">
+                          Started at {{ inConsultation?.appointmentTime }}
+                        </p>
+                      </div>
+                      <button
+                        (click)="handleComplete(inConsultation!.id)"
+                        class="inline-flex items-center justify-center rounded-md bg-green-600 hover:bg-green-700 text-white px-3 py-2 text-sm font-medium shadow-lg"
+                      >
+                        <!-- CheckCircle Icon -->
+                        <svg
+                          class="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M9 12l2 2 4-4"
+                          ></path>
+                          <circle cx="12" cy="12" r="9"></circle>
+                        </svg>
+                        Complete Consultation
+                      </button>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="bg-slate-200 h-3 rounded-full overflow-hidden shadow-inner">
+                      <div
+                        class="bg-gradient-to-r from-teal-500 via-teal-600 to-teal-500 h-full transition-all duration-500 rounded-full shadow-lg"
+                        [ngStyle]="{ width: consultationProgress + '%' }"
+                      ></div>
+                    </div>
+                    <p class="text-right text-slate-500 text-xs mt-2">
+                      {{ consultationProgress }}% complete
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- End Consultation Status -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Patient Indicator -->
+      <div
+        *ngIf="nextPatient && !inConsultation"
+        class="border-2 border-amber-400 bg-gradient-to-r from-amber-50 to-amber-100 animate-pulse rounded-xl"
+      >
+        <div class="p-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center text-white text-xl shadow-lg border-4 border-white">
+              {{ nextPatient?.name?.charAt(0) }}
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <p class="text-amber-900 font-medium">Next Patient Ready</p>
+                <span class="px-3 py-1 bg-amber-500 text-white text-sm rounded-full">
+                  Token {{ nextPatient?.token }}
+                </span>
+              </div>
+              <p class="text-amber-800">
+                {{ nextPatient?.name }}
+              </p>
+              <p class="text-slate-600 text-sm">
+                Age: {{ nextPatient?.age }} | {{ nextPatient?.gender }}
+              </p>
+            </div>
+            <button
+              (click)="handleCallNext()"
+              class="inline-flex items-center justify-center rounded-md bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 text-sm font-medium shadow"
+            >
+              <!-- DoorOpen Icon -->
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M3 21h18"></path>
+                <path d="M14 3H9a2 2 0 0 0-2 2v16"></path>
+                <path d="M18 21V7a2 2 0 0 0-1.4-1.9L14 4"></path>
+                <circle cx="13" cy="12" r="1"></circle>
+              </svg>
+              Call In
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Waiting Area -->
+    <div class="space-y-6">
+      <div class="border-2 border-blue-200 rounded-xl bg-white overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-200 px-4 py-3">
+          <div class="flex items-center gap-2 text-blue-900 font-semibold">
+            <!-- Users Icon -->
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"
+              ></path>
+              <circle cx="9" cy="7" r="3"></circle>
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              ></path>
+              <path
+                d="M16 3.13a3 3 0 0 1 0 5.75"
+              ></path>
+            </svg>
+            <span>Waiting Area</span>
+          </div>
+          <p class="text-blue-700 text-sm mt-1">
+            {{ waitingCount }} patients in queue
+          </p>
+        </div>
+        <div class="p-4">
+          <div class="space-y-3 max-h-[600px] overflow-y-auto">
+            <div
+              *ngIf="waitingPatients.length === 0; else patientsList"
+              class="text-center py-12 text-slate-400"
+            >
+              <!-- Armchair Icon -->
+              <svg
+                class="w-16 h-16 mx-auto mb-3 opacity-30"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M4 13a3 3 0 0 1 6 0v6H4z"
+                ></path>
+                <path
+                  d="M14 13a3 3 0 0 1 6 0v6h-6z"
+                ></path>
+                <path
+                  d="M4 13h16"
+                ></path>
+              </svg>
+              <p>No patients waiting</p>
+              <p class="text-sm mt-1">All seats are empty</p>
+            </div>
+
+            <ng-template #patientsList>
+              <div
+                *ngFor="let patient of waitingPatients; index as index; trackBy: trackByPatientId"
+                class="relative p-4 rounded-xl border-2 transition-all"
+                [ngClass]="{
+                  'border-amber-400 bg-gradient-to-br from-amber-50 to-amber-100 shadow-lg scale-105':
+                    index === 0,
+                  'border-orange-300 bg-orange-50':
+                    index !== 0 && getWaitingTime(patient.arrivalTime) > 30,
+                  'border-slate-200 bg-white hover:border-blue-300 hover:shadow-md':
+                    index !== 0 && getWaitingTime(patient.arrivalTime) <= 30
+                }"
+              >
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="relative">
+                    <div
+                      class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg relative"
+                      [ngClass]="{
+                        'bg-gradient-to-br from-amber-500 to-amber-600': index === 0,
+                        'bg-gradient-to-br from-orange-500 to-orange-600':
+                          index !== 0 && getWaitingTime(patient.arrivalTime) > 30,
+                        'bg-gradient-to-br from-blue-500 to-blue-600':
+                          index !== 0 && getWaitingTime(patient.arrivalTime) <= 30
+                      }"
+                    >
+                      <!-- Armchair Icon -->
+                      <svg
+                        class="w-8 h-8 text-white opacity-20 absolute"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M4 13a3 3 0 0 1 6 0v6H4z"
+                        ></path>
+                        <path
+                          d="M14 13a3 3 0 0 1 6 0v6h-6z"
+                        ></path>
+                        <path
+                          d="M4 13h16"
+                        ></path>
+                      </svg>
+                      <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-800 text-lg z-10 shadow-inner">
+                        {{ patient.name.charAt(0) }}
+                      </div>
+                    </div>
+                    <div
+                      *ngIf="index === 0"
+                      class="absolute -top-2 -right-2 w-7 h-7 bg-amber-600 rounded-full flex items-center justify-center text-white text-xs shadow-lg animate-bounce"
+                    >
+                      1
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <p
+                        class="truncate"
+                        [ngClass]="{
+                          'text-amber-900': index === 0,
+                          'text-slate-900': index !== 0
+                        }"
+                      >
+                        {{ patient.name }}
+                      </p>
+                      <span
+                        *ngIf="index === 0"
+                        class="px-2 py-1 bg-amber-600 text-white text-xs rounded-full whitespace-nowrap"
+                      >
+                        NEXT
+                      </span>
+                    </div>
+                    <p class="text-slate-600 text-sm">
+                      Token: {{ patient.token }}
+                    </p>
+                    <p class="text-slate-600 text-xs">
+                      {{ patient.age }}y | {{ patient.gender }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Waiting Info -->
+                <div class="flex items-center justify-between text-sm mt-3 pt-3 border-t border-slate-200">
+                  <div class="flex items-center gap-1 text-slate-600">
+                    <!-- Clock Icon -->
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle cx="12" cy="12" r="9"></circle>
+                      <path d="M12 7v5l3 3"></path>
+                    </svg>
+                    <span>{{ patient.arrivalTime }}</span>
+                  </div>
+                  <div
+                    class="flex items-center gap-1"
+                    [ngClass]="{
+                      'text-orange-600': getWaitingTime(patient.arrivalTime) > 30,
+                      'text-slate-600': getWaitingTime(patient.arrivalTime) <= 30
+                    }"
+                  >
+                    <!-- AlertCircle Icon -->
+                    <svg
+                      *ngIf="getWaitingTime(patient.arrivalTime) > 30"
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle cx="12" cy="12" r="9"></circle>
+                      <path d="M12 8v4"></path>
+                      <path d="M12 16h.01"></path>
+                    </svg>
+                    <span>{{ getWaitingTime(patient.arrivalTime) }} min</span>
+                  </div>
+                </div>
+
+                <!-- Position Indicator -->
+                <div
+                  *ngIf="index !== 0"
+                  class="absolute top-2 right-2 w-6 h-6 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 text-xs"
+                >
+                  {{ index + 1 }}
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Today Summary -->
+      <div class="border-2 border-green-200 bg-green-50 rounded-xl">
+        <div class="px-4 py-3 pb-2">
+          <div class="flex items-center gap-2 text-green-800 text-base font-semibold">
+            <!-- CheckCircle Icon -->
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M9 12l2 2 4-4"
+              ></path>
+              <circle cx="12" cy="12" r="9"></circle>
+            </svg>
+            <span>Completed Today</span>
+          </div>
+        </div>
+        <div class="px-4 pb-4">
+          <p class="text-3xl text-green-700">
+            {{ completedCount }}
+          </p>
+          <p class="text-green-600 text-sm mt-1">
+            patients treated successfully
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

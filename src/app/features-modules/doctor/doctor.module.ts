@@ -31,11 +31,23 @@ const routes: Route[] = [
       {
         path: 'e-chamber',
         canActivate: [isAuth],
+        canActivateChild: [isAuth],
         data: { roles: ['doctor'] },
-        loadComponent: () =>
-          import('./e-chamber/e-chamber.component').then((c) => c.EChamberComponent),
+        children: [
+          {
+            path: '',
+            data: { roles: ['doctor'] },
+            loadComponent: () =>
+              import('./e-chamber/e-chamber.component').then((c) => c.EChamberComponent),
+          },
+          {
+            path: 'room/:sessionId',
+            data: { roles: ['doctor'] },
+            loadComponent: () =>
+              import('./e-chamber/room/room.component').then((c) => c.RoomComponent),
+          },
+        ],
       },
-
       {
         path: 'patients',
         component: MyPatientsComponent,
