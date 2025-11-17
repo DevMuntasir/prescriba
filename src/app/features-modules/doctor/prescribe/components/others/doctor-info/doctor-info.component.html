@@ -1,14 +1,14 @@
 @if (isHeader) {
-<section class="rx-header">
-  <div class="rx-header__row">
-    <div class="rx-header__column rx-header__column--doctor">
-      <p class="rx-header__eyebrow">Dr.</p>
-      <h1>{{ doctor?.doctorName || 'Name not updated' }}</h1>
+<section class="flex flex-col gap-4 font-Roboto text-brand-neutral">
+  <div class="flex justify-between">
+    <div class="space-y-2">
+      <p class="text-[10px] uppercase tracking-[0.5em] text-brand-neutral/60">Physician</p>
+      <h1 class="text-2xl font-semibold leading-tight">{{ doctor?.doctorName || 'Name not updated' }}</h1>
       @if (doctor?.qualification) {
-      <p>{{ doctor.qualification }}</p>
+      <p class="text-sm">{{ doctor.qualification }}</p>
       }
       @if (doctor?.degree?.length) {
-      <ul>
+      <ul class="space-y-1 text-sm">
         @for (item of doctor.degree; track $index) {
         <li>
           {{ item.degreeName }}
@@ -20,41 +20,42 @@
       </ul>
       }
       @if (doctor?.areaOfExperties) {
-      <p>{{ doctor.areaOfExperties }}</p>
+      <p class="text-sm">{{ doctor.areaOfExperties }}</p>
       }
     </div>
 
-    <div class="rx-header__column rx-header__column--clinic">
-      <p class="rx-header__eyebrow">Chamber</p>
+    <div >
+      <p class="text-[10px] uppercase tracking-[0.5em] text-brand-neutral/60 mb-2">Chamber</p>
       @if (doctor?.chamber?.length) {
-      @for (item of doctor.chamber; track $index) {
-      <p>
-        <strong>{{ item.chamberName }}</strong>
-        <span>{{ item.address }}, {{ item.city }} {{ item.zipCode }}</span>
-      </p>
-      }
+      <div class="space-y-2 ">
+        @for (item of doctor.chamber; track $index) {
+        <p class="text-sm">
+          <strong class="block text-base font-semibold">{{ item.chamberName }}</strong>
+          <span class="text-brand-neutral/70">{{ item.address }}, {{ item.city }} {{ item.zipCode }}</span>
+        </p>
+        }
+      </div>
       } @else {
-      <p>
-        <strong>Prescriba Online</strong>
+      <p class="text-sm">
+        <strong class="block text-base font-semibold">Prescripto Online</strong>
     </p>
-    <p>+880 1605-144633</p>
-    <p>info&#64;prescriba.com</p>
+    <p class="text-brand-neutral/70 m-0">+880 1874 303208</p>
+    <p class="text-brand-neutral/70 m-0">info&#64;prescripto.com</p>
       }
     </div>
 
 
   </div>
 
-  <div class="rx-header__line"></div>
 
   @if (doctor?.schedule?.length) {
-  <div class="rx-header__schedule">
-    <span>Visiting hours:</span>
-    <ul>
+  <div class="flex flex-wrap items-center gap-3 text-sm">
+    <span class="uppercase tracking-[0.3em] text-[10px] text-brand-neutral/60">Visiting hours</span>
+    <ul class="flex flex-wrap gap-3">
       @for (item of doctor.schedule; track $index) {
-      <li>
+      <li class=" pb-0.5">
         {{ item.start !== item.end ? item.start + ' - ' + item.end : item.start }}
-        <strong>{{ item.startTime }} - {{ item.endTime }}</strong>
+        <strong class="pl-2 text-brand-neutral/80">{{ item.startTime }} - {{ item.endTime }}</strong>
       </li>
       }
     </ul>
@@ -62,4 +63,3 @@
   }
 </section>
 }
-

@@ -1,87 +1,135 @@
-<div class="prescription-page px-3 md:px-6">
-  <div class="prescription-page__inner space-y-6">
-    <!-- <app-topbar
-      class="prescription-topbar"
-      (enterFullScreen)="enterFullScreen()"
-      [isPreHand]="isPreHand"
-      [patientId]="0"
-      [doctorId]="0"
-      (onClickSelectChamber)="onClickSelectChamber()"
-    /> -->
-
+<div class="min-h-screen bg-[var(--gradient-brand-panel)] px-3 pb-12 md:px-6">
+  <app-top-bar/>
+  <div class="mx-auto max-w-[1320px] space-y-6 pt-6">
     <div #fullScreenElement>
       @if (isLoading) {
-      <div class="prescription-panel flex items-center justify-center">
+      <div class="flex min-h-[720px] items-center justify-center rounded-[32px] border border-brand-border/70 bg-white shadow-[0_34px_60px_rgba(6,180,139,0.15)]">
         <app-prescription-skelton />
       </div>
       } @else {
-      <div class="prescription-panel" [class.prescription-panel--fullscreen]="isFullScreen">
-        <form [formGroup]="prescribeForm" class="space-y-8">
-          <div class="prescription-hero brand-card">
-            <div class="prescription-hero__doctor">
+      <div
+        class="rounded-[32px] border border-brand-border/70 bg-white  shadow-[0_34px_60px_rgba(6,180,139,0.15)]"
+        [ngClass]="{ 'min-h-screen rounded-none shadow-none border-none': isFullScreen }"
+      >
+        <form [formGroup]="prescribeForm" class="">
+          <div
+            class="relative flex flex-wrap gap-6 border border-brand-border/70 bg-gradient-to-b from-white to-brand-surface px-5 py-8 shadow-[0_30px_80px_rgba(31,42,55,0.08)]"
+          >
+            <span
+              class="pointer-events-none absolute left-7 right-7 top-0 h-1 rounded-full bg-gradient-to-r from-transparent via-brand-primary/50 to-transparent"
+            ></span>
+            <div class="min-w-[320px] flex-1">
               <app-doctor-info [doctor]="doctor" [isPreHand]="isPreHand" [isHeader]="isHeader" />
             </div>
-            <div class="prescription-hero__divider" aria-hidden="true"></div>
-            <!-- <div class="prescription-hero__patient">
-                <app-patient-info [patient]="patient" />
-              </div> -->
           </div>
 
-          <div class=" px-4 space-y-4">
-            <div class="quick-action-bar">
+          <div class="space-y-4 px-2 md:px-6">
+            <div
+              class="flex flex-wrap items-center justify-between gap-4 rounded-[50px] border border-brand-border bg-brand-primary/5 px-5 py-4"
+            >
               <div>
-                <p class="quick-action-bar__title">Quick updates</p>
-                <p class="quick-action-bar__subtitle">Jump directly into a section to edit the current visit.</p>
+                <p class="text-base font-semibold text-brand-neutral">Quick updates</p>
+                <p class="text-sm text-brand-neutral/70">Jump directly into a section to edit the current visit.</p>
               </div>
-              <div class="quick-action-bar__chips">
-                <button type="button" class="quick-action" (click)="openComplaintDialog()">Complaints</button>
-                <button type="button" class="quick-action" (click)="openHistoryDialog()">History</button>
-                <button type="button" class="quick-action" (click)="openExaminationDialog()">Examination</button>
-                <button type="button" class="quick-action" (click)="openDiagnosisDialog()">Diagnosis</button>
-                <button type="button" class="quick-action" (click)="openMedicineDialog()">Medication</button>
-                <button type="button" class="quick-action" (click)="openAdviceDialog()">Advice</button>
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  class="rounded-full border border-brand-primary/50 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  (click)="openComplaintDialog()"
+                >
+                  Complaints
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full border border-brand-primary/50 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  (click)="openHistoryDialog()"
+                >
+                  History
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full border border-brand-primary/50 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  (click)="openExaminationDialog()"
+                >
+                  Examination
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full border border-brand-primary/50 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  (click)="openDiagnosisDialog()"
+                >
+                  Diagnosis
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full border border-brand-primary/50 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  (click)="openMedicineDialog()"
+                >
+                  Medication
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full border border-brand-primary/50 bg-white px-4 py-2 text-sm font-semibold text-brand-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                  (click)="openAdviceDialog()"
+                >
+                  Advice
+                </button>
               </div>
             </div>
 
             @if (uploadImage.isUploadImage && uploadImage.image !== '') {
-            <div class="brand-card flex justify-center">
-              <img class="rounded-2xl shadow-brand-soft" [src]="uploadImage.image" width="600" height="600"
-                alt="Prescription snapshot" />
+            <div class="flex justify-center rounded-[28px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
+              <img class="rounded-2xl shadow-brand-soft" [src]="uploadImage.image" width="600" height="600" alt="Prescription snapshot" />
             </div>
             } @else {
             <div class="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
               <div class="space-y-5">
-                <div class="brand-card">
-                  <div class="brand-card__header">
-                    <div>
-                      <p class="brand-card__title">Clinical Notes</p>
-                      <p class="brand-card__subtitle">Review and refine everything discussed during this encounter.</p>
-                    </div>
-                  </div>
+                <div class="rounded-[28px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
                   <div class="space-y-4">
-                    <app-section [fields]="['name', 'duration', 'notes']" title="Chief Complaints" [items]="complaints"
-                      (buttonClick)="openComplaintDialog()"></app-section>
-                    <app-section [fields]="['name', 'pastHistory', 'presentHistory']" title="History" [items]="historys"
-                      (buttonClick)="openHistoryDialog()"></app-section>
-                    <app-section [fields]="['name', 'notes']" title="Examination" [items]="exam"
-                      (buttonClick)="openExaminationDialog()"></app-section>
-                    <app-section [fields]="['name', 'pastDiagnosis', 'presentDiagnosis']" title="Diagnosis"
-                      [items]="diagnosis" (buttonClick)="openDiagnosisDialog()"></app-section>
-                    <app-section [fields]="['name', 'duration', 'notes']" title="Investigation" [items]="tests"
-                      (buttonClick)="openTestDialog()"></app-section>
+                    <app-section
+                      [fields]="['name', 'duration', 'notes']"
+                      title="Chief Complaints"
+                      [items]="complaints"
+                      (buttonClick)="openComplaintDialog()"
+                    ></app-section>
+                    <app-section
+                      [fields]="['name', 'pastHistory', 'presentHistory']"
+                      title="History"
+                      [items]="historys"
+                      (buttonClick)="openHistoryDialog()"
+                    ></app-section>
+                    <app-section
+                      [fields]="['name', 'notes']"
+                      title="Examination"
+                      [items]="exam"
+                      (buttonClick)="openExaminationDialog()"
+                    ></app-section>
+                    <app-section
+                      [fields]="['name', 'pastDiagnosis', 'presentDiagnosis']"
+                      title="Diagnosis"
+                      [items]="diagnosis"
+                      (buttonClick)="openDiagnosisDialog()"
+                    ></app-section>
+                    <app-section
+                      [fields]="['name', 'duration', 'notes']"
+                      title="Investigation"
+                      [items]="tests"
+                      (buttonClick)="openTestDialog()"
+                    ></app-section>
                   </div>
                 </div>
               </div>
 
               <div class="space-y-5">
-                <div class="brand-card">
-                  <div class="brand-card__header">
-                    <div>
-                      <p class="brand-card__title">Medication plan</p>
-                      <p class="brand-card__subtitle">Tap anywhere in this list to quickly update medicines.</p>
-                    </div>
+                <div class="rounded-[28px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
+                  <div class="mb-5 flex items-start justify-between gap-4">
+                    <p class="text-lg font-semibold text-brand-neutral">Medication plan</p>
                     @if (medications.length > 0) {
-                    <button type="button" class="brand-link" (click)="openMedicineDialog()">
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 px-4 py-2 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/20"
+                      (click)="openMedicineDialog()"
+                    >
                       Edit list
                       <app-modal-icon />
                     </button>
@@ -91,53 +139,60 @@
                 </div>
 
                 <div class="grid gap-5 md:grid-cols-2">
-                  <div class="brand-card advice-card">
-                    <div class="brand-card__header">
-                      <div>
-                        <p class="brand-card__title">Advice</p>
-                      </div>
-                      <button type="button" class="brand-link" (click)="openAdviceDialog()">
+                  <div class="rounded-[28px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
+                    <div class="mb-4 flex items-start justify-between gap-3">
+                      <p class="text-lg font-semibold text-brand-neutral">Advice</p>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 px-3 py-1.5 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/20"
+                        (click)="openAdviceDialog()"
+                      >
                         Manage
                         <app-modal-icon />
                       </button>
                     </div>
-                    <ul class="advice-card__list">
+                    <ul class="flex list-none flex-col gap-3">
                       @for (advice of advice; track $index) {
-                      <li>
-                        <span class="advice-card__index">{{$index + 1}}.</span>
-                        <span>{{advice.name}} <span class="opacity-70" *ngIf="advice.notes">-
-                            {{advice.notes}}</span></span>
+                      <li class="flex items-start gap-2 rounded-2xl border border-dashed border-brand-border bg-brand-surface px-4 py-2 text-sm text-brand-neutral">
+                        <span class="font-semibold text-brand-primary">{{$index + 1}}.</span>
+                        <span>{{advice.name}} <span class="opacity-70" *ngIf="advice.notes">- {{advice.notes}}</span></span>
                       </li>
                       } @empty {
-                      <li class="advice-card__empty">
-                        <p class="font-medium text-brand-neutral">No advice added yet</p>
-                        <p>Add personalised directions to keep the patient on track.</p>
+                      <li class="flex flex-col items-center rounded-2xl border border-dashed border-brand-border bg-brand-surface px-4 py-6 text-center text-sm text-brand-neutral">
+                        <p class="font-medium">No advice added yet</p>
+                        <p class="text-brand-neutral/70">Add personalised directions to keep the patient on track.</p>
                       </li>
                       }
                     </ul>
                   </div>
 
-                  <div class="brand-card followup-card">
-                    <div class="brand-card__header">
-                      <div>
-                        <p class="brand-card__title">Follow-up</p>
-                      </div>
-                      <button type="button" class="brand-link" (click)="openFollowUpDialog()">
+                  <div class="rounded-[28px] border border-brand-border bg-gradient-to-b from-brand-surface via-brand-surface-soft to-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
+                    <div class="mb-4 flex items-start justify-between gap-3">
+                      <p class="text-lg font-semibold text-brand-neutral">Follow-up</p>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 px-3 py-1.5 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/20"
+                        (click)="openFollowUpDialog()"
+                      >
                         Notes
                         <app-modal-icon />
                       </button>
                     </div>
-                    <div class="followup-picker">
-                      <div class="followup-picker__display">
+                    <div class="relative flex items-center justify-between gap-4 rounded-[24px] border border-dashed border-brand-primary/40 px-5 py-4">
+                      <div class="text-sm text-brand-neutral">
                         @if (!followupDate) {
-                        <span class="text-brand-neutral-soft">Tap the calendar to set the next visit</span>
+                        <span class="text-brand-neutral/60">Tap the calendar to set the next visit</span>
                         } @else {
-                        <span class="text-brand-neutral text-lg font-semibold">{{followupDate | date: 'dd MMM,
-                          yyyy'}}</span>
+                        <span class="text-lg font-semibold">{{followupDate | date: 'dd MMM, yyyy'}}</span>
                         }
                       </div>
-                      <input class="followup-input" matInput [matDatepicker]="picker"
-                        (dateInput)="addEvent('input', $event)" (dateChange)="addEvent('change', $event)" />
+                      <input
+                        class="absolute inset-0 cursor-pointer opacity-0"
+                        matInput
+                        [matDatepicker]="picker"
+                        (dateInput)="addEvent('input', $event)"
+                        (dateChange)="addEvent('change', $event)"
+                      />
                       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>
                     </div>
@@ -148,7 +203,7 @@
             }
           </div>
 
-          <div class="pt-6 border-t border-brand-border/70">
+          <div class="border-t border-brand-border/70 pt-6">
             <app-bottom-nav [isPreHand]="isPreHand" [appointmentCode]="appointmentCode ?? '0'" />
           </div>
         </form>
