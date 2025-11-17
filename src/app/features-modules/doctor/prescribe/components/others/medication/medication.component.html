@@ -1,22 +1,29 @@
-<div class="space-y-6 mb-8" (click)="openMedicineDialog.emit()">
-    @for (item of medications; track $index) {
-    <div class="relative pl-8">
-        <div class="absolute left-0 top-0 text-gray-600">{{$index + 1}}</div>
-        <div class="font-medium text-gray-800">{{item.name}}</div>
-        <div class="text-gray-700 mt-1 pl-4">
-            {{item.timming}} {{item.mealTime}} {{item.duration}}
+<div class="medication-list" (click)="openMedicineDialog.emit()">
+  @for (item of medications; track $index) {
+    <article class="medication-pill">
+      <div class="medication-pill__index">{{$index + 1}}</div>
+      <div class="medication-pill__body">
+        <div class="medication-pill__title">{{ item.name }}</div>
+        <div class="medication-pill__tags">
+          @if (item.timming) {
+            <span class="medication-tag">{{ item.timming }}</span>
+          }
+          @if (item.mealTime) {
+            <span class="medication-tag">{{ item.mealTime }}</span>
+          }
+          @if (item.duration) {
+            <span class="medication-tag medication-tag--muted">{{ item.duration }}</span>
+          }
         </div>
         @if (item.notes) {
-        <p class="text-gray-700 mt-1 pl-4"> Note :{{item.notes}}</p>
+          <p class="medication-pill__note">Note: {{ item.notes }}</p>
         }
-        <div class="border-b border-dashed border-gray-300 mt-2"></div>
+      </div>
+    </article>
+  } @empty {
+    <div class="medication-empty">
+      <p class="font-semibold text-brand-neutral">No medicines added</p>
+      <p>Tapping here lets you build the regimen in seconds.</p>
     </div>
-    }@empty {
-    <div
-        class="border-dotted rounded-xl border-2 border-gray-300 p-4 text-center w-full h-[100px] flex items-center justify-center">
-        <p class="text-gray-500 underline hover:font-bold cursor-pointer duration-200">Add
-            Medicine</p>
-
-    </div>
-    }
+  }
 </div>

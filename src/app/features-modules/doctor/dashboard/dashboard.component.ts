@@ -1,16 +1,8 @@
-import { AppointmentService } from './../../../proxy/services/appointment.service';
-import { Component, inject, OnInit } from '@angular/core';
-import {
-  AppointmentDto,
-  DashboardStateDto,
-  DataFilterModel,
-  DoctorProfileDto,
-  FilterModel,
-} from 'src/app/proxy/dto-models';
-import { AuthService } from 'src/app/shared/services/auth.service';
-import { DashboardService } from './../../../proxy/services/dashboard.service';
-import { DoctorScheduleService } from './../../../proxy/services/doctor-schedule.service';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { Component, OnInit, inject } from '@angular/core';
+import { DoctorProfileDto } from 'src/app/api/dto-models';
+import { DoctorProfileInputDto } from 'src/app/api/input-dto';
+import { DoctorProfileService } from 'src/app/api/services';
+import { TosterService } from 'src/app/shared/services/toster.service';
 import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-state.service';
 
 @Component({
@@ -19,194 +11,80 @@ import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-st
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  private UserService = inject(UserinfoStateService);
-  private NormalAuth = inject(AuthService);
-  private DashboardService = inject(DashboardService);
-  private DoctorScheduleService = inject(DoctorScheduleService);
-  private AppointmentService = inject(AppointmentService);
+  private userStateService = inject(UserinfoStateService);
+  private doctorProfileService = inject(DoctorProfileService);
+  private toaster = inject(TosterService);
 
   authenticatedUserDetails: DoctorProfileDto = {} as DoctorProfileDto;
-  warning = false;
-  showWarning: boolean = false;
-  details: DashboardStateDto = {} as DashboardStateDto;
-  doctorId: any;
-  appointmentList: AppointmentDto[] = [];
-  onlineAptLoader: boolean = false;
-  chamberAptLoader: boolean = false;
-  authInfo: any;
+  showProfileOnboarding = false;
+  savingProfile = false;
 
-  myDate = new Date();
-
-  selectedOnlineValue = 'completed';
-  selectedChamberValue = 'completed';
-  filterModel: FilterModel = {
-    pageNo: 1,
-    pageSize: 10,
-    sortBy: 'name',
-    sortOrder: 'asc',
-    limit: 0,
-    isDesc: false,
-    offset: 0,
-  };
-  filterData: DataFilterModel = {} as DataFilterModel;
-  onlineTabLabels = ['today', 'completed'];
-  chamberTabLabels = ['today', 'completed'];
-
-  onlineAppointmentCache: { [key: string]: any[] } = {};
-  chamberAppointmentCache: { [key: string]: any[] } = {};
-  selectedIndex = 1;
-  selectedChamberIndex = 1;
-  exportLoader: boolean = false;
   ngOnInit(): void {
-    setTimeout(() => {
-      this.showWarning = true;
-    }, 1000);
-
-    this.UserService.authenticateUserInfo.subscribe((res) => {
-      this.authenticatedUserDetails = res;
+    this.userStateService.authenticateUserInfo.subscribe((res) => {
+      if (res) {
+        this.authenticatedUserDetails = res;
+        this.evaluateOnboardingState(res);
+      }
     });
+  }
 
-    this.authInfo = this.NormalAuth.authInfo();
-    const authId = this.authInfo?.id;
+  handleProfileCompletion(updatedProfile: DoctorProfileInputDto): void {
+    this.savingProfile = true;
+    this.doctorProfileService.updateDoctorProfile(updatedProfile).subscribe({
+      next: (profile) => {
+        this.savingProfile = false;
+        this.showProfileOnboarding = this.shouldPromptForOnboarding(profile);
+        this.authenticatedUserDetails = profile;
+        this.userStateService.sendData(profile);
+        this.toaster.customToast('Profile updated successfully', 'success');
+      },
+      error: (error) => {
+        this.savingProfile = false;
+        this.toaster.customToast(
+          error?.message ?? 'Unable to update profile, please try again.',
+          'error'
+        );
+      },
+    });
+  }
 
-    if (authId) {
-      this.doctorId = authId;
-      this.getDashboardStatisticData(authId);
-      this.loadOnlineAppointmentsForTab(this.selectedOnlineValue);
-      this.loadOnChamberAppointmentsForTab(this.selectedChamberValue);
-      this.DoctorScheduleService.getScheduleListByDoctorId(authId).subscribe({
-        next: (res) => {
-          this.warning = res == null;
-        },
-      });
+  private evaluateOnboardingState(profile: DoctorProfileDto): void {
+    if (!profile?.id) {
+      this.showProfileOnboarding = false;
+      return;
     }
+    this.showProfileOnboarding = this.shouldPromptForOnboarding(profile);
   }
 
-  onChangeTab(event: MatTabChangeEvent) {
-    this.selectedIndex = event.index;
-    const tab = this.onlineTabLabels[event.index];
-    if (!this.onlineAppointmentCache[tab]) {
-      this.loadOnlineAppointmentsForTab(tab);
+  private shouldPromptForOnboarding(profile: DoctorProfileDto): boolean {
+    if (!profile) {
+      return true;
     }
-  }
-  onChamberChangeTab(event: MatTabChangeEvent) {
-    this.selectedChamberIndex = event.index;
-    const tab = this.chamberTabLabels[event.index];
 
-    if (!this.chamberAppointmentCache[tab]) {
-      this.loadOnChamberAppointmentsForTab(tab);
-    }
-  }
-  get currentOnlineAppointments(): any[] {
-    const currentTab = this.onlineTabLabels[this.selectedIndex];
-    return this.onlineAppointmentCache[currentTab] || [];
-  }
+    const requiredFields: (keyof DoctorProfileDto)[] = [
+      'bmdcRegNo',
+      'bmdcRegExpiryDate',
+      'address',
+      'city',
+      'zipCode',
+      'country',
+      'identityNumber',
+      'specialityName',
+    ];
 
-  get currentChamberAppointments(): any[] {
-    const currentTab = this.chamberTabLabels[this.selectedChamberIndex];
-    return this.chamberAppointmentCache[currentTab] || [];
-  }
-
-  refreshOnlineTab() {
-    const currentTab = this.onlineTabLabels[this.selectedIndex];
-    this.loadOnlineAppointmentsForTab(currentTab, true);
-  }
-
-  refreshChamberTab() {
-    const currentTab = this.chamberTabLabels[this.selectedIndex];
-    this.loadOnChamberAppointmentsForTab(currentTab, true);
-  }
-
-  loadOnlineAppointmentsForTab(tab: string, forceRefresh: boolean = false) {
-    if (!forceRefresh && this.onlineAppointmentCache[tab]) return;
-
-    this.onlineAptLoader = true;
-
-    this.DashboardService.getDashboardAppointmentListForDoctor(
-      this.doctorId,
-      tab
-    ).subscribe({
-      next: (res) => {
-        this.onlineAppointmentCache[tab] = res.result || [];
-        this.onlineAptLoader = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.onlineAptLoader = false;
-      },
+    const hasMissingBasics = requiredFields.some((field) => {
+      const value = profile[field];
+      return value === undefined || value === null || value === '';
     });
+
+    const hasDegrees = Array.isArray(profile.degrees) && profile.degrees.length > 0;
+    const hasSpecializations =
+      Array.isArray(profile.doctorSpecialization) &&
+      profile.doctorSpecialization.length > 0;
+
+    const isProfileStepCompleted = (profile.profileStep ?? 0) >= 3
+    ;
+
+    return hasMissingBasics || !hasDegrees || !hasSpecializations || !isProfileStepCompleted;
   }
-
-  loadOnChamberAppointmentsForTab(tab: string, forceRefresh: boolean = false) {
-    if (!forceRefresh && this.chamberAppointmentCache[tab]) return;
-    this.filterData.day = tab;
-    this.filterData.consultancyType = 1;
-    this.filterData.export = true;
-    this.chamberAptLoader = true;
-
-    this.AppointmentService.getAppointmentListForDoctorWithSearchFilter(
-      this.doctorId,
-      this.filterData,
-      this.filterModel
-    ).subscribe({
-      next: (res) => {
-        this.chamberAppointmentCache[tab] = res.result || [];
-        this.chamberAptLoader = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.chamberAptLoader = false;
-      },
-    });
-  }
-  exportToCSV() {
-    this.exportLoader = true;
-    this.AppointmentService.getAppointmentExportFile(
-      this.doctorId,
-      this.filterData,
-      this.filterModel
-    ).subscribe({
-      next: (res) => {
-        const blob = new Blob([res], { type: 'text/xlsx' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'appointments.xlsx';
-        a.click();
-
-        window.URL.revokeObjectURL(url);
-        this.exportLoader = false;
-      },
-      error: (err) => {
-        console.error('Download failed:', err);
-        this.exportLoader = false;
-      },
-    });
-  }
-  getDashboardStatisticData(id: number) {
-    this.DashboardService.getDashboadDataForDoctor(id).subscribe({
-      next: (res) => {
-        this.details = res;
-      },
-    });
-  }
-
-  // getDashboardChamberAppointment(value: string) {
-  //   this.aptLoading = true;
-  //   this.DashboardService.getDashboardAppointmentListForDoctor(
-  //     this.doctorId,
-
-  //     value
-  //   ).subscribe({
-  //     next: (res) => {
-  //       this.appointmentList = res;
-  //       this.aptLoading = false;
-  //       console.log(res);
-  //     },
-  //     error: (err) => {
-  //       console.log(err);
-  //       this.aptLoading = false;
-  //     },
-  //   });
-  // }
 }

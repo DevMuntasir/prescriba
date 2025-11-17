@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DegreeService } from 'src/app/proxy/services';
+import { DegreeService } from 'src/app/api/services';
 
 @Component({
   selector: 'app-degree-card',

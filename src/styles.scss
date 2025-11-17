@@ -1,6 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import '@angular/cdk/overlay-prebuilt.css';
+
+
+// Ensure Angular Material overlays keep their default positioning
 // @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 // @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap');
 
@@ -261,3 +266,26 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.toast-success .mdc-snackbar__surface {
+  background-color: rgb(0 171 7 / 100%);
+  color: #f1f1f1;
+}
+
+.toast-error .mdc-snackbar__surface {
+  background-color: rgb(255 0 0 / 100%);
+  color: #f1f1f1;
+}
+
+.toast-warning .mdc-snackbar__surface {
+  background-color: rgb(255 179 68 / 100%);
+  color: #483500;
+}
+
+.toast-success .mdc-button__label,
+.toast-error .mdc-button__label,
+.toast-warning .mdc-button__label {
+  color: inherit;
+}
+
+

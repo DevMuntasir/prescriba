@@ -1,0 +1,383 @@
+<div
+  *ngIf="open"
+  class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-neutral/80 bg-opacity-70 backdrop-blur-sm px-4 py-8"
+>
+  <div
+    class="onboarding-modal relative w-full max-w-4xl rounded-3xl bg-white p-8 shadow-[0_45px_85px_rgba(6,180,139,0.18)]"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="onboarding-modal-title"
+  >
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 id="onboarding-modal-title" class="text-xl font-semibold text-brand-primary">
+          Provide your onboarding details
+        </h2>
+        <p class="text-sm text-brand-neutral/70">
+          Share the required regulatory and professional info so we can unlock your dashboard.
+        </p>
+      </div>
+      <span class="rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-medium text-brand-primary">
+        Step {{ currentStep + 1 }} of {{ steps.length }}
+      </span>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <ng-container *ngFor="let label of steps; let idx = index">
+        <div class="flex items-center gap-2">
+          <span
+            class="grid h-8 w-8 place-items-center rounded-full text-sm font-semibold"
+            [ngClass]="{
+              'bg-brand-primary text-white': idx <= currentStep,
+              'bg-brand-neutral/10 text-brand-neutral/70': idx > currentStep
+            }"
+          >
+            {{ idx + 1 }}
+          </span>
+          <span
+            class="text-sm font-medium"
+            [ngClass]="{ 'text-brand-primary': idx === currentStep, 'text-brand-neutral/70': idx !== currentStep }"
+          >
+            {{ label }}
+          </span>
+        </div>
+        <span
+          *ngIf="idx < steps.length - 1"
+          class="hidden h-px flex-1 bg-brand-neutral/20 sm:block"
+        ></span>
+      </ng-container>
+    </div>
+
+    <form class="mt-8 space-y-6" [formGroup]="form" (ngSubmit)="submit()">
+      <ng-container [ngSwitch]="currentStep">
+        <section *ngSwitchCase="0" formGroupName="basicInfo" class="rounded-3xl border border-brand-primary/10 bg-brand-surface/40 p-6">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary">
+              <span class="text-lg font-semibold">ID</span>
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-brand-neutral">Professional identity</p>
+              <p class="text-xs text-brand-neutral/60">Match the exact information on your official documents.</p>
+            </div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <ng-container *ngFor="let field of ['bmdcRegNo','bmdcRegExpiryDate','address','city','zipCode','country','identityNumber','specialityName']">
+              <div [ngSwitch]="field">
+                <label class="mb-2 block text-sm font-medium text-brand-neutral">{{ basicInfoLabels[field] }}</label>
+                <ng-container [ngSwitch]="field">
+                  <input
+                    *ngSwitchCase="'bmdcRegNo'"
+                    type="text"
+                    placeholder="Enter your BMDC number"
+                    formControlName="bmdcRegNo"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                  <input
+                    *ngSwitchCase="'bmdcRegExpiryDate'"
+                    type="date"
+                    formControlName="bmdcRegExpiryDate"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                  <input
+                    *ngSwitchCase="'address'"
+                    type="text"
+                    placeholder="Runway Road Dhaka"
+                    formControlName="address"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                  <input
+                    *ngSwitchCase="'city'"
+                    type="text"
+                    placeholder="Enter city"
+                    formControlName="city"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                  <input
+                    *ngSwitchCase="'zipCode'"
+                    type="text"
+                    placeholder="1216"
+                    formControlName="zipCode"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                  <select
+                    *ngSwitchCase="'country'"
+                    formControlName="country"
+                    class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  >
+                    <option *ngFor="let country of countries" [ngValue]="country">{{ country }}</option>
+                  </select>
+                  <input
+                    *ngSwitchCase="'identityNumber'"
+                    type="text"
+                    placeholder="Identity Number (Passport/NID)"
+                    formControlName="identityNumber"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                  <select
+                    *ngSwitchDefault
+                    formControlName="specialityName"
+                    class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  >
+                    <option value="" disabled>Select speciality</option>
+                    <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality">{{ speciality }}</option>
+                  </select>
+                </ng-container>
+                <p class="mt-1 text-xs text-red-500" *ngIf="basicInfoGroup.get(field)?.touched && basicInfoGroup.get(field)?.invalid">
+                  {{ basicInfoLabels[field] }} is required.
+                </p>
+              </div>
+            </ng-container>
+          </div>
+        </section>
+
+        <section *ngSwitchCase="1" class="space-y-6">
+          <div class="rounded-3xl border border-brand-primary/10 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary">??</span>
+                <div>
+                  <p class="text-sm font-semibold text-brand-neutral">Medical educational info</p>
+                  <p class="text-xs text-brand-neutral/60">List each degree so patients can trust your expertise.</p>
+                </div>
+              </div>
+              <span class="rounded-full bg-brand-primary/5 px-3 py-1 text-xs font-semibold text-brand-primary">
+                {{ degreesArray.length }} degree{{ degreesArray.length > 1 ? 's' : '' }}
+              </span>
+            </div>
+
+            <div formArrayName="degrees" class="space-y-4">
+              <div
+                *ngFor="let degree of degreesArray.controls; let idx = index"
+                [formGroupName]="idx"
+                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5"
+              >
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex flex-1 items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary text-white text-sm font-semibold">
+                      {{ idx + 1 }}
+                    </span>
+                    <div>
+                      <p class="text-sm font-semibold text-brand-neutral">Degree {{ idx + 1 }}</p>
+                      <p class="text-xs text-brand-neutral/60">Provide the credential details</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="text-xs font-semibold text-brand-neutral/60 transition hover:text-red-500"
+                    *ngIf="degreesArray.length > 1"
+                    (click)="removeDegree(idx)"
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div class="mt-4 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Degree</label>
+                    <select
+                      formControlName="degreeId"
+                      (change)="onDegreeSelected(idx)"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    >
+                      <option value="" disabled>Select Degree</option>
+                      <option *ngFor="let degree of degreeOptions" [ngValue]="degree?.id">{{ degree?.degreeName }}</option>
+                    </select>
+                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('degreeId')?.touched && degree.get('degreeId')?.invalid">
+                      Degree is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Passing Year</label>
+                    <input
+                      type="number"
+                      placeholder="2000"
+                      formControlName="passingYear"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    />
+                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('passingYear')?.touched && degree.get('passingYear')?.invalid">
+                      Enter a valid year (e.g. 2000).
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute Name</label>
+                    <input
+                      type="text"
+                      placeholder="Institute Name"
+                      formControlName="instituteName"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    />
+                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('instituteName')?.touched && degree.get('instituteName')?.invalid">
+                      Institute name is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute City</label>
+                    <input
+                      type="text"
+                      placeholder="City"
+                      formControlName="instituteCity"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    />
+                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('instituteCity')?.touched && degree.get('instituteCity')?.invalid">
+                      City is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute Country</label>
+                    <select
+                      formControlName="instituteCountry"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    >
+                      <option *ngFor="let country of countries" [ngValue]="country">{{ country }}</option>
+                    </select>
+                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('instituteCountry')?.touched && degree.get('instituteCountry')?.invalid">
+                      Country is required.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:border-brand-primary hover:bg-brand-primary/5"
+              (click)="addDegree()"
+            >
+              + Add Degree
+            </button>
+          </div>
+
+          <div class="rounded-3xl border border-brand-primary/10 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-100 text-brand-primary">??</span>
+                <div>
+                  <p class="text-sm font-semibold text-brand-neutral">Specialization info</p>
+                  <p class="text-xs text-brand-neutral/60">Tell us where you focus your practice.</p>
+                </div>
+              </div>
+              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-brand-primary">
+                {{ specializationsArray.length }} specialization{{ specializationsArray.length > 1 ? 's' : '' }}
+              </span>
+            </div>
+
+            <div formArrayName="specializations" class="space-y-4">
+              <div
+                *ngFor="let specialization of specializationsArray.controls; let idx = index"
+                [formGroupName]="idx"
+                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5"
+              >
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex flex-1 items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary text-sm font-semibold">
+                      {{ idx + 1 }}
+                    </span>
+                    <div>
+                      <p class="text-sm font-semibold text-brand-neutral">Specialization {{ idx + 1 }}</p>
+                      <p class="text-xs text-brand-neutral/60">Document your expertise</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="text-xs font-semibold text-brand-neutral/60 transition hover:text-red-500"
+                    *ngIf="specializationsArray.length > 1"
+                    (click)="removeSpecialization(idx)"
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div class="mt-4 grid gap-4 md:grid-cols-3">
+                  <div class="md:col-span-1">
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Speciality</label>
+                    <select
+                      formControlName="specialityId"
+                      (change)="onSpecialitySelected(idx)"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    >
+                      <option value="" disabled>Select speciality</option>
+                      <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality?.id">{{ speciality?.specialityName }}</option>
+                    </select>
+                    <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specialityId')?.touched && specialization.get('specialityId')?.invalid">
+                      Speciality is required.
+                    </p>
+                  </div>
+                  <div class="md:col-span-1">
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Department</label>
+                    <input
+                      type="text"
+                      placeholder="Department"
+                      formControlName="specializationName"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    />
+                    <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specializationName')?.touched && specialization.get('specializationName')?.invalid">
+                      Department is required.
+                    </p>
+                  </div>
+                  <div class="md:col-span-1">
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Document Name</label>
+                    <input
+                      type="text"
+                      placeholder="Document Name"
+                      formControlName="documentName"
+                      class="w-full rounded-xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:border-brand-primary hover:bg-brand-primary/5"
+              (click)="addSpecialization()"
+            >
+              + Add Specialization
+            </button>
+          </div>
+        </section>
+      </ng-container>
+
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs text-brand-neutral/60">
+          Submit these details once to keep your profile live and discoverable.
+        </p>
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="rounded-xl border border-brand-neutral/30 px-5 py-2 text-sm font-medium text-brand-neutral transition hover:border-brand-neutral/60"
+            (click)="goToPreviousStep()"
+            [disabled]="currentStep === 0 || saving"
+          >
+            Back
+          </button>
+          <button
+            *ngIf="currentStep < steps.length - 1"
+            type="button"
+            class="rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
+            (click)="goToNextStep()"
+            [disabled]="saving"
+          >
+            Continue
+          </button>
+          <button
+            *ngIf="currentStep === steps.length - 1"
+            type="submit"
+            class="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
+            [disabled]="saving"
+          >
+            <ng-container *ngIf="!saving; else savingTpl">Save profile</ng-container>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <ng-template #savingTpl>
+      <span class="flex items-center gap-2">
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+        Saving...
+      </span>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,217 @@
+<section id="find-doctor" class="relative py-20 bg-gradient-to-b from-white via-emerald-50 to-white">
+  <div class="absolute inset-x-0 -top-16 h-32 bg-white rounded-t-3xl shadow-inner"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-12 mb-12">
+      <div class="space-y-6">
+        <span class="inline-flex items-center px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold">
+          Book Trusted Doctors
+        </span>
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+          Find the right doctor
+          <span class="text-emerald-600 block">and confirm by phone in minutes</span>
+        </h2>
+        <p class="text-lg text-gray-600 max-w-3xl leading-relaxed">
+          Discover our curated network of specialists, compare availability at a glance, and reserve a slot instantly
+          with a direct call. No apps, no forms -- just quick help when you need it.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+          <div class="flex items-center gap-3 bg-white/80 backdrop-blur border border-emerald-100 rounded-2xl py-3 px-4 shadow-sm">
+            <span class="inline-flex items-center justify-center rounded-full bg-emerald-600 text-white w-10 h-10 text-lg font-semibold">1</span>
+            <div>
+              <p class="font-semibold text-gray-900">Search & compare</p>
+              <p class="text-gray-500">Filter by specialty, rating, or availability</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 bg-white/80 backdrop-blur border border-emerald-100 rounded-2xl py-3 px-4 shadow-sm">
+            <span class="inline-flex items-center justify-center rounded-full bg-emerald-600 text-white w-10 h-10 text-lg font-semibold">2</span>
+            <div>
+              <p class="font-semibold text-gray-900">Call to book</p>
+              <p class="text-gray-500">Speak directly with the doctor's assistant</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full xl:max-w-md space-y-4">
+        <div class="relative bg-white border border-emerald-100 rounded-3xl shadow-lg overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-5">
+            <span class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 text-xl">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="stroke-current">
+                <path d="M10.5 4.5C13.8137 4.5 16.5 7.18629 16.5 10.5C16.5 11.9721 15.9773 13.317 15.1184 14.3775L19.3703 18.6297C19.6643 18.9237 19.6643 19.3986 19.3703 19.6926C19.1019 19.961 18.6799 19.9831 18.3867 19.7588L18.3074 19.6926L14.0553 15.4404C12.9948 16.2993 11.6499 16.822 10.1779 16.822C6.86421 16.822 4.17792 14.1357 4.17792 10.822C4.17792 7.50829 6.86421 4.822 10.1779 4.822C13.4916 4.822 16.1779 7.50829 16.1779 10.822" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <div class="flex-1">
+              <label class="text-sm text-gray-500">Quick search</label>
+              <input
+                type="search"
+                [(ngModel)]="searchTerm"
+                placeholder="Search doctor, specialty, clinic"
+                class="w-full bg-transparent text-gray-900 text-lg font-semibold placeholder:text-gray-400 focus:outline-none"
+              />
+            </div>
+          </div>
+          <div class="flex items-center justify-between bg-emerald-600/5 px-6 py-4 text-sm text-emerald-700">
+            <span>Phone booking desk - 24/7</span>
+            <span class="font-semibold">+880 1234-567890</span>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 text-sm text-gray-500 bg-white/70 backdrop-blur border border-emerald-100 rounded-3xl p-4 shadow-sm">
+          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-emerald-100 text-emerald-600">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current">
+              <path d="M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21Z" stroke-width="1.6"/>
+              <path d="M12 8.40039V12.6004" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="12" cy="15.6" r="0.8" fill="currentColor"/>
+            </svg>
+          </span>
+          <p class="leading-relaxed">
+            Save time with our concierge desk -- we pre-confirm availability before connecting your call.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-emerald-100 rounded-3xl shadow-xl p-6 md:p-8 mb-12">
+      <div class="flex flex-col xl:flex-row xl:items-center gap-6">
+        <div class="doctor-directory__pill-row">
+          <button
+            type="button"
+            class="doctor-directory__pill"
+            [ngClass]="{ 'doctor-directory__pill--active': selectedSpecialization === 'all' }"
+            (click)="selectedSpecialization = 'all'"
+          >
+            All Specialists
+          </button>
+          <button
+            *ngFor="let specialization of specializations"
+            type="button"
+            class="doctor-directory__pill"
+            [ngClass]="{ 'doctor-directory__pill--active': selectedSpecialization === specialization }"
+            (click)="selectedSpecialization = specialization"
+          >
+            {{ specialization }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="grid gap-6 md:gap-8 md:grid-cols-2 xl:grid-cols-3">
+      <article
+        *ngFor="let doctor of filteredDoctors; trackBy: trackByDoctor"
+        class="doctor-directory__card group"
+      >
+        <div class="flex flex-col gap-5">
+          <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-emerald-600 bg-emerald-50 rounded-full px-3 py-1 mb-2">
+                Verified Doctor
+              </p>
+              <h3 class="text-2xl font-semibold text-gray-900 leading-tight">
+                {{ doctor.name }}
+              </h3>
+              <p class="text-emerald-600 font-medium">{{ doctor.specialization }}</p>
+            </div>
+            <div class="flex items-center gap-3  self-start">
+              <div class="text-emerald-600">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-md font-semibold text-gray-900">
+                  {{ doctor.rating | number: '1.1-1' }}
+                </p>
+              </div>
+            </div>
+          </header>
+
+          <div class="flex flex-col gap-3 text-sm text-gray-600">
+            <div class="flex items-center gap-3">
+              <span class="doctor-directory__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current">
+                  <path d="M12 22C12 22 5 15.913 5 10.5C5 6.35786 8.13401 3 12 3C15.866 3 19 6.35786 19 10.5C19 15.913 12 22 12 22Z" stroke-width="1.5" stroke-linejoin="round"/>
+                  <circle cx="12" cy="10.5" r="2.5" stroke-width="1.5"/>
+                </svg>
+              </span>
+              <div>
+                <p class="text-gray-900 font-medium">{{ doctor.location }}</p>
+                <p class="text-xs uppercase tracking-wide text-gray-500">Clinic</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="doctor-directory__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current">
+                  <path d="M12 7V12L15 15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="9" stroke-width="1.5"/>
+                </svg>
+              </span>
+              <div>
+                <p class="text-gray-900 font-medium">{{ doctor.nextAvailable }}</p>
+                <p class="text-xs uppercase tracking-wide text-gray-500">Next availability</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="doctor-directory__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current">
+                  <path d="M7.5 4.5H16.5L18 6V9C18 13.4183 14.4183 17 10 17H9C8.44772 17 8 17.4477 8 18V20H6V18C6 16.3431 7.34315 15 9 15H10C12.2091 15 14 13.2091 14 11V8H7.5V4.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <div>
+                <p class="text-gray-900 font-medium">{{ doctor.experience }}+ years experience</p>
+                <p class="text-xs uppercase tracking-wide text-gray-500">Expertise</p>
+              </div>
+            </div>
+          </div>
+
+          <ul class="flex flex-wrap gap-2">
+            <li
+              *ngFor="let tag of doctor.tags"
+              class="px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold tracking-wide uppercase"
+            >
+              {{ tag }}
+            </li>
+          </ul>
+        </div>
+
+        <footer class=" pt-5 border-t border-emerald-50">
+          <a
+            class="inline-flex items-center justify-center gap-2 w-full sm:flex-1 bg-emerald-600 text-white font-semibold py-3.5 rounded-2xl shadow-md transition-all hover:bg-emerald-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            [href]="createTelLink(doctor.phone)"
+            [attr.aria-label]="createCallLabel(doctor)"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current text-white">
+              <path d="M6 5L8.5 4.5C9.14433 7.7476 11.7524 10.3557 15 11L14.5 13.5C10.9101 12.7895 8.21052 10.0899 7.5 6.5L6 5Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15.5 3.5C16.8807 3.5 18.205 4.05268 19.1716 5.01926C20.1381 5.98584 20.6908 7.31016 20.6908 8.69092" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M15.5 7.5C16.1932 7.5 16.8503 7.77607 17.3504 8.26777C17.8505 8.75947 18.1544 9.4307 18.2045 10.1461" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M9 14.5C10.892 16.392 13.4623 17.5 16.1421 17.5C16.9484 17.5 17.7422 17.4298 18.5 17.2956L18.5 17.2956C19.244 17.1639 19.5 16.3602 19.5 15.5V14.5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Call to Book</span>
+          </a>
+          <div class="w-full text-center">
+            <p class="text-sm text-gray-500 mt-2">
+              Hotline:
+              <span class="font-semibold text-gray-900">{{ doctor.phone }}</span>
+            </p>
+          </div>
+        </footer>
+      </article>
+    </div>
+
+    <div *ngIf="filteredDoctors.length === 0" class="mt-12 bg-white border border-emerald-100 rounded-3xl p-10 text-center shadow-xl">
+      <h3 class="text-2xl font-semibold text-gray-900 mb-3">No doctors matched this search</h3>
+      <p class="text-gray-600 mb-6">
+        Try easing your filters or call our care desk at
+        <span class="font-semibold text-emerald-600">+880 1234-567890</span> for a concierge booking.
+      </p>
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-emerald-700 transition-all shadow-md hover:shadow-lg"
+        (click)="selectedSpecialization = 'all'; searchTerm = ''"
+      >
+        Reset Filters
+      </button>
+    </div>
+  </div>
+</section>

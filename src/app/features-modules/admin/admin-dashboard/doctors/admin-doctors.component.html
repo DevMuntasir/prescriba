@@ -105,12 +105,12 @@
                 <th class="px-6 py-3">Speciality</th>
                 <th class="px-6 py-3">Contact</th>
                 <th class="px-6 py-3">Status</th>
-                <th class="px-6 py-3">Last activity</th>
+                <th class="px-6 py-3">Patient ID</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-brand-primary/10 text-sm text-brand-neutral">
               <tr
-                *ngFor="let doctor of filteredDoctors(); trackBy: trackById"
+                *ngFor="let doctor of doctors(); trackBy: trackById"
                 class="transition-colors hover:bg-brand-primary/5"
               >
                 <td class="px-6 py-4">
@@ -154,16 +154,16 @@
                       ></span>
                       {{ doctor.isActive ? 'Active' : 'Pending' }}
                     </span>
-                    <span class="text-xs text-brand-neutral/60">
+                    <!-- <span class="text-xs text-brand-neutral/60">
                       {{ doctor.isOnline ? 'Online' : 'Offline' }}
-                    </span>
+                    </span> -->
                   </div>
                 </td>
                 <td class="px-6 py-4 text-brand-neutral/80">
-                  <span>{{ getLastUpdatedTime(doctor) | date: 'medium' }}</span>
+                  <span>{{doctor.id }}</span>
                 </td>
               </tr>
-              <tr *ngIf="!filteredDoctors().length">
+              <tr *ngIf="!doctors().length && !isLoading()">
                 <td colspan="5" class="px-6 py-8 text-center text-sm text-brand-neutral/60">
                   No doctors match the current search.
                 </td>

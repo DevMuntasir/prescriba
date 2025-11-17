@@ -3,7 +3,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { MenuService } from 'src/app/shared/services/menu.service';
 import { UserinfoStateService } from 'src/app/shared/services/states/userinfo-state.service';
-
 @Component({
   selector: 'app-doctor',
   templateUrl: './doctor.component.html',
@@ -24,6 +23,18 @@ export class DoctorComponent {
           <rect x="3" y="14" width="7" height="7"></rect>
         </svg>`),
     },
+    {
+  menuName: 'E-Chamber',
+  route: 'e-chamber',
+  icon: this.sanitizer.bypassSecurityTrustHtml(`
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 21v-4a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v4" />
+      <circle cx="12" cy="7" r="4" />
+      <path d="M10 11h4" />
+    </svg>`),
+},
+
     {
       menuName: 'Patients',
       route: 'patients',
@@ -63,7 +74,7 @@ export class DoctorComponent {
     },
     {
       menuName: 'Hospital',
-      route: 'hospital-schedule',
+      route: 'hospital',
       icon: this.sanitizer.bypassSecurityTrustHtml(`
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -71,6 +82,19 @@ export class DoctorComponent {
           <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
         </svg>`),
     },
+    // {
+    //   menuName: 'Schedule',
+    //   route: 'schedule',
+    //   icon: this.sanitizer.bypassSecurityTrustHtml(`
+    //     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+    //       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    //       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+    //       <line x1="16" y1="2" x2="16" y2="6"></line>
+    //       <line x1="8" y1="2" x2="8" y2="6"></line>
+    //       <line x1="3" y1="10" x2="21" y2="10"></line>
+    //       <polyline points="16 14 12 18 9 15"></polyline>
+    //     </svg>`),
+    // },
     {
       menuName: 'Settings',
       route: 'profile-settings',

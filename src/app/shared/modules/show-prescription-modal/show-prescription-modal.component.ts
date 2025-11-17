@@ -1,5 +1,5 @@
 import { TosterService } from 'src/app/shared/services/toster.service';
-import { PrescriptionMasterService } from './../../../proxy/services/prescription-master.service';
+import { PrescriptionMasterService } from './../../../api/services/prescription-master.service';
 import {
   Component,
   ElementRef,
@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import html2canvas from 'html2canvas';
+
 
 @Component({
   selector: 'app-show-prescription-modal',
@@ -74,29 +74,6 @@ export class ShowPrescriptionModalComponent implements OnInit {
           scale: scale,
           useCORS: true,
         };
-        html2canvas(printableContent, options).then(async (canvas) => {
-          const { jsPDF } = await import('jspdf');
-          const pdf = new jsPDF();
-          const imgData = canvas.toDataURL('image/jpeg', 0.5);
-          const imgWidth = 210; // A4 size
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-          this.saveLoader = false;
-          pdf.save(`${this.prescriptionInfo.patientName}-Prescription.pdf`);
-          //
-          // const blob = pdf.output('blob');
-          // const pdfUrl = URL.createObjectURL(blob);
-          // const printWindow: Window | null = window.open(pdfUrl);
-          // if (printWindow) {
-          //   printWindow.onload = () => {
-          //     // printWindow.print();
-          //     pdf.autoPrint();
-          //   };
-          // } else {
-          //   console.error('Print window could not be opened.');
-          // }
-        });
       } else {
         console.error('Printable section not found');
       }

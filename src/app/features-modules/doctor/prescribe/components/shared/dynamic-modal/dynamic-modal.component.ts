@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { ChiefComplainComponent } from '../../modals/chief-complain/chief-complain.component';
 import { OnExaminationComponent } from '../../modals/on-examination/on-examination.component';
@@ -21,6 +21,7 @@ import { InstructionComponent } from '../../modals/instruction/instruction.compo
   standalone: true,
   imports: [
     CommonModule,
+    MatDialogModule,
     ChiefComplainComponent,
     OnExaminationComponent,
     HistoryComponent,

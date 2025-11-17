@@ -1,0 +1,104 @@
+:host {
+  display: block;
+}
+
+.patient-slip {
+  position: relative;
+  border-radius: 28px;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid rgba(6, 180, 139, 0.2);
+  background: linear-gradient(180deg, #ffffff 0%, var(--brand-surface) 100%);
+  box-shadow: 0 15px 45px rgba(6, 180, 139, 0.08);
+}
+
+.patient-slip__seal {
+  position: absolute;
+  top: -20px;
+  right: 1.75rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-accent));
+  color: #fff;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 18px 30px rgba(6, 180, 139, 0.3);
+}
+
+.patient-slip__header {
+  margin-bottom: 1.5rem;
+}
+
+.patient-slip__title {
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand-neutral);
+  margin: 0 0 0.25rem;
+}
+
+.patient-slip__header p:last-child {
+  font-size: 0.9rem;
+  color: var(--brand-neutral-soft);
+  margin: 0;
+}
+
+.patient-slip__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.patient-slip__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-bottom: 1px solid rgba(31, 42, 55, 0.1);
+  padding-bottom: 0.9rem;
+}
+
+.patient-slip__row span {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(31, 42, 55, 0.7);
+}
+
+.patient-slip__row input,
+.patient-slip__row select {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1rem;
+  color: var(--brand-neutral);
+  padding: 0.2rem 0;
+}
+
+.patient-slip__row--split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  column-gap: 1.25rem;
+}
+
+.patient-slip__row--split label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.patient-slip__row select {
+  appearance: none;
+  background: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231f2a37' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.25rem center;
+  padding-right: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .patient-slip {
+    padding: 1.25rem 1.2rem;
+  }
+
+  .patient-slip__seal {
+    right: 1.25rem;
+  }
+}

@@ -1,0 +1,195 @@
+﻿<div class="space-y-6 max-w-6xl mx-auto py-10">
+  <!-- Session Header -->
+  <div class="rounded-2xl bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-lg p-6">
+    <div class="flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between">
+      <div>
+        <p class="text-sm text-teal-100 uppercase tracking-wider">E-Chamber Session</p>
+        <h1 class="text-2xl font-semibold mt-1">
+          {{ session?.sessionName || 'Consultation Room' }}
+        </h1>
+        <p class="text-teal-100 mt-1">
+          {{ session?.startTime }} - {{ session?.endTime }}
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-4">
+        <div class="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 7v5l3 3"></path>
+          </svg>
+          <span class="text-sm font-medium">{{ currentTime | date: 'h:mm:ss a' }}</span>
+        </div>
+        <div class="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="3"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a3 3 0 0 1 0 5.75"></path>
+          </svg>
+          <span class="text-sm font-medium">{{ waitingCount }} waiting</span>
+        </div>
+        <button
+          (click)="handleCallNext()"
+          [disabled]="waitingCount === 0 || inConsultation"
+          class="inline-flex items-center gap-2 rounded-xl bg-white text-teal-700 hover:text-teal-900 px-4 py-2 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 21h18"></path>
+            <path d="M14 3H9a2 2 0 0 0-2 2v16"></path>
+            <path d="M18 21V7a2 2 0 0 0-1.4-1.9L14 4"></path>
+            <circle cx="13" cy="12" r="1"></circle>
+          </svg>
+          Call Next patient
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-3">
+    <section class="lg:col-span-2 space-y-6">
+      <!-- Consultation Table -->
+      <div class="rounded-2xl border-2 border-slate-200 bg-white  overflow-hidden">
+        <div class="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-500">Consultation Room</p>
+            <p class="text-lg font-semibold text-slate-900">Doctor &amp; Patient table</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs uppercase text-slate-400">Progress</p>
+            <p class="text-sm font-semibold text-teal-600">{{ consultationProgress }}%</p>
+          </div>
+        </div>
+        <div class="p-6 space-y-6">
+          <div class="consultation-scene">
+            <div class="scene-column doctor" aria-label="Doctor area">
+              <div class="chair doctor-chair">
+               
+               
+              </div>
+              <div class="scene-card">
+                <p class="text-xs uppercase text-slate-400">Doctor</p>
+                <p class="text-lg font-semibold text-slate-900">Dr. Sarah Mitchell</p>
+                <p class="text-sm text-slate-500">Cardiology • Room 302</p>
+                <p class="text-xs text-slate-400 mt-2">Reviewing {{ session?.sessionName?.toLowerCase() || 'this session' }}</p>
+              </div>
+            </div>
+
+           
+
+            <div class="scene-column patient" aria-label="Patient area">
+              <div class="chair patient-chair">
+  
+  
+              </div>
+              <div class="scene-card">
+                <ng-container *ngIf="inConsultation; else waitingSeat">
+                  <p class="text-xs uppercase text-slate-400">Patient</p>
+                  <p class="text-lg font-semibold text-slate-900">{{ inConsultation!.name }}</p>
+                  <p class="text-sm text-slate-500">Token {{ inConsultation!.token }} • {{ inConsultation!.age }}y {{ inConsultation!.gender }}</p>
+                  <p class="text-xs text-slate-400 mt-2">Arrived {{ inConsultation!.arrivalTime }} • Appointment {{ inConsultation!.appointmentTime }}</p>
+  <div class=" flex gap-3">
+                    <button
+                    class="mt-4 w-full rounded-lg bg-emerald-600 text-white py-2 text-sm font-semibold hover:bg-emerald-500"
+                    (click)="handleComplete(inConsultation!.id)"
+                  >
+                    Mark completed
+                  </button>
+                  <button
+                    class="mt-4 w-full rounded-lg bg-emerald-600 text-white py-2 text-sm font-semibold hover:bg-emerald-500"
+                    (click)="handleComplete(inConsultation!.id)"
+                  >
+                    RX
+                  </button>
+  </div>
+                </ng-container>
+                <ng-template #waitingSeat>
+                  <p class="text-sm text-slate-500">No patient inside. Call the next patient to begin.</p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Queue Overview -->
+      <div class="rounded-2xl border border-slate-200 bg-white shadow divide-y">
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-500">Queue overview</p>
+            <h2 class="text-lg font-semibold text-slate-900">Waiting area</h2>
+          </div>
+          <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1">
+            {{ waitingCount }} waiting
+          </span>
+        </div>
+        <div class="divide-y max-h-[420px] overflow-y-auto">
+          <div
+            *ngFor="let patient of queue; let index = index; trackBy: trackByPatientId"
+            class="px-6 py-4 flex items-center gap-4"
+          >
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-base font-semibold"
+              [ngClass]="{
+                'bg-emerald-100 text-emerald-700 border border-emerald-200': patient.status === 'completed',
+                'bg-blue-100 text-blue-700 border border-blue-200': patient.status === 'in-consultation',
+                'bg-amber-100 text-amber-700 border border-amber-200': patient.status === 'waiting'
+              }"
+            >
+              {{ patient.name.charAt(0) }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-slate-900 truncate">{{ patient.name }}</p>
+                <span class="text-xs uppercase tracking-wide" [ngClass]="{
+                    'text-emerald-600': patient.status === 'completed',
+                    'text-blue-600': patient.status === 'in-consultation',
+                    'text-amber-600': patient.status === 'waiting'
+                  }">
+                  {{ patient.status | titlecase }}
+                </span>
+              </div>
+              <p class="text-sm text-slate-500">Token {{ patient.token }} • Arrived {{ patient.arrivalTime }}</p>
+              <p class="text-xs text-slate-400">Waiting {{ getWaitingTime(patient.arrivalTime) }} min</p>
+            </div>
+            <div *ngIf="index === 0 && patient.status === 'waiting'" class="text-amber-600 text-xs font-semibold">Next</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats column -->
+    <aside class="space-y-6">
+      <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow">
+        <p class="text-sm text-emerald-700">Completed today</p>
+        <p class="text-4xl font-semibold text-emerald-800 mt-2">{{ completedCount }}</p>
+        <p class="text-sm text-emerald-700 mt-1">Consultations successfully closed</p>
+      </div>
+
+      <div class="rounded-2xl border border-blue-200 bg-blue-50 p-6 shadow space-y-4">
+        <div>
+          <p class="text-sm text-blue-700">Next patient</p>
+          <ng-container *ngIf="nextPatient; else noNext">
+            <p class="text-lg font-semibold text-blue-900 mt-1">{{ nextPatient!.name }}</p>
+            <p class="text-sm text-blue-700">Token {{ nextPatient!.token }} • Arrived {{ nextPatient!.arrivalTime }}</p>
+          </ng-container>
+        </div>
+        <div>
+          <p class="text-sm text-blue-700">Estimated waiting</p>
+          <p class="text-2xl font-semibold text-blue-900">{{ nextPatient ? getWaitingTime(nextPatient.arrivalTime) : 0 }} min</p>
+        </div>
+        <ng-template #noNext>
+          <p class="text-sm text-blue-700">No one else in the queue.</p>
+        </ng-template>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow">
+        <p class="text-sm text-slate-500">Session summary</p>
+        <ul class="mt-3 space-y-2 text-sm text-slate-700">
+          <li>Session: {{ session?.sessionName || 'Not assigned' }}</li>
+          <li>Timings: {{ session?.startTime }} - {{ session?.endTime }}</li>
+          <li>Total patients in queue: {{ queue.length }}</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</div>
