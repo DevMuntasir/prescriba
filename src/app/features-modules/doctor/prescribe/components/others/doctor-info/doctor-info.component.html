@@ -1,59 +1,65 @@
 @if (isHeader) {
-<div class="flex justify-between w-full gap-6">
-    <div class="w-1/2 mb-5">
-        <h1 class="text-2xl font-RobotoBold text-slate-900 !mb-2">{{doctor.doctorName}}</h1>
-        <p>{{doctor.qualification}}</p>
+<section class="rx-header">
+  <div class="rx-header__row">
+    <div class="rx-header__column rx-header__column--doctor">
+      <p class="rx-header__eyebrow">Dr.</p>
+      <h1>{{ doctor?.doctorName || 'Name not updated' }}</h1>
+      @if (doctor?.qualification) {
+      <p>{{ doctor.qualification }}</p>
+      }
+      @if (doctor?.degree?.length) {
+      <ul>
         @for (item of doctor.degree; track $index) {
-        <p class="text-gray-500 !mb-0">{{item.degreeName}} - {{item.instituteName}},{{item.instituteCity}}</p>
+        <li>
+          {{ item.degreeName }}
+          @if (item.instituteName || item.instituteCity) {
+          <span>- {{ item.instituteName }}, {{ item.instituteCity }}</span>
+          }
+        </li>
         }
-        <p class="text-gray-500">{{doctor.areaOfExperties}}</p>
-        <p class="text-gray-500">BMDC:{{doctor.bmdc}}</p>
+      </ul>
+      }
+      @if (doctor?.areaOfExperties) {
+      <p>{{ doctor.areaOfExperties }}</p>
+      }
     </div>
 
-    <div class="w-1/2 text-right mb-2">
-
-        @for (item of doctor.chamber; track $index) {
-        <p class="text-slate-900 font-Roboto text-right text-[20px] !mb-0 whitespace-wrap">{{item.chamberName}}</p>
-        <p class="text-gray-500 font-RobotoLight text-right text-[14px] !mb-0 whitespace-wrap">
-            {{item.address}}, {{item.city}} - {{item.zipCode}}</p>
-        }@empty {
-
-        @if (isPreHand) {
-        <p class="text-slate-900 font-RobotoBold text-right text-[22px] !mb-0 whitespace-nowrap">Prescriba Online</p>
-        <p class="text-gray-500 text-right !mb-0 whitespace-nowrap">+880 1605-144633</p>
-        <p class="text-gray-500 text-right !mb-0 whitespace-nowrap">info&#64;prescriba.com
-        </p>
-        }
-        @if(!doctor?.chamber?.length && !isPreHand) {
-        <p class="text-slate-900 font-RobotoBold text-right text-[22px] !mb-0 whitespace-nowrap">Prescriba Online</p>
-        <p class="text-gray-500 text-right !mb-0 whitespace-nowrap">+880 1605-144633</p>
-        <p class="text-gray-500 text-right !mb-0 whitespace-nowrap">info&#64;prescriba.com
-        </p>
-        }
-        }
-
-
-        <!-- @for (item of doctor.schedule; let last = $last; track $index) {
-              <span class="whitespace-nowrap">
-                {{ item.day }} - {{ ('1970-01-01T' + item.time) | date:'hh:mm a' }}<span *ngIf="!last">, </span>
-              </span>
-            } -->
-
-        <div class="flex gap-3 flex-wrap justify-end">
-
-            @for (item of doctor.schedule; let last = $last; track $index) {
-            <span class="whitespace-nowrap">
-                {{ item.start !== item.end ? item.start + ' - ' + item.end : item.start }}
-                <strong>
-                    ({{ item.startTime }} - {{ item.endTime}})
-                </strong> </span>
-            }
-        </div>
-
-
-        <!-- <button (click)="enterFullScreen.emit()" class="whitespace-nowrap">Full Screen</button> -->
+    <div class="rx-header__column rx-header__column--clinic">
+      <p class="rx-header__eyebrow">Chamber</p>
+      @if (doctor?.chamber?.length) {
+      @for (item of doctor.chamber; track $index) {
+      <p>
+        <strong>{{ item.chamberName }}</strong>
+        <span>{{ item.address }}, {{ item.city }} {{ item.zipCode }}</span>
+      </p>
+      }
+      } @else {
+      <p>
+        <strong>Prescriba Online</strong>
+    </p>
+    <p>+880 1605-144633</p>
+    <p>info&#64;prescriba.com</p>
+      }
     </div>
-</div>
+
+
+  </div>
+
+  <div class="rx-header__line"></div>
+
+  @if (doctor?.schedule?.length) {
+  <div class="rx-header__schedule">
+    <span>Visiting hours:</span>
+    <ul>
+      @for (item of doctor.schedule; track $index) {
+      <li>
+        {{ item.start !== item.end ? item.start + ' - ' + item.end : item.start }}
+        <strong>{{ item.startTime }} - {{ item.endTime }}</strong>
+      </li>
+      }
+    </ul>
+  </div>
+  }
+</section>
 }
-
 

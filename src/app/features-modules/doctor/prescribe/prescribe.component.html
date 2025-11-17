@@ -1,94 +1,143 @@
-<div class="px-4">
-  <app-topbar (enterFullScreen)="enterFullScreen()" [isPreHand]="isPreHand" 
-    [patientId]="0" [doctorId]="0"
-    (onClickSelectChamber)="onClickSelectChamber()" />
-  <div>
-
+<div class="prescription-page px-3 md:px-6">
+  <div class="prescription-page__inner space-y-6">
+    <!-- <app-topbar
+      class="prescription-topbar"
+      (enterFullScreen)="enterFullScreen()"
+      [isPreHand]="isPreHand"
+      [patientId]="0"
+      [doctorId]="0"
+      (onClickSelectChamber)="onClickSelectChamber()"
+    /> -->
 
     <div #fullScreenElement>
       @if (isLoading) {
-      <div>
+      <div class="prescription-panel flex items-center justify-center">
         <app-prescription-skelton />
       </div>
-      }@else {
-
-      <div [class]="isFullScreen ? 'h-screen':'min-h-[800px]'"
-        class="w-full h-full mx-auto border-[1px] py-8 px-6 shadow-xl bg-white rounded-lg overflow-y-auto">
-
-        <form [formGroup]="prescribeForm">
-          <div class="h-full">
-            <div class="flex flex-wrap justify-between w-full">
+      } @else {
+      <div class="prescription-panel" [class.prescription-panel--fullscreen]="isFullScreen">
+        <form [formGroup]="prescribeForm" class="space-y-8">
+          <div class="prescription-hero brand-card">
+            <div class="prescription-hero__doctor">
               <app-doctor-info [doctor]="doctor" [isPreHand]="isPreHand" [isHeader]="isHeader" />
             </div>
-            <app-patient-info [patient]="patient" />
-            @if (uploadImage.isUploadImage && uploadImage.image !== '') {
-            <img [src]="uploadImage.image" width="500" height="500">
-            }@else {
-            <div class="flex flex-wrap h-full">
-              <div class="w-full md:max-w-[400px]">
-                <app-section [fields]="['name', 'duration', 'notes']" title="Chief Complaints" [items]="complaints"
-                  (buttonClick)="openComplaintDialog()"></app-section>
-                <app-section [fields]="['name', 'pastHistory', 'presentHistory']" title="History" [items]="historys"
-                  (buttonClick)="openHistoryDialog()"></app-section>
-                <app-section [fields]="['name', 'notes']" title="Examination" [items]="exam"
-                  (buttonClick)="openExaminationDialog()"></app-section>
-                <app-section [fields]="['name', 'pastDiagnosis', 'presentDiagnosis']" title="Diagnosis"
-                  [items]="diagnosis" (buttonClick)="openDiagnosisDialog()"></app-section>
-                <app-section [fields]="['name', 'duration', 'notes']" title="Investigation" [items]="tests"
-                  (buttonClick)="openTestDialog()"></app-section>
+            <div class="prescription-hero__divider" aria-hidden="true"></div>
+            <!-- <div class="prescription-hero__patient">
+                <app-patient-info [patient]="patient" />
+              </div> -->
+          </div>
+
+          <div class=" px-4 space-y-4">
+            <div class="quick-action-bar">
+              <div>
+                <p class="quick-action-bar__title">Quick updates</p>
+                <p class="quick-action-bar__subtitle">Jump directly into a section to edit the current visit.</p>
               </div>
-              <div class="w-[1px] min-h-full bg-gray-200"></div>
-              <div class="w-full justify-end flex-1 pl-8">
-                <div class="mb-6">
-                  <div class="w-full flex justify-between items-center gap-1 font-poppins">
-                    <img class="w-[30px] h-[30px]" src="/assets/other/rx.png" alt="rx">
+              <div class="quick-action-bar__chips">
+                <button type="button" class="quick-action" (click)="openComplaintDialog()">Complaints</button>
+                <button type="button" class="quick-action" (click)="openHistoryDialog()">History</button>
+                <button type="button" class="quick-action" (click)="openExaminationDialog()">Examination</button>
+                <button type="button" class="quick-action" (click)="openDiagnosisDialog()">Diagnosis</button>
+                <button type="button" class="quick-action" (click)="openMedicineDialog()">Medication</button>
+                <button type="button" class="quick-action" (click)="openAdviceDialog()">Advice</button>
+              </div>
+            </div>
+
+            @if (uploadImage.isUploadImage && uploadImage.image !== '') {
+            <div class="brand-card flex justify-center">
+              <img class="rounded-2xl shadow-brand-soft" [src]="uploadImage.image" width="600" height="600"
+                alt="Prescription snapshot" />
+            </div>
+            } @else {
+            <div class="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
+              <div class="space-y-5">
+                <div class="brand-card">
+                  <div class="brand-card__header">
+                    <div>
+                      <p class="brand-card__title">Clinical Notes</p>
+                      <p class="brand-card__subtitle">Review and refine everything discussed during this encounter.</p>
+                    </div>
+                  </div>
+                  <div class="space-y-4">
+                    <app-section [fields]="['name', 'duration', 'notes']" title="Chief Complaints" [items]="complaints"
+                      (buttonClick)="openComplaintDialog()"></app-section>
+                    <app-section [fields]="['name', 'pastHistory', 'presentHistory']" title="History" [items]="historys"
+                      (buttonClick)="openHistoryDialog()"></app-section>
+                    <app-section [fields]="['name', 'notes']" title="Examination" [items]="exam"
+                      (buttonClick)="openExaminationDialog()"></app-section>
+                    <app-section [fields]="['name', 'pastDiagnosis', 'presentDiagnosis']" title="Diagnosis"
+                      [items]="diagnosis" (buttonClick)="openDiagnosisDialog()"></app-section>
+                    <app-section [fields]="['name', 'duration', 'notes']" title="Investigation" [items]="tests"
+                      (buttonClick)="openTestDialog()"></app-section>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-5">
+                <div class="brand-card">
+                  <div class="brand-card__header">
+                    <div>
+                      <p class="brand-card__title">Medication plan</p>
+                      <p class="brand-card__subtitle">Tap anywhere in this list to quickly update medicines.</p>
+                    </div>
                     @if (medications.length > 0) {
-                    <span (click)="openMedicineDialog()"
-                      class="flex text-slate-900 text-[14px] items-center gap-1 cursor-pointer">
-                      Edit
+                    <button type="button" class="brand-link" (click)="openMedicineDialog()">
+                      Edit list
                       <app-modal-icon />
-                    </span>
+                    </button>
                     }
                   </div>
-                  <div class="space-y-3 mt-3">
-                    <app-medication [medications]="medications" (openMedicineDialog)="openMedicineDialog()" />
-                  </div>
-
+                  <app-medication [medications]="medications" (openMedicineDialog)="openMedicineDialog()" />
                 </div>
 
-                <div class="flex gap-4 mt-5">
-                  <div class="mb-6 w-1/2" (click)="openAdviceDialog()">
-                    <div class="flex items-center justify-between gap-1 font-poppins">
-                      Advice
-                      @if (advice.length > 0) {
-                      <span class="flex text-[14px] text-slate-900 items-center gap-1 cursor-pointer">
-                        Edit
-                        <app-modal-icon />
-                      </span>
-                      }
-                    </div>
-                    <ul class="border-dotted rounded-xl border-2 border-gray-300 p-4 w-full min-h-[100px]">
-                      @for (advice of advice; track $index) {
-                      <li class="font-poppins text-[14px]">
-                        {{$index + 1}}. {{advice.name}}-{{advice.notes}}
-                      </li>
-                      }@empty {
-                      <div class="p-4 w-full flex justify-center">
-                        <p class="text-gray-500 underline hover:font-bold cursor-pointer duration-200">Add Advice</p>
+                <div class="grid gap-5 md:grid-cols-2">
+                  <div class="brand-card advice-card">
+                    <div class="brand-card__header">
+                      <div>
+                        <p class="brand-card__title">Advice</p>
                       </div>
+                      <button type="button" class="brand-link" (click)="openAdviceDialog()">
+                        Manage
+                        <app-modal-icon />
+                      </button>
+                    </div>
+                    <ul class="advice-card__list">
+                      @for (advice of advice; track $index) {
+                      <li>
+                        <span class="advice-card__index">{{$index + 1}}.</span>
+                        <span>{{advice.name}} <span class="opacity-70" *ngIf="advice.notes">-
+                            {{advice.notes}}</span></span>
+                      </li>
+                      } @empty {
+                      <li class="advice-card__empty">
+                        <p class="font-medium text-brand-neutral">No advice added yet</p>
+                        <p>Add personalised directions to keep the patient on track.</p>
+                      </li>
                       }
                     </ul>
                   </div>
 
-                  <div class="w-1/2">
-                    <button class="flex items-center gap-1 font-poppins">
-                      Follow-up
-                    </button>
-                    <div
-                      class="relative border-dotted rounded-xl border-2 border-gray-300 p-4 text-center w-full h-[100px] flex items-center justify-center">
-                      <input class="absolute top-0 opacity-0" matInput [matDatepicker]="picker"
+                  <div class="brand-card followup-card">
+                    <div class="brand-card__header">
+                      <div>
+                        <p class="brand-card__title">Follow-up</p>
+                      </div>
+                      <button type="button" class="brand-link" (click)="openFollowUpDialog()">
+                        Notes
+                        <app-modal-icon />
+                      </button>
+                    </div>
+                    <div class="followup-picker">
+                      <div class="followup-picker__display">
+                        @if (!followupDate) {
+                        <span class="text-brand-neutral-soft">Tap the calendar to set the next visit</span>
+                        } @else {
+                        <span class="text-brand-neutral text-lg font-semibold">{{followupDate | date: 'dd MMM,
+                          yyyy'}}</span>
+                        }
+                      </div>
+                      <input class="followup-input" matInput [matDatepicker]="picker"
                         (dateInput)="addEvent('input', $event)" (dateChange)="addEvent('change', $event)" />
-                      @if (!followupDate) {Add Follo-up Date} @else { {{followupDate | date: 'dd-MM-yyyy'}} }
                       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>
                     </div>
@@ -97,13 +146,14 @@
               </div>
             </div>
             }
-            <app-bottom-nav [isPreHand]="isPreHand" [appointmentCode]="'0'" />
+          </div>
+
+          <div class="pt-6 border-t border-brand-border/70">
+            <app-bottom-nav [isPreHand]="isPreHand" [appointmentCode]="appointmentCode ?? '0'" />
           </div>
         </form>
-
       </div>
       }
     </div>
-
   </div>
 </div>

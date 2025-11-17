@@ -1,1 +1,195 @@
-﻿
+﻿.consultation-scene {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.scene-column {
+  flex: 1 1 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chair {
+  width: 150px;
+  height: 180px;
+  position: relative;
+  border-radius: 1.5rem;
+  padding: 1.25rem 1rem 2rem;
+  box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.doctor-chair {
+  background: linear-gradient(160deg, #0f766e, #14b8a6);
+}
+
+.patient-chair {
+  background: linear-gradient(160deg, #f97316, #fbbf24);
+}
+
+.figure-head {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fed7aa;
+  border: 4px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.figure-body {
+  width: 60px;
+  height: 70px;
+  border-radius: 1.5rem;
+  margin-top: 0.5rem;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.doctor .figure-body {
+  background: #f8fafc;
+}
+
+.patient .figure-body {
+  background: #f97316;
+}
+
+.coat {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem 1.5rem 0.5rem 0.5rem;
+  background: linear-gradient(180deg, #fff, #cbd5f5);
+}
+
+.stethoscope {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 40px;
+  height: 50px;
+  transform: translateX(-50%);
+  border: 3px solid #0f766e;
+  border-radius: 0 0 20px 20px;
+  border-top: none;
+}
+
+.sweater {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem 1.5rem 0.75rem 0.75rem;
+  background: linear-gradient(180deg, #f97316, #ea580c);
+}
+
+.figure-hand {
+  position: absolute;
+  bottom: 15px;
+  right: -12px;
+  width: 40px;
+  height: 24px;
+  background: #fed7aa;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.pen-tip {
+  width: 12px;
+  height: 12px;
+  background: #1d4ed8;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.scene-card {
+  width: 100%;
+  max-width: 230px;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 1rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 20px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.scene-table {
+  flex: 0 0 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-surface {
+  width: 100%;
+  height: 140px;
+  border-radius: 2.5rem;
+  background: linear-gradient(180deg, #fcd34d, #f59e0b);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 20px 40px rgba(234, 88, 12, 0.2);
+}
+
+.table-divider {
+  width: 4px;
+  height: 110px;
+  background: #1e293b;
+  border-radius: 999px;
+}
+
+.rx-card {
+  position: absolute;
+  left: 45%;
+  width: 60px;
+  height: 70px;
+  background: #fff7ed;
+  border-radius: 12px;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #c2410c;
+  transform: translate(-50%, -25px) rotate(-6deg);
+}
+
+.table-pen {
+  position: absolute;
+  right: 18%;
+  bottom: 25px;
+  width: 36px;
+  height: 6px;
+  background: #1d4ed8;
+  border-radius: 4px;
+}
+
+.table-legs {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 1rem;
+}
+
+.table-leg {
+  width: 14px;
+  height: 70px;
+  background: linear-gradient(180deg, #d97706, #92400e);
+  border-radius: 999px;
+}
+
+@media (max-width: 1024px) {
+  .scene-card {
+    max-width: 100%;
+  }
+
+  .scene-table {
+    flex-basis: 100%;
+  }
+}
