@@ -242,16 +242,17 @@ export class LoginComponent implements OnInit {
   handleDoctorProfile(userInfo: LoginResponseDto) {
 
     if (userInfo.userName || userInfo.userEmail) {
-      const fetchProfile$ = userInfo.userName
-        ? this.doctorProfileService.getByUserName(userInfo.userName)
-        : this.doctorProfileService.getByUserEmail(userInfo.userEmail);
+      const fetchProfile$ = userInfo.loginType === 'google' ?
+      this.doctorProfileService.getByUserEmail(userInfo.userEmail)
+        : this.doctorProfileService.getByUserName(userInfo.userName)
+        
       fetchProfile$.subscribe({
         next: (patientDto: PatientProfileDto) => {
           const saveLocalStorage = {
-            fullName: patientDto.fullName,
+            fullName: userInfo.loginType === 'google' ? userInfo.userEmail : patientDto.fullName,
             userId: patientDto.userId,
             id: patientDto.id,
-            userType: userInfo.roleName[0].toLowerCase(),
+            userType: 'doctor',
           };
           this.normalAuth.setAuthInfoInLocalStorage(saveLocalStorage);
 
@@ -260,7 +261,7 @@ export class LoginComponent implements OnInit {
             'refreshToken',
             JSON.stringify(userInfo.refreshToken)
           );
-          const userType = userInfo.roleName[0].toLowerCase() + '/dashboard';
+          const userType = 'doctor' + '/dashboard';
           this.router.navigate([userType.toLowerCase()], {
             state: { data: patientDto },
           });
@@ -297,17 +298,17 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  updateQueryParam(userType: string) {
-    const queryParams =
-      userType !== '' ? { userType: userType } : { userType: null };
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams,
-      queryParamsHandling: 'merge',
-    });
-  }
+  // updateQueryParam(userType: string) {
+  //   const queryParams =
+  //     userType !== '' ? { userType: userType } : { userType: null };
+  //   this.router.navigate([], {
+  //     relativeTo: this.route,
+  //     queryParams,
+  //     queryParamsHandling: 'merge',
+  //   });
+  // }
 
-  backToPrevious() {
-    this.updateQueryParam('');
-  }
+  // backToPrevious() {
+  //   this.updateQueryParam('');
+  // }
 }

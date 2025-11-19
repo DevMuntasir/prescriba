@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Route, RouterModule } from '@angular/router';
-import { isAuth } from 'src/app/auth-gurd/auth.service';
+import { isAuth } from 'src/app/auth-guard/auth.service';
 import { DashboardMenuComponent } from 'src/app/shared/modules/dashboard-menu/dashboard-menu.component';
 import { DoctorComponent } from './doctor.component';
 import { DoctorsPrescriptionsComponent } from './doctors-prescriptions/doctors-prescriptions.component';
@@ -105,15 +105,15 @@ const routes: Route[] = [
       //       (m) => m.VideoConsultationModule
       //     ),
       // },
-      
+
       {
         path: 'build-prescription',
         canActivate: [isAuth],
         data: { roles: ['doctor'] },
         loadComponent: () =>
-      import('./prescribe/prescribe.component').then(c => c.PrescribeComponent)
+          import('./prescribe/prescribe.component').then(c => c.PrescribeComponent)
       },
-      
+
       {
         path: 'prescriptions',
         canActivate: [isAuth],
@@ -137,4 +137,4 @@ const routes: Route[] = [
   //   { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
   // ],
 })
-export class DoctorModule {}
+export class DoctorModule { }

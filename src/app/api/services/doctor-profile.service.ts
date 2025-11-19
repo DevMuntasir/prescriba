@@ -86,7 +86,7 @@ export class DoctorProfileService {
     return this.http.get<DoctorProfileDto>(
       `${this.baseUrl}/api/app/doctor-profile/by-user-email`,
       {
-        params: new HttpParams().set('userEmail', email),
+        params: new HttpParams().set('emailAddress', email),
       }
     );
   }
@@ -98,7 +98,8 @@ export class DoctorProfileService {
   }
 
   getDoctorByProfileId(id: number): Observable<DoctorProfileDto> {
-    return this.http.get<DoctorProfileDto>(`/assets/doctorById.json`);
+    // return this.http.get<DoctorProfileDto>(`/assets/doctorById.json`);
+    return this.http.get<DoctorProfileDto>(`${this.baseUrl}/api/app/doctor-profile/${id}/doctor-by-profile-id`);
   }
 
   getDoctorDetailsByAdmin(id: number): Observable<DoctorProfileDto> {

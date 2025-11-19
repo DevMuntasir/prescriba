@@ -18,10 +18,28 @@ export class AuthService {
   }
 
   signOut(): Observable<any> {
-    localStorage.clear();
+    const previousUser = this.authInfo();
+    localStorage.removeItem('auth');
+    localStorage.removeItem('access');
+    localStorage.removeItem('refreshToken');
     this._authenticated = false;
-    this._router.navigate(['/']);
+    const destination = this.resolvePostLogoutRoute(previousUser?.userType);
+    this._router.navigate([destination], { replaceUrl: true });
     return of(true);
+  }
+
+  private resolvePostLogoutRoute(role?: string): string {
+    const normalised = (role || '').toLowerCase();
+
+    if (normalised === 'admin' || normalised === 'sgadmin') {
+      return '/ps-admin';
+    }
+
+    if (normalised === 'doctor') {
+      return '/login';
+    }
+
+    return '/';
   }
 
   authInfo(): any {

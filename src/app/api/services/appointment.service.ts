@@ -54,4 +54,10 @@ export class AppointmentService {
         })
       );
   }
+
+  getAppointmentById(id: number): Observable<AppointmentDto> {
+      return this.http.get<AppointmentDto>(
+        `${this.baseUrl}/api/app/doctor-profile/by-user-id/${id}`
+      );
+    }
 }

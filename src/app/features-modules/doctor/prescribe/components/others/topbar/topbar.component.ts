@@ -17,6 +17,8 @@ import { PreviousDocumentsDialogComponent } from '../previous-documents-dialog/p
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
+import { PatientSelectorDialogComponent, PatientInfoPayload } from './patient-selector-dialog/patient-selector-dialog.component';
+
 @Component({
   selector: 'app-topbar',
   standalone: true,
@@ -107,4 +109,18 @@ export class TopbarComponent {
       }
     });
   }
+  openPatientDialog(): void {
+    this.dialog
+      .open(PatientSelectorDialogComponent, {
+        width: '520px',
+        data: { doctorId: this.doctorId },
+      })
+      .afterClosed()
+      .subscribe((patient: PatientInfoPayload | undefined) => {
+        if (patient) {
+          this.Prescription.setPatientInfo(patient);
+        }
+      });
+  }
+
 }

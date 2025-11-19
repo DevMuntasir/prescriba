@@ -10,15 +10,13 @@ import { SectionHeaderComponent } from 'src/app/shared/components/section-header
 import { ScheduleDialogComponent } from './schedule-dialog/schedule-dialog.component';
 import { DialogHeaderComponent } from 'src/app/shared/components/dialog-header/dialog-header.component';
 import { ScheduleFormComponent } from './schedule-form/schedule-form.component';
-import { InputModule } from 'src/app/shared/modules/input/input.module';
+
 import { FeeSetupComponent } from './fee-info/fee-setup.component';
 import { FeeDialogComponent } from './fee-dialog/fee-dialog.component';
-import { ConfirmDialogModule } from 'src/app/shared/modules/confirm-dialog/confirm-dialog.module';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 
 const routes: Route[] = [
   {
@@ -32,7 +30,6 @@ const routes: Route[] = [
     HospitalScheduleComponent,
     HospitalDialogComponent,
     ScheduleInfoComponent,
-    SectionHeaderComponent,
     ScheduleDialogComponent,
     DialogHeaderComponent,
     ScheduleFormComponent,
@@ -44,14 +41,14 @@ const routes: Route[] = [
     CommonModule,
     RouterModule.forChild(routes),
     MaterialModulesModule,
-    InputModule,
-    ConfirmDialogModule,
+
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatCheckboxModule,
-    NgxMatTimepickerModule,
+
+    SectionHeaderComponent,
   ],
   providers: [DatePipe],
 })
-export class HospitalScheduleModule {}
+export class HospitalScheduleModule { }

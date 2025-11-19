@@ -119,7 +119,7 @@
                     class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                   >
                     <option value="" disabled>Select speciality</option>
-                    <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality">{{ speciality }}</option>
+                    <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality">{{ speciality.specialityName }}</option>
                   </select>
                 </ng-container>
                 <p class="mt-1 text-xs text-red-500" *ngIf="basicInfoGroup.get(field)?.touched && basicInfoGroup.get(field)?.invalid">
@@ -296,6 +296,7 @@
                       class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                     >
                       <option value="" disabled>Select speciality</option>
+   
                       <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality?.id">{{ speciality?.specialityName }}</option>
                     </select>
                     <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specialityId')?.touched && specialization.get('specialityId')?.invalid">

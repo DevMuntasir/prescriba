@@ -25,9 +25,8 @@ import {
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { forkJoin, map,  Subscription } from 'rxjs';
-import { AuthInterceptor } from 'src/app/helper/auth.interceptor';
-import { AppointmentDto } from 'src/app/api/dto-models';
+import { forkJoin, map, Subscription } from 'rxjs';
+
 import { DoctorProfileService } from 'src/app/api/services';
 import { environment } from 'src/environments/environment';
 
@@ -44,10 +43,8 @@ import { DynamicModalComponent } from './components/shared/dynamic-modal/dynamic
 import { ModalIconComponent } from './components/shared/dynamic-modal/icons/modal-icon/modal-icon.component';
 import { ChiefComplaintsService } from './services/chief-complaints.service';
 import { PrescriptionService } from './services/prescription.service';
-// TODO
-interface ExtendedAppointmentDto extends AppointmentDto {
-  bloodGroup?: string;
-}
+
+
 @Component({
   selector: 'app-prescribe',
   standalone: true,
@@ -71,14 +68,8 @@ interface ExtendedAppointmentDto extends AppointmentDto {
   providers: [
     provideNativeDateAdapter(),
     ChiefComplaintsService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
     { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
   ],
-
   templateUrl: './prescribe.component.html',
   styleUrls: ['./prescribe.component.scss'],
 })
@@ -91,14 +82,15 @@ export class PrescribeComponent implements OnInit, OnDestroy {
   followupDate: any;
   docFile: string = '';
   docFileUrl: any[] = [];
+  doctorProfileId: number = 0;
   public picUrl = `${environment.apis.default.url}/`;
   uploadImage: {
     isUploadImage: boolean;
     image: string;
   } = {
-    isUploadImage: false,
-    image: '',
-  };
+      isUploadImage: false,
+      image: '',
+    };
   constructor(
     private dialog: MatDialog,
     private fb: FormBuilder,
@@ -106,7 +98,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     private DoctorProfileService: DoctorProfileService,
     private AuthService: AuthService,
     private DocumentsAttachmentService: DocumentsAttachmentService
-  ) {}
+  ) { }
 
   addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
     this.followupDate = event.value;
@@ -132,18 +124,19 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     this.prescriptionService.resetForm();
     this.prescribeForm = this.prescriptionService.prescribeForm();
     const doctorProfileId = this.AuthService.authInfo().id ?? null;
+    this.doctorProfileId = doctorProfileId
     this.prescriptionService.setPreHand(true);
     this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
     this.prescribeForm.get('uploadImage')?.valueChanges.subscribe((res) =>
       res !== '' || res !== undefined
         ? (this.uploadImage = {
-            image: res,
-            isUploadImage: true,
-          })
+          image: res,
+          isUploadImage: true,
+        })
         : (this.uploadImage = {
-            image: res,
-            isUploadImage: false,
-          })
+          image: res,
+          isUploadImage: false,
+        })
     );
   }
 
@@ -189,6 +182,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         }))
       ),
 
+
       signature:
         this.DocumentsAttachmentService.getAttachmentInfoByEntityTypeAndEntityIdAndAttachmentType(
           'Doctor',
@@ -205,6 +199,8 @@ export class PrescribeComponent implements OnInit, OnDestroy {
             })
           )
         ),
+
+      // appointmentDetails: this.prescriptionService.getAppointmentDataForPrehand(),
     }).subscribe(({ doctorDetails, signature }) => {
       this.prescriptionService.setDoctorInfo({
         doctorName:
@@ -223,6 +219,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
       this.isLoading = false;
     });
   }
+
 
 
   convertTo24(time: string): string {
@@ -268,7 +265,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
       // disableClose: true,
       panelClass: 'custom-modal',
       autoFocus: false,
-       
+
     });
   }
   get complaint() {

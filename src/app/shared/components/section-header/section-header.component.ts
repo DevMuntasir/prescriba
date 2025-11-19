@@ -1,22 +1,21 @@
 import { HospitalStateService } from '../../services/states/hospital-state.service';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-section-header',
   templateUrl: './section-header.component.html',
   styleUrls: ['./section-header.component.scss'],
+  standalone: true,
+  imports: [CommonModule],
 })
 export class SectionHeaderComponent {
-  @Input() headingText: any;
-  @Input() buttonText: any;
-  @Input() iconClass: any;
-  @Output() openForm: EventEmitter<void> = new EventEmitter<void>();
-  buttonStatus!: boolean;
+  headingText = input<any>();
+  buttonText = input<any>();
+  iconClass = input<any>();
+  openForm = output<void>();
 
-  constructor(private HospitalStateService: HospitalStateService) {
-    // this.HospitalStateService.setHospitalScheduleFormEvent(false);
-    this.HospitalStateService.getHospitalScheduleFormEvent().subscribe(
-      (res: boolean) => (this.buttonStatus = res)
-    );
-  }
+  private hospitalStateService = inject(HospitalStateService);
+  buttonStatus = toSignal(this.hospitalStateService.getHospitalScheduleFormEvent(), { initialValue: false });
 }

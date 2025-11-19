@@ -426,7 +426,7 @@ export interface DoctorProfileDto extends FullAuditedEntityDto<number> {
   isActive?: boolean;
   userId?: string;
   isOnline?: boolean;
-  profileStep?: number;
+  profileStep: number;
   createFrom?: string;
   profileRole?: string;
   profilePic?: string;
@@ -595,6 +595,7 @@ export interface LoginResponseDto {
   roleName: string[];
   success: boolean;
   message?: string;
+  loginType:string
 }
 
 export interface MasterDoctorDto extends FullAuditedEntityDto<number> {

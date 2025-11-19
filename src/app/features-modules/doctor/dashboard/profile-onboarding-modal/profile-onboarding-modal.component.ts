@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -147,6 +147,7 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
   }
 
   submit(): void {
+    debugger
     this.form.markAllAsTouched();
 
     if (!this.validateCurrentStep(true)) {

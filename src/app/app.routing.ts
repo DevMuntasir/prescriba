@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { routerGuard } from './auth-gurd/router.guard';
+import { routerGuard } from './auth-guard/router.guard';
 import { LoginComponent } from './core-modules/auth/login/login.component';
 import { AdminLoginComponent } from './core-modules/auth/admin-login/admin-login.component';
 import { SignupComponent } from './core-modules/auth/signup/signup.component';
 import { DoctorLayoutComponent } from './layout-module/doctor-layout.component';
-import { isAuth } from './auth-gurd/auth.service';
+import { isAuth } from './auth-guard/auth.service';
 
 export const appRoutes: Route[] = [
   {
@@ -80,4 +80,4 @@ export const appRoutes: Route[] = [
   ],
   exports: [RouterModule],
 })
-export class AppRouting {}
+export class AppRouting { }
