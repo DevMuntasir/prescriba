@@ -72,7 +72,11 @@ export class AppointmentService {
       `${this.baseUrl}/api/app/doctor-profile/by-user-id/${id}`
     );
   }
-
+  getAppointments(): Observable<AppointmentDto> {
+    return this.http.get<AppointmentDto>(
+      `${this.baseUrl}/api/2025-20/appointment/get-all`
+    );
+  }
   createAppointment(
     payload: CreateAppointmentPayload
   ): Observable<AppointmentDto> {

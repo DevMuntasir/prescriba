@@ -90,57 +90,39 @@ export interface AgentSupervisorDto extends FullAuditedEntityDto<number> {
 }
 
 export interface AppointmentDto extends FullAuditedEntityDto<number> {
-  appointmentSerial?: string;
-  appointmentCode?: string;
-  doctorScheduleId?: number;
-  doctorScheduleName?: string;
-  doctorProfileId?: number;
-  doctorName?: string;
-  doctorCode?: string;
-  patientProfileId?: number;
-  patientName?: string;
-  patientAge?: number;
-  patientCode?: string;
-  patientMobileNo?: string;
-  mobileNo?: string;
-  patientEmail?: string;
-  patientLocation?: string;
-  consultancyType?: ConsultancyType;
-  consultancyTypeName?: string;
-  doctorChamberId?: number;
-  doctorChamberName?: string;
-  doctorScheduleDaySessionId?: number;
-  scheduleDayofWeek?: string;
-  appointmentType?: AppointmentType;
-  appointmentTypeName?: string;
-  appointmentDate?: string;
-  appointmentTime?: string;
-  doctorFeesSetupId?: number;
-  doctorFee?: number;
-  agentFee?: number;
-  platformFee?: number;
-  vatFee?: number;
-  totalAppointmentFee?: number;
-  appointmentStatus?: AppointmentStatus;
-  appointmentStatusName?: string;
-  appointmentPaymentStatus?: AppointmentPaymentStatus;
-  chamberPaymentType?: ChamberPaymentType;
-  chamberPaymentTypeName?: string;
-  appointmentPaymentStatusName?: string;
-  cancelledByEntityId?: number;
-  cancelledByRole?: string;
-  paymentTransactionId?: string;
-  appointmentCreatorId?: number;
-  appointmentCreatorCode?: string;
-  appointmentCreatorRole?: string;
-  isCousltationComplete?: boolean;
-  creatorName?: string;
-  boothName?: string;
-  agentName?: string;
-  agentMasterName?: string;
-  agentSupervisorName?: string;
-  bloodGroup?: string;
-  doctorChamberAddress?: string;
+  appointmentId: number | string;
+  appointmentSerial:number;
+  patientID: number;
+  patientName: string;
+  bloodGroup: string; // could be union later like "A" | "B" | "AB" | "O" | ...
+  gender: string;     // could be "Male" | "Female" | "Other"
+  patientAge: number;
+  sessionId: number;
+  scheduleId: number;
+  phoneNumber: string;
+  scheduleName: string;
+  sessionName: string | null;
+  appointmentDate: string; // "11/29/2025 02:12:00" (if you parse to Date, change to Date)
+  serialNo: number;
+  isDeleted: boolean;
+  doctorScheduleName: string | null;
+  scheduleDayofWeek: string; // could be union of weekdays
+  startTime: string; // "08:12"
+  endTime: string;   // "09:13"
+  noOfPatients: number;
+  isActive: boolean;
+  scheduleTypeName: string;
+  consultancyTypeName: string;
+  doctorChamberId: number;
+  chamber: string;
+  status: string | null;
+  offDayFrom: string | null;
+  dayTextFrom: string | null;
+  offDayTo: string | null;
+  dayTextTo: string | null;
+  remarks: string | null;
+  responseSuccess: boolean | null;
+  responseMessage: string | null;
 }
 
 export interface ExtendedAppointmentDto {

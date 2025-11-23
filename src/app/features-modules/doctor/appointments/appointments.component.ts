@@ -19,7 +19,7 @@ import {
   SessionBookingDialogResult,
 } from './session-booking-dialog/session-booking-dialog.component';
 
-interface Appointment {
+export interface Appointment {
   serial: string;
   patientName: string;
   age: number;
@@ -29,7 +29,7 @@ interface Appointment {
   status: string;
 }
 
-interface ScheduleSessionView {
+export interface ScheduleSessionView {
   id?: number | string;
   scheduleId?: number;
   startTime?: string;
@@ -69,8 +69,7 @@ export class AppointmentsComponent implements OnInit {
   selectedWeekDay: string | null = null;
   selectedBookingDate: string | null = null;
   bookingDateError?: string;
-  isCreatingAppointment = false;
-  appointmentCreationError?: string;
+
 
   readonly todayDate = this.formatDateInput(new Date());
 
@@ -192,8 +191,7 @@ export class AppointmentsComponent implements OnInit {
     this.selectedWeekDay = null;
     this.selectedBookingDate = null;
     this.bookingDateError = undefined;
-    this.appointmentCreationError = undefined;
-    this.isCreatingAppointment = false;
+
     this.bookingDateError = undefined;
   }
 
@@ -355,10 +353,12 @@ export class AppointmentsComponent implements OnInit {
       },
     });
 
+   
+
     dialogRef.afterClosed().subscribe((result?: SessionBookingDialogResult) => {
       if (!result) return;
 
-      this.createAppointmentFromDialogResult(session, result);
+    //call all apt funtion
     });
   }
 
@@ -369,98 +369,13 @@ export class AppointmentsComponent implements OnInit {
     }
   }
 
-  private createAppointmentFromDialogResult(
-    session: ScheduleSessionView,
-    result: SessionBookingDialogResult
-  ): void {
-    const scheduleId = this.toNumber(result.scheduleId ?? session.scheduleId);
-    const sessionId = this.toNumber(result.sessionId ?? session.id);
 
-    if (!scheduleId || !sessionId) {
-      this.appointmentCreationError =
-        'Missing schedule information. Please refresh and try again.';
-      return;
-    }
 
-    const appointmentDateIso = this.buildAppointmentDateIso(
-      result.appointmentDate,
-      session.startTime
-    );
 
-    const payload: CreateAppointmentPayload = {
-      patientName: result.patientName.trim(),
-      gender: result.gender,
-      age: result.age ?? 0,
-      phoneNumber: result.phone,
-      sessionId,
-      bloodGroup: result.bloodGroup?.trim().toUpperCase() ?? '',
-      scheduleId,
-      appointmentDate: appointmentDateIso,
-    };
 
-    this.isCreatingAppointment = true;
-    this.appointmentCreationError = undefined;
 
-    this.appointmentService.createAppointment(payload).subscribe({
-      next: (created) => {
-        this.isCreatingAppointment = false;
-        const resolvedSerial =
-          created?.appointmentSerial ?? this.generateSerial();
-        this.lastGeneratedSerial = resolvedSerial;
 
-        const newAppointment: Appointment = {
-          serial: resolvedSerial,
-          patientName: result.patientName,
-          age: result.age ?? 0,
-          gender: result.gender,
-          contactNumber: result.phone,
-          appointmentDate: this.formatAppointmentDisplay(appointmentDateIso),
-          status: 'Pending',
-        };
-
-        this.appointments = [newAppointment, ...this.appointments];
-      },
-      error: () => {
-        this.isCreatingAppointment = false;
-        this.appointmentCreationError =
-          'Unable to create appointment right now. Please try again.';
-      },
-    });
-  }
-
-  private toNumber(value?: number | string | null): number | null {
-    if (value === null || value === undefined || value === '') {
-      return null;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? null : parsed;
-  }
-
-  private buildAppointmentDateIso(date: string, startTime?: string): string {
-    const safeDate = date || this.todayDate;
-    const [hour = '00', minute = '00'] = (startTime ?? '00:00').split(':');
-    const normalizedHour = hour.padStart(2, '0');
-    const normalizedMinute = minute.padStart(2, '0');
-    const candidate = new Date(
-      `${safeDate}T${normalizedHour}:${normalizedMinute}:00`
-    );
-
-    if (Number.isNaN(candidate.getTime())) {
-      return new Date().toISOString();
-    }
-
-    return candidate.toISOString();
-  }
-
-  private formatAppointmentDisplay(value: string): string {
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      return value;
-    }
-
-    return parsed.toLocaleString();
-  }
+ 
 
   private generateSerial(): string {
     // FIX: previously "const serial = AP-;"
@@ -624,7 +539,7 @@ export class AppointmentsComponent implements OnInit {
     return null;
   }
 
-  private formatDateInput(date: Date): string {
+ public formatDateInput(date: Date): string {
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
