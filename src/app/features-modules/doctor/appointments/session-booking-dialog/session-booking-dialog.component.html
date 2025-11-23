@@ -1,0 +1,149 @@
+<div class="p-6 w-[420px] max-w-full">
+  <header class="space-y-1 mb-4">
+    <p class="text-xs uppercase tracking-[0.4em] text-brand-primary font-semibold">
+      Confirm session
+    </p>
+
+    <h2 class="text-2xl font-bold text-slate-900">
+      Create appointment
+    </h2>
+
+    <p class="text-sm text-slate-600">
+      {{ data?.scheduleName || 'Untitled schedule' }} &mdash;
+      {{ data?.sessionTimeLabel || '' }}
+    </p>
+
+    <p class="text-xs text-slate-500">
+      Appointment date:
+      <strong>{{ data?.appointmentDate | date: 'fullDate' }}</strong>
+    </p>
+  </header>
+
+  <form
+    [formGroup]="bookingForm"
+    class="space-y-4"
+    (ngSubmit)="submit()"
+    novalidate
+  >
+    <!-- Patient name -->
+    <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+      Patient name
+      <input
+        type="text"
+        formControlName="patientName"
+        maxlength="80"
+        autocomplete="name"
+        class="rounded-xl border border-slate-200 px-4 py-3 text-base outline-none focus:border-brand-primary"
+        placeholder="Enter patient name"
+      />
+      <span
+        *ngIf="
+          bookingForm.controls.patientName.invalid &&
+          bookingForm.controls.patientName.touched
+        "
+        class="text-xs font-medium text-red-600"
+      >
+        Patient name is required.
+      </span>
+    </label>
+
+    <!-- Age + Gender -->
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+        Age
+        <input
+          type="number"
+          formControlName="age"
+          min="0"
+          max="120"
+          inputmode="numeric"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-base outline-none focus:border-brand-primary"
+          placeholder="Age"
+        />
+        <span
+          *ngIf="
+            bookingForm.controls.age.invalid &&
+            bookingForm.controls.age.touched
+          "
+          class="text-xs font-medium text-red-600"
+        >
+          Enter a valid age.
+        </span>
+      </label>
+
+      <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+        Gender
+        <select
+          formControlName="gender"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-base outline-none focus:border-brand-primary bg-white"
+        >
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <span
+          *ngIf="
+            bookingForm.controls.gender.invalid &&
+            bookingForm.controls.gender.touched
+          "
+          class="text-xs font-medium text-red-600"
+        >
+          Select a gender.
+        </span>
+      </label>
+    </div>
+
+    <!-- Phone + Blood group -->
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+        Phone number
+        <input
+          type="tel"
+          formControlName="phone"
+          autocomplete="tel"
+          inputmode="tel"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-base outline-none focus:border-brand-primary"
+          placeholder="01XXXXXXXXX"
+        />
+        <span
+          *ngIf="
+            bookingForm.controls.phone.invalid &&
+            bookingForm.controls.phone.touched
+          "
+          class="text-xs font-medium text-red-600"
+        >
+          Enter a valid contact number.
+        </span>
+      </label>
+
+      <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+        Blood group (optional)
+        <input
+          type="text"
+          formControlName="bloodGroup"
+          maxlength="5"
+          class="rounded-xl border border-slate-200 px-4 py-3 text-base outline-none focus:border-brand-primary uppercase"
+          placeholder="e.g. O+"
+        />
+      </label>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <button
+        type="button"
+        class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"
+        (click)="close()"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="bookingForm.invalid"
+        class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Save appointment
+      </button>
+    </div>
+  </form>
+</div>

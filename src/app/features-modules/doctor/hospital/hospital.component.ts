@@ -5,16 +5,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import type { DoctorChamberDto } from 'src/app/api/dto-models/models';
+import type { DoctorChamberDto, DoctorScheduleDto } from 'src/app/api/dto-models/models';
 import { DoctorChamberService } from 'src/app/api/services/doctor-chamber.service';
 import type { DoctorChamberInputDto } from 'src/app/api/input-dto/models';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { TosterService } from 'src/app/shared/services/toster.service';
+import { DoctorScheduleBuilderComponent } from './schedule-builder/doctor-schedule-builder.component';
 
 @Component({
   selector: 'app-hospital',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DoctorScheduleBuilderComponent],
   templateUrl: './hospital.component.html',
   styleUrls: ['./hospital.component.scss'],
 })
@@ -23,7 +24,6 @@ export class HospitalComponent {
   private readonly doctorChamberService = inject(DoctorChamberService);
   private readonly authService = inject(AuthService);
   private readonly toaster = inject(TosterService);
-  private doctorProfileId: number | null = null;  isFormOpen = false;
 
   readonly chamberForm = this.formBuilder.nonNullable.group({
     chamberName: ['', [Validators.required, Validators.maxLength(120)]],
@@ -39,14 +39,24 @@ export class HospitalComponent {
   isSaving = false;
   loadError?: string;
 
+  doctorProfileId: number | null = null;
+  isFormOpen = false;
+
+  isScheduleBuilderOpen = false;
+  selectedScheduleChamberId: number | null = null;
+
   constructor() {
     const authInfo = this.authService.authInfo();
     this.doctorProfileId = authInfo?.id ?? null;
 
     if (!this.doctorProfileId) {
-         this.chamberForm.disable();      this.loadError =
-      'Doctor profile not found. Please log in again to manage your chambers.';
-    } else {      this.loadChambers();  } 
+      this.chamberForm.disable();
+      this.loadError =
+        'Doctor profile not found. Please log in again to manage your chambers.';
+      return;
+    }
+
+    this.loadChambers();
   }
 
   get hasChambers(): boolean {
@@ -77,7 +87,18 @@ export class HospitalComponent {
     return null;
   }
 
-  openForm(): void { if (this.chamberForm.disabled) { return; } this.isFormOpen = true; } closeForm(): void { this.isFormOpen = false; } onSubmit(): void {
+  openForm(): void {
+    if (this.chamberForm.disabled) {
+      return;
+    }
+    this.isFormOpen = true;
+  }
+
+  closeForm(): void {
+    this.isFormOpen = false;
+  }
+
+  onSubmit(): void {
     if (!this.doctorProfileId) {
       this.toaster.customToast(
         'Cannot detect doctor profile. Please refresh and try again.',
@@ -111,7 +132,9 @@ export class HospitalComponent {
           country: payload.country,
           isVisibleOnPrescription: true,
         });
-        this.chambers = [chamber, ...this.chambers];         this.isSaving = false;         this.closeForm();
+        this.chambers = [chamber, ...this.chambers];
+        this.isSaving = false;
+        this.closeForm();
       },
       error: () => {
         this.isSaving = false;
@@ -126,6 +149,21 @@ export class HospitalComponent {
   refresh(): void {
     this.loadChambers();
   }
+
+  openScheduleBuilder(chamberId: number | null): void {
+    if (!this.doctorProfileId || !chamberId) {
+      return;
+    }
+
+    this.selectedScheduleChamberId = chamberId;
+    this.isScheduleBuilderOpen = true;
+  }
+
+  closeScheduleBuilder(): void {
+    this.isScheduleBuilderOpen = false;
+  }
+
+  handleScheduleCreated(_: DoctorScheduleDto): void {   this.isScheduleBuilderOpen = false;  }
 
   trackByChamber(index: number, chamber: DoctorChamberDto): number {
     return chamber.id ?? index;
@@ -154,4 +192,6 @@ export class HospitalComponent {
       });
   }
 }
+
+
 

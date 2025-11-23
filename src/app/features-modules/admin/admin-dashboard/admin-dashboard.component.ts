@@ -184,5 +184,5 @@ export class AdminDashboardComponent {
     // },
   ];
 
-  onLogout(): void {}
-}
+  onLogout(): void {    this.authService.signOut().subscribe() }}
+

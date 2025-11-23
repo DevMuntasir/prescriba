@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api-urls';
@@ -28,6 +28,20 @@ export class DoctorScheduleService {
   getListByDoctorIdList(doctorId: number): Observable<DoctorScheduleDto[]> {
     return this.http.get<DoctorScheduleDto[]>(
       `${this.baseUrl}/api/app/doctor-schedule/by-doctor-id-list/${doctorId}`
+    );
+  }
+
+  getScheduleDetailsByDoctorAndChamber(
+    doctorId: number,
+    chamberId: number
+  ): Observable<DoctorScheduleDto[]> {
+    const params = new HttpParams()
+      .set('doctorId', doctorId.toString())
+      .set('chamberId', chamberId.toString());
+
+    return this.http.get<DoctorScheduleDto[]>(
+      `${this.baseUrl}/api/app/doctor-schedule/details-schedule-list-by-doctor-chamber-id`,
+      { params }
     );
   }
 

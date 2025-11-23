@@ -1,13 +1,11 @@
 <div class="min-h-screen bg-[var(--gradient-brand-panel)] px-3 pb-12 md:px-6 relative w-full">
-  <app-topbar class=" fixed z-10 left-1/2 -translate-x-1/3  px-4 border-[1px] py-2.5 rounded-b-[15px] bg-white backdrop-blur-lg" (enterFullScreen)="enterFullScreen()" [isPreHand]="isPreHand" [appointmentId]="0"
+  <app-topbar class=" shadow-lg fixed z-10 left-1/2 -translate-x-1/3  px-4 border-[1px] py-2.5 rounded-b-[15px] bg-white backdrop-blur-lg" (enterFullScreen)="enterFullScreen()" [isPreHand]="isPreHand" [appointmentId]="0"
     [patientId]="1" [doctorId]="doctorProfileId"
     (onClickSelectChamber)="onClickSelectChamber()" />
   <div class="mx-auto max-w-[1320px] space-y-6 pt-6">
     <div #fullScreenElement>
       @if (isLoading) {
-      <div class="flex min-h-[720px] items-center justify-center rounded-[32px] border border-brand-border/70 bg-white shadow-[0_34px_60px_rgba(6,180,139,0.15)]">
         <app-prescription-skelton />
-      </div>
       } @else {
       <div
         class="rounded-[32px] border border-brand-border/70 bg-white  shadow-[0_34px_60px_rgba(6,180,139,0.15)]"
@@ -27,11 +25,10 @@
 
           <div class="space-y-4 px-2 md:px-6">
             <div
-              class="flex flex-wrap items-center justify-between gap-4 rounded-[50px] border border-brand-border bg-brand-primary/5 px-5 py-4"
+              class="flex flex-wrap items-center justify-between gap-4 rounded-[50px] border border-brand-border bg-brand-primary/5 px-2 py-1.5"
             >
               <div>
-                <p class="text-base font-semibold text-brand-neutral">Quick updates</p>
-                <p class="text-sm text-brand-neutral/70">Jump directly into a section to edit the current visit.</p>
+                <p class="text-base font-semibold text-brand-neutral">Quick action</p>
               </div>
               <div class="flex flex-wrap gap-3">
                 <button

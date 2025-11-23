@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {  map } from 'rxjs/operators';
-import { API_BASE_URL } from '../api-urls';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { API_BASE_URL, PRESCRIPTION_API_BASE_URL } from '../api-urls';
 import { ApiResponse } from '../core/generic-models';
 import type { AppointmentDto } from '../dto-models/models';
-import { Observable } from 'rxjs';
 
 export interface AppointmentPatientQuery {
   searchTerm?: string;
@@ -12,10 +12,22 @@ export interface AppointmentPatientQuery {
   pageSize?: number;
 }
 
+export interface CreateAppointmentPayload {
+  patientName: string;
+  gender: string;
+  age: number;
+  phoneNumber: string;
+  sessionId: number;
+  bloodGroup: string;
+  scheduleId: number;
+  appointmentDate: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = API_BASE_URL;
+  private readonly prescriptionBaseUrl = PRESCRIPTION_API_BASE_URL;
 
   getPatientsByDoctorId(
     doctorId: number,
@@ -56,8 +68,17 @@ export class AppointmentService {
   }
 
   getAppointmentById(id: number): Observable<AppointmentDto> {
-      return this.http.get<AppointmentDto>(
-        `${this.baseUrl}/api/app/doctor-profile/by-user-id/${id}`
-      );
-    }
+    return this.http.get<AppointmentDto>(
+      `${this.baseUrl}/api/app/doctor-profile/by-user-id/${id}`
+    );
+  }
+
+  createAppointment(
+    payload: CreateAppointmentPayload
+  ): Observable<AppointmentDto> {
+    return this.http.post<AppointmentDto>(
+      `${this.prescriptionBaseUrl}/api/2025-20/appointment/create_appointment`,
+      payload
+    );
+  }
 }

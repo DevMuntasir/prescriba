@@ -18,7 +18,7 @@
           Refresh
         </button>
         <button type="button" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
-          (click)="openBuilderSheet()" [disabled]="scheduleDetailsForm.disabled">
+          (click)="openBuilderSheet()" [disabled]="!doctorProfileId || chambers.length === 0">
           + New schedule
         </button>
       </div>
@@ -68,7 +68,7 @@
               <div>
                 <h3 class="text-lg font-semibold text-slate-900">{{ schedule.scheduleName || 'Untitled schedule' }}</h3>
                 <p class="text-sm text-slate-600">
-                  {{ schedule.scheduleTypeName || schedule.scheduleType }} �
+                  {{ schedule.scheduleTypeName || schedule.scheduleType }} -
                   {{ schedule.consultancyTypeName || schedule.consultancyType }}
                 </p>
               </div>
@@ -96,167 +96,15 @@
     </section>
   </div>
 
-  <div class="fixed  inset-0 z-40" *ngIf="isBuilderOpen">
-    <div class="absolute inset-0 bg-slate-900/40" (click)="closeBuilderSheet()"></div>
-    <div class="absolute right-0 top-0 h-full w-full max-w-3xl bg-white shadow-2xl flex flex-col">
-      <header class="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
-        <div>
-          <p class="text-sm uppercase tracking-[0.4em] text-brand-primary font-semibold">Create schedule</p>
-          <h2 class="text-2xl font-bold text-slate-900">Build availability</h2>
-        </div>
-        <button type="button" class="px-3 py-1 rounded-full bg-emerald-50 text-brand-primary font-semibold"
-          (click)="closeBuilderSheet()">Close</button>
-      </header>
-
-      <form [formGroup]="scheduleDetailsForm" class="flex-1 overflow-y-auto px-6 pb-8 pt-6 space-y-6" (ngSubmit)="saveSchedule()">
-        <!-- <section class="rounded-2xl border border-slate-100 bg-slate-50 p-5 space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="h-9 w-9 rounded-full bg-emerald-100 flex items-center justify-center text-brand-primary font-bold">1</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">Schedule basics</h3>
-              <p class="text-sm text-slate-600">Choose chamber, add labels and define overall type.</p>
-            </div>
-          </div>
-
-          <div class="grid gap-4 md:grid-cols-2">
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Select chamber</span>
-              <select formControlName="doctorChamberId" [disabled]="isLoadingChambers"
-                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
-                <option value="" disabled>Select a chamber</option>
-                <option *ngFor="let chamber of chambers" [ngValue]="chamber.id ?? null">
-                  {{ chamber.chamberName }}
-                </option>
-              </select>
-              <small *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched"
-                class="text-xs text-red-600">Chamber selection is required.</small>
-            </label>
-
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Schedule name (optional)</span>
-              <input type="text" formControlName="scheduleName" maxlength="150" placeholder="e.g. Evening shift"
-                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900" />
-              <small *ngIf="scheduleDetailsForm.controls.scheduleName.invalid && scheduleDetailsForm.controls.scheduleName.touched"
-                class="text-xs text-red-600">Schedule name can be up to 150 characters.</small>
-            </label>
-
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Schedule type</span>
-              <select formControlName="scheduleType" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
-                <option *ngFor="let option of scheduleTypeChoices" [ngValue]="option.value">{{ option.name }}</option>
-              </select>
-            </label>
-
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Consultancy type</span>
-              <select formControlName="consultancyType" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
-                <option *ngFor="let option of consultancyTypeChoices" [ngValue]="option.value">{{ option.name }}</option>
-              </select>
-            </label>
-          </div>
-
-          <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-900">
-            <input type="checkbox" formControlName="isActive" class="h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary" />
-            Keep this schedule active
-          </label>
-        </section> -->
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Select chamber</span>
-              <select formControlName="doctorChamberId" [disabled]="isLoadingChambers"
-                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base text-slate-900">
-                <option value="" disabled>Select a chamber</option>
-                <option *ngFor="let chamber of chambers" [ngValue]="chamber.id ?? null">
-                  {{ chamber.chamberName }}
-                </option>
-              </select>
-              <small *ngIf="scheduleDetailsForm.controls.doctorChamberId.invalid && scheduleDetailsForm.controls.doctorChamberId.touched"
-                class="text-xs text-red-600">Chamber selection is required.</small>
-            </label>
-
-<div>
-              <span class="font-medium text-slate-900">Select session</span>
-        <section class="rounded-2xl border border-slate-100 bg-slate-50 p-5 space-y-4">
-
-          <div class="flex flex-wrap gap-2">
-            <button type="button"
-              class="px-3 py-1.5 rounded-full border text-sm font-semibold"
-              *ngFor="let day of daysOfWeek"
-              [ngClass]="dayIsSelected(day.value) ? 'bg-brand-primary text-white border-brand-primary' : 'border-slate-200 text-slate-700'"
-              (click)="toggleDay(day.value, !dayIsSelected(day.value))">
-              {{ day.label }}
-            </button>
-          </div>
-          <p class="text-xs text-slate-500">You can select multiple days at once.</p>
-
-          <div [formGroup]="sessionForm" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Start time</span>
-              <input type="time" formControlName="startTime" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base" />
-              <small *ngIf="sessionForm.controls.startTime.invalid && sessionForm.controls.startTime.touched"
-                class="text-xs text-red-600">Start time is required.</small>
-            </label>
-
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">End time</span>
-              <input type="time" formControlName="endTime" class="rounded-xl border border-slate-200 px-3 py-2.5 text-base" />
-              <small *ngIf="sessionForm.controls.endTime.invalid && sessionForm.controls.endTime.touched"
-                class="text-xs text-red-600">End time is required.</small>
-            </label>
-
-            <label class="flex flex-col gap-1 text-sm text-slate-700">
-              <span class="font-medium text-slate-900">Patient capacity (optional)</span>
-              <input type="number" min="1" max="999" formControlName="noOfPatients" placeholder="e.g. 15"
-                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base" />
-              <small *ngIf="sessionForm.controls.noOfPatients.invalid && sessionForm.controls.noOfPatients.touched"
-                class="text-xs text-red-600">Patient capacity must be between 1 and 999.</small>
-            </label>
-
-            <div class="flex items-end">
-              <button type="button" class="px-4 py-2 rounded-xl bg-emerald-100 text-brand-primary font-semibold"
-                (click)="addSession()">Add session</button>
-            </div>
-          </div>
-
-          <div *ngIf="!hasSessions" class="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-sm text-slate-500">
-            No sessions added yet. Use the controls above to add day and time combinations.
-          </div>
-
-          <div *ngIf="hasSessions" class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="text-left bg-slate-100 text-slate-600">
-                <tr>
-                  <th class="py-2 px-3 font-semibold">Day</th>
-                  <th class="py-2 px-3 font-semibold">Time</th>
-                  <th class="py-2 px-3 font-semibold">Capacity</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let session of sessionDrafts" class="border-b border-slate-100">
-                  <td class="py-2 px-3">{{ getDayLabel(session.day) }}</td>
-                  <td class="py-2 px-3">{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</td>
-                  <td class="py-2 px-3">{{ session.noOfPatients || '�' }}</td>
-                  <td class="py-2 px-3 text-right">
-                    <button type="button" class="text-sm font-semibold text-red-600" (click)="removeSession(session.id)">Remove</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+  <app-doctor-schedule-builder
+    [isOpen]="isBuilderOpen"
+    [doctorId]="doctorProfileId"
+    [chambers]="chambers"
+    [initialChamberId]="builderInitialChamberId"
+    [chambersLoading]="isLoadingChambers"
+    (closed)="handleBuilderClosed()"
+    (scheduleCreated)="handleScheduleCreated($event)"></app-doctor-schedule-builder>
 </div>
 
-        <div class="flex justify-end">
-          <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold flex items-center gap-2"
-            [disabled]="isSubmitting || scheduleDetailsForm.disabled">
-            <svg *ngIf="isSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" fill="none" class="opacity-30" />
-              <path stroke-linecap="round" stroke="currentColor" stroke-width="4" d="M4 12a8 8 0 018-8" />
-            </svg>
-            Save schedule
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+
+

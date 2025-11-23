@@ -1,14 +1,14 @@
 @if (isHeader) {
 <section class="flex flex-col gap-4 font-Roboto text-brand-neutral">
   <div class="flex justify-between">
-    <div class="space-y-2">
+    <div class="">
       <p class="text-[10px] uppercase tracking-[0.5em] text-brand-neutral/60">Physician</p>
-      <h1 class="text-2xl font-semibold leading-tight">{{ doctor?.doctorName || 'Name not updated' }}</h1>
+      <h1 class="text-lg text-brand-primary font-Roboto">{{ doctor?.doctorName || 'Name not updated' }}</h1>
       @if (doctor?.qualification) {
-      <p class="text-sm">{{ doctor.qualification }}</p>
+      <p class="text-[13px]">{{ doctor.qualification }}</p>
       }
       @if (doctor?.degree?.length) {
-      <ul class="space-y-1 text-sm">
+      <ul class=" text-[13px]">
         @for (item of doctor.degree; track $index) {
         <li>
           {{ item.degreeName }}
