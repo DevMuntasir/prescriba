@@ -3,7 +3,6 @@ import {
   OverlayContainer,
 } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -27,7 +26,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { forkJoin, map, Subscription } from 'rxjs';
 
-import { DoctorProfileService } from 'src/app/api/services';
+import { AppointmentService, DoctorProfileService } from 'src/app/api/services';
 import { environment } from 'src/environments/environment';
 
 import { DocumentsAttachmentService } from './../../../api/services/documents-attachment.service';
@@ -43,6 +42,7 @@ import { DynamicModalComponent } from './components/shared/dynamic-modal/dynamic
 import { ModalIconComponent } from './components/shared/dynamic-modal/icons/modal-icon/modal-icon.component';
 import { ChiefComplaintsService } from './services/chief-complaints.service';
 import { PrescriptionService } from './services/prescription.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -97,7 +97,9 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     private prescriptionService: PrescriptionService,
     private DoctorProfileService: DoctorProfileService,
     private AuthService: AuthService,
-    private DocumentsAttachmentService: DocumentsAttachmentService
+    private DocumentsAttachmentService: DocumentsAttachmentService,
+    private AppointmentService : AppointmentService,
+    private ActivatedRoute : ActivatedRoute
   ) { }
 
   addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
@@ -138,6 +140,15 @@ export class PrescribeComponent implements OnInit, OnDestroy {
           isUploadImage: false,
         })
     );
+
+        this.ActivatedRoute.queryParams.subscribe((params) => {
+      if (params['aptId']) {
+        this.prescriptionService.setAppointmentId(Number(params['aptId']));
+      } else {
+        this.prescriptionService.setPreHand(true);
+        this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
+      }
+    });
   }
 
   getDocuments(id: any) {
@@ -200,7 +211,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
           )
         ),
 
-      // appointmentDetails: this.prescriptionService.getAppointmentDataForPrehand(),
+      // appointmentDetails: this.AppointmentService.getAppointmentById(1),
     }).subscribe(({ doctorDetails, signature }) => {
       this.prescriptionService.setDoctorInfo({
         doctorName:

@@ -119,6 +119,8 @@ export class TopbarComponent {
       .subscribe((patient: PatientInfoPayload | undefined) => {
         if (patient) {
           this.Prescription.setPatientInfo(patient);
+          console.log(this.Prescription.prescribeForm);
+          
         }
       });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -14,6 +14,7 @@ import {
   PrescriptionPatient,
   PrescriptionPatientService,
 } from '../../../../services/patient-service';
+import { PrescriptionService } from '../../../../services/prescription.service';
 
 interface PatientDialogData {
   doctorId?: number;
@@ -36,7 +37,7 @@ export interface PatientInfoPayload {
   templateUrl: './patient-selector-dialog.component.html',
   styleUrl: './patient-selector-dialog.component.scss',
 })
-export class PatientSelectorDialogComponent {
+export class PatientSelectorDialogComponent implements OnInit {
   readonly searchForm: FormGroup = this.fb.group({
     mobileNo: ['', [Validators.required, Validators.minLength(6)]],
   });
@@ -55,14 +56,32 @@ export class PatientSelectorDialogComponent {
   showManualEntry = false;
   manualSubmitted = false;
   errorMessage = '';
-
+ prescribeForm!: FormGroup;
   constructor(
     private readonly dialogRef: MatDialogRef<PatientSelectorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private readonly data: PatientDialogData,
     private readonly fb: FormBuilder,
-    private readonly patientService: PrescriptionPatientService
-  ) {}
-
+    private readonly patientService: PrescriptionPatientService,
+    private readonly prescriptionService: PrescriptionService
+  ) {
+      this.prescribeForm = this.prescriptionService.prescribeForm();
+  }
+  get patient() {
+    return this.prescribeForm.get('patient') as FormGroup;
+  }
+  ngOnInit(): void {
+    debugger
+    console.log(this.prescribeForm);
+    
+    this.patient.patchValue({
+      patientName: this.prescribeForm.get('patientName')?.value || '',
+      patientAge: this.prescribeForm.get('patientAge')?.value || '',  
+      patientGender: this.prescribeForm.get('patientGender')?.value || '',
+      patientBloodGroup: this.prescribeForm.get('patientBloodGroup')?.value || '',
+      patientPhoneNo: this.prescribeForm.get('patientPhoneNo')?.value || '',
+    });
+    this.patients.push(this.patient.value);
+  }
   get mobileNoControl() {
     return this.searchForm.get('mobileNo');
   }

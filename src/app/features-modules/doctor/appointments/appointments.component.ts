@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import type {
+  AppointmentDto,
   DoctorChamberDto,
   DoctorScheduleDto,
 } from 'src/app/api/dto-models/models';
@@ -70,6 +71,9 @@ export class AppointmentsComponent implements OnInit {
   selectedBookingDate: string | null = null;
   bookingDateError?: string;
 
+  isLoadingAppointments = false;
+  appointmentsLoadError?: string;
+
 
   readonly todayDate = this.formatDateInput(new Date());
 
@@ -103,44 +107,7 @@ export class AppointmentsComponent implements OnInit {
     6: 'saturday',
   };
 
-  appointments: Appointment[] = [
-    {
-      serial: 'AP-001',
-      patientName: 'Rahim Uddin',
-      age: 42,
-      gender: 'Male',
-      contactNumber: '01711-234567',
-      appointmentDate: '23 Oct 2025, 10:30 AM',
-      status: 'Confirmed',
-    },
-    {
-      serial: 'AP-002',
-      patientName: 'Mita Akter',
-      age: 31,
-      gender: 'Female',
-      contactNumber: '01922-765432',
-      appointmentDate: '23 Oct 2025, 11:15 AM',
-      status: 'Confirmed',
-    },
-    {
-      serial: 'AP-003',
-      patientName: 'Kamal Hossain',
-      age: 55,
-      gender: 'Male',
-      contactNumber: '01818-998877',
-      appointmentDate: '23 Oct 2025, 12:00 PM',
-      status: 'Checked In',
-    },
-    {
-      serial: 'AP-004',
-      patientName: 'Nazma Begum',
-      age: 47,
-      gender: 'Female',
-      contactNumber: '01616-554433',
-      appointmentDate: '23 Oct 2025, 01:30 PM',
-      status: 'Pending',
-    },
-  ];
+  appointments: Appointment[] = [];
 
   readonly appointmentForm = this.fb.nonNullable.group({
     patientName: ['', [Validators.required, Validators.maxLength(80)]],
@@ -175,6 +142,8 @@ export class AppointmentsComponent implements OnInit {
     if (this.doctorProfileId) {
       this.loadDoctorChambers(this.doctorProfileId);
     }
+
+    this.fetchAppointments();
   }
 
   openForm(): void {
@@ -377,6 +346,48 @@ export class AppointmentsComponent implements OnInit {
 
  
 
+  private fetchAppointments(): void {
+    this.isLoadingAppointments = true;
+    this.appointmentsLoadError = undefined;
+
+    this.appointmentService.getAppointments().subscribe({
+      next: (response) => {
+        const normalized = response ?? [];
+        this.appointments = normalized?.results?.map((dto) =>
+          this.mapAppointmentDto(dto)
+        );
+        this.isLoadingAppointments = false;
+      },
+      error: () => {
+        this.isLoadingAppointments = false;
+        this.appointmentsLoadError =
+          'Unable to load appointments right now. Please try again later.';
+      },
+    });
+  }
+
+  private mapAppointmentDto(dto: AppointmentDto): Appointment {
+    debugger
+    const serial =
+      dto.appointmentSerial !== undefined && dto.appointmentSerial !== null
+        ? dto.appointmentSerial.toString()
+        : dto.serialNo !== undefined && dto.serialNo !== null
+          ? dto.serialNo.toString()
+          : dto.appointmentId?.toString() ?? 'N/A';
+
+    return {
+      serial,
+      patientName: dto.patientName ?? 'Unknown patient',
+      age: dto.patientAge ?? 0,
+      gender: dto.gender ?? 'N/A',
+      contactNumber: dto.phoneNumber ?? 'N/A',
+      appointmentDate: this.formatAppointmentDisplay(dto.appointmentDate),
+      status:
+        dto.status ??
+        dto.responseMessage ??
+        (dto.responseSuccess === false ? 'Failed' : 'Pending'),
+    };
+  }
   private generateSerial(): string {
     // FIX: previously "const serial = AP-;"
     const serial = `AP-${String(this.serialCounter).padStart(3, '0')}`;
@@ -539,6 +550,18 @@ export class AppointmentsComponent implements OnInit {
     return null;
   }
 
+  private formatAppointmentDisplay(value: string | undefined | null): string {
+    if (!value) {
+      return '';
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return value;
+    }
+
+    return parsed.toLocaleString();
+  }
  public formatDateInput(date: Date): string {
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
@@ -546,11 +569,4 @@ export class AppointmentsComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 }
-
-
-
-
-
-
-
 

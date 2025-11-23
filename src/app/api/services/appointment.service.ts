@@ -69,12 +69,12 @@ export class AppointmentService {
 
   getAppointmentById(id: number): Observable<AppointmentDto> {
     return this.http.get<AppointmentDto>(
-      `${this.baseUrl}/api/app/doctor-profile/by-user-id/${id}`
+      `${this.prescriptionBaseUrl}/api/2025-20/appointment/get-by-id/${id}`
     );
   }
-  getAppointments(): Observable<AppointmentDto> {
-    return this.http.get<AppointmentDto>(
-      `${this.baseUrl}/api/2025-20/appointment/get-all`
+  getAppointments(): Observable<ApiResponse<AppointmentDto[]>> {
+    return this.http.get<ApiResponse<AppointmentDto[]>>(
+      `${this.prescriptionBaseUrl}/api/2025-20/appointment/get-all`
     );
   }
   createAppointment(
