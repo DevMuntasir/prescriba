@@ -62,25 +62,22 @@ export class PatientSelectorDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private readonly data: PatientDialogData,
     private readonly fb: FormBuilder,
     private readonly patientService: PrescriptionPatientService,
-    private readonly prescriptionService: PrescriptionService
+    // private readonly prescriptionService: PrescriptionService
   ) {
-      this.prescribeForm = this.prescriptionService.prescribeForm();
+      // this.prescribeForm = this.prescriptionService.prescribeForm();
   }
   get patient() {
     return this.prescribeForm.get('patient') as FormGroup;
   }
   ngOnInit(): void {
-    debugger
-    console.log(this.prescribeForm);
-    
-    this.patient.patchValue({
-      patientName: this.prescribeForm.get('patientName')?.value || '',
-      patientAge: this.prescribeForm.get('patientAge')?.value || '',  
-      patientGender: this.prescribeForm.get('patientGender')?.value || '',
-      patientBloodGroup: this.prescribeForm.get('patientBloodGroup')?.value || '',
-      patientPhoneNo: this.prescribeForm.get('patientPhoneNo')?.value || '',
+    const existing = (this.prescribeForm.get('patient') as FormGroup)?.value || {};
+    this.manualForm.patchValue({
+      patientName: existing.patientName ?? '',
+      patientAge: existing.patientAge ?? '',
+      patientGender: existing.patientGender ?? '',
+      patientBloodGroup: existing.patientBloodGroup ?? '',
+      patientPhoneNo: existing.patientPhoneNo ?? '',
     });
-    this.patients.push(this.patient.value);
   }
   get mobileNoControl() {
     return this.searchForm.get('mobileNo');

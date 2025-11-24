@@ -82,7 +82,6 @@ export class PrescriptionService {
   }
 
   addHistory(history: History): void {
-    console.log(history);
 
     this.prescribeForm.update((form) => {
       const chiefComplaints = form.get('history') as FormArray;
@@ -94,7 +93,6 @@ export class PrescriptionService {
           id: [history.id, Validators.required],
         })
       );
-      console.log(history, form);
 
       return form;
     });
@@ -125,7 +123,6 @@ export class PrescriptionService {
           id: [advice.id, Validators.required],
         })
       );
-      console.log(history, form);
 
       return form;
     });
@@ -146,7 +143,6 @@ export class PrescriptionService {
     this.printForm();
   }
   addMedicine(medicine: Medicine): void {
-    console.log(medicine);
     this.prescribeForm.update((form) => {
       const formMedications = form.get('medications') as FormArray;
       formMedications.push(
@@ -203,7 +199,8 @@ export class PrescriptionService {
     patientBloodGroup: string | null;
   }) {
     this.prescribeForm.update((form) => {
-      form.patchValue({ patient });
+      const group = form.get('patient') as FormGroup;
+      group.patchValue(patient);
       return form;
     });
   }
@@ -257,7 +254,8 @@ export class PrescriptionService {
     signature?: string | null;
   }) {
     this.prescribeForm.update((form) => {
-      form.patchValue({ doctor });
+      const group = form.get('doctor') as FormGroup;
+      group.patchValue(doctor);
       return form;
     });
   }
@@ -303,17 +301,8 @@ export class PrescriptionService {
       // const uploadImage = form.get('uploadImage')?.value;
 
       form.patchValue({
-        doctor: currentDoctor,
-        //  appointmentCode:'',
-        isPreHand: false,
-        isHeader: true,
-        // appointmentId,
-
         followUp: '',
-        uploadImage: '',
-        // appointmentCode: '',
-        // appointmentId: 0,
-        // isPreHand: '',
+        uploadImage: ''
       });
 
       form.get('patient')?.patchValue({
@@ -353,9 +342,7 @@ export class PrescriptionService {
     });
   }
 
-  printForm(): void {
-    console.log(this.prescribeForm().value);
-  }
+  printForm(): void {}
 
   resetArrayField() {}
 
