@@ -50,14 +50,25 @@ export class ChatbotComponent implements AfterViewChecked {
     this.messages.push({ text: userMsg, sender: 'user', timestamp: new Date() });
     this.userInput = '';
     this.isTyping = true;
+    this.messages.push({ text: '', sender: 'agent', timestamp: new Date() });
+    const currentMessageIndex = this.messages.length - 1;
 
-    try {
-      const response = await this.geminiService.generateText(userMsg);
-      this.messages.push({ text: response, sender: 'agent', timestamp: new Date() });
-    } catch (error) {
-      this.messages.push({ text: 'Sorry, something went wrong.', sender: 'agent', timestamp: new Date() });
-    } finally {
-      this.isTyping = false;
-    }
+    this.geminiService.generateStream(userMsg).subscribe({
+      next: (chunk) => {
+        this.isTyping = false;
+        this.messages[currentMessageIndex].text += chunk;
+        // Force change detection or scroll if needed, though Angular usually handles this.
+        // We might need to trigger scroll manually.
+        setTimeout(() => this.scrollToBottom(), 0);
+      },
+      error: (err) => {
+        this.isTyping = false;
+        this.messages[currentMessageIndex].text = 'Sorry, something went wrong.';
+        console.error(err);
+      },
+      complete: () => {
+        this.isTyping = false;
+      }
+    });
   }
 }

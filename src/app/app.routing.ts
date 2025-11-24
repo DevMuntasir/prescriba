@@ -6,6 +6,7 @@ import { AdminLoginComponent } from './core-modules/auth/admin-login/admin-login
 import { SignupComponent } from './core-modules/auth/signup/signup.component';
 import { DoctorLayoutComponent } from './layout-module/doctor-layout.component';
 import { isAuth } from './auth-guard/auth.service';
+import { AdminUploadComponent } from './shared/components/chatbot/admin/admin-upload.component';
 
 export const appRoutes: Route[] = [
   {
@@ -19,6 +20,10 @@ export const appRoutes: Route[] = [
     path: 'login',
     canActivate: [routerGuard],
     component: LoginComponent,
+  },
+  {
+    path: 'chatbot-admin',
+    component: AdminUploadComponent,
   },
 
   {
