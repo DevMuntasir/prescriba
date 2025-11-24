@@ -1,9 +1,8 @@
 import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AppointmentService, CreateAppointmentPayload } from 'src/app/api';
 import { ScheduleSessionView } from '../appointments.component';
-import { CommonModule } from '@angular/common';
 
 export interface SessionBookingDialogData {
   scheduleId?: number;
@@ -32,7 +31,7 @@ export interface SessionBookingDialogResult {
 })
 export class SessionBookingDialogComponent {
   private readonly fb = inject(FormBuilder);
-isSuccessAppointmentCreate:boolean = false
+  isSuccessAppointmentCreate: boolean = false
   readonly bookingForm = this.fb.nonNullable.group({
     patientName: ['', [Validators.required, Validators.maxLength(80)]],
     age: [
@@ -137,7 +136,7 @@ isSuccessAppointmentCreate:boolean = false
 
     this.appointmentService.createAppointment(payload).subscribe({
       next: (created) => {
-        this.isSuccessAppointmentCreate=true
+        this.isSuccessAppointmentCreate = true
         this.isCreatingAppointment = false;
         // this.dialogRef.close(payload);
       },

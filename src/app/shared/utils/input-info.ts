@@ -1,4 +1,4 @@
-import { AppointmentType, ConsultancyType, DoctorTitle, Gender, MaritalStatus } from 'src/app/proxy/enums';
+import { AppointmentType, ConsultancyType, DoctorTitle, Gender, MaritalStatus } from 'src/app/api';
 import { CommonService } from '../services/common.service';
 const consultancyType = CommonService.getEnumList(ConsultancyType);
 

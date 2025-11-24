@@ -88,7 +88,7 @@
           No hospitals found yet. Add a hospital from the Hospital tab to see it here.
         </div>
 
-        <div *ngIf="!isLoadingChambers && chambers.length > 0" class="space-y-5">
+        <div *ngIf="!isLoadingChambers" class="space-y-5">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <article
               *ngFor="let chamber of chambers; trackBy: trackByChamber"
@@ -131,7 +131,7 @@
               No saved schedules were found for this chamber.
             </div>
 
-            <div *ngIf="!isLoadingSchedules && !scheduleLoadError && schedules.length > 0" class="mt-4 space-y-4">
+            <div *ngIf="!isLoadingSchedules " class="mt-4 space-y-4">
               <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Week days</p>
                 <div class="mt-2 flex flex-wrap gap-2">

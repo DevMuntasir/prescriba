@@ -20,8 +20,10 @@
             ></span>
             <div class="min-w-[320px] flex-1">
               <app-doctor-info [doctor]="doctor" [isPreHand]="isPreHand" [isHeader]="isHeader" />
+
             </div>
           </div>
+          <app-patient-info [patient]="patient"  />
 
           <div class="space-y-4 px-2 md:px-6">
             <div
@@ -83,7 +85,7 @@
             } @else {
             <div class="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
               <div class="space-y-5">
-                <div class="rounded-[28px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
+                <div class="rounded-[20px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
                   <div class="space-y-4">
                     <app-section
                       [fields]="['name', 'duration', 'notes']"

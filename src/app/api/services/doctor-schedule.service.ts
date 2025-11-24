@@ -50,7 +50,7 @@ export class DoctorScheduleService {
     input: DoctorScheduleInputDto
   ): Observable<DoctorScheduleDto> {
     return this.http.put<DoctorScheduleDto>(
-      `${this.baseUrl}/api/app/doctor-schedule/${id}`,
+      `${this.baseUrl}/api/app/doctor-schedule`,
       input
     );
   }

@@ -29,6 +29,14 @@ const routes: Route[] = [
           import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
       {
+        path: 'profile-settings',
+        data: { roles: ['doctor'] },
+        loadComponent: () =>
+          import('./profile-settings/profile-settings.component').then(
+            (c) => c.ProfileSettingsComponent
+          ),
+      },
+      {
         path: 'e-chamber',
         canActivate: [isAuth],
         canActivateChild: [isAuth],
@@ -91,13 +99,7 @@ const routes: Route[] = [
       //   loadChildren: () =>
       //     import('./billing/billing.module').then((m) => m.BillingModule),
       // },
-      // {
-      //   path: 'profile-settings',
-      //   loadChildren: () =>
-      //     import('./profile-settings/profile-settings.module').then(
-      //       (m) => m.ProfileSettingsModule
-      //     ),
-      // },
+
       // {
       //   path: 'video-consultation',
       //   loadChildren: () =>

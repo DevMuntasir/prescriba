@@ -5,9 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-upload',
-  // Standalone: true ব্যবহার করে এটি নিশ্চিত করা হলো যে এটি একটি Standalone Component
   standalone: true, 
-  // প্রয়োজনীয় মডিউলগুলো ইমপোর্ট করুন
   imports: [CommonModule, HttpClientModule], 
   
  templateUrl: './admin-upload.component.html',
@@ -37,27 +35,27 @@ export class AdminUploadComponent {
 
   onUpload(): void {
     if (!this.selectedFile) {
-      this.message = 'দয়া করে ফাইল নির্বাচন করুন।';
+      this.message = 'Please select a file to upload.';
       this.isSuccess = false;
       return;
     }
 
     this.isUploading = true;
-    this.message = 'ফাইল আপলোড এবং ইনডেক্সিং প্রক্রিয়া চলছে...';
+    this.message = 'Indexing started. Please wait...';
     this.isSuccess = false;
 
     this.uploadService.uploadFile(this.selectedFile)
       .subscribe({
         next: (response) => {
           console.log('Upload success:', response);
-          this.message = `✅ সফলভাবে আপলোড ও ইনডেক্সিং সম্পন্ন হয়েছে। চ্যাটবট ব্যবহারের জন্য প্রস্তুত।`;
+          this.message = `Indexing completed successfully. Chatbot is ready to use.`;
           this.isSuccess = true;
           this.isUploading = false;
           this.resetForm();
         },
         error: (err) => {
           console.error('Upload failed:', err);
-          this.message = `❌ আপলোড ব্যর্থ: ${err.message || 'সার্ভার/নেটওয়ার্ক ত্রুটি'}`;
+          this.message = `Indexing failed: ${err.message || 'Server/Network error'}`;
           this.isSuccess = false;
           this.isUploading = false;
         }
@@ -65,9 +63,7 @@ export class AdminUploadComponent {
   }
 
   private resetForm(): void {
-    // সফল আপলোডের পর ফাইল নির্বাচন রিসেট করা
     this.selectedFile = null;
-    this.selectedFileName = 'ফাইল নির্বাচন করুন';
-    // ইনপুট রিসেট করার জন্য প্রয়োজন হলে ডিরেক্ট রেফারেন্স ব্যবহার করা যেতে পারে
+    this.selectedFileName = 'Please select a file to upload.';
   }
 }

@@ -33,18 +33,20 @@ export class DashboardComponent implements OnInit {
   authenticatedUserDetails: DoctorProfileDto = {} as DoctorProfileDto;
   showProfileOnboarding = false;
   savingProfile = false;
+  isInitialLoading = true;
 
   ngOnInit(): void {
     this.userStateService.authenticateUserInfo.subscribe((res) => {
-      if (res) {
-        this.authenticatedUserDetails = res;
-        this.evaluateOnboardingState(res);
-        this.showProfileOnboarding = this.shouldPromptForOnboarding(res)
-        console.log(this.shouldPromptForOnboarding(res));
-        console.log(res);
-
-
+      if (!res?.id) {
+        return;
       }
+
+      this.authenticatedUserDetails = res;
+      this.evaluateOnboardingState(res);
+      this.showProfileOnboarding = this.shouldPromptForOnboarding(res)
+      console.log(this.shouldPromptForOnboarding(res));
+      console.log(res);
+      this.isInitialLoading = false;
     });
   }
 
