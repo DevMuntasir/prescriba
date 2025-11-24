@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
+﻿import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GeminiService } from './gemini.service';
@@ -18,16 +18,20 @@ interface Message {
   styleUrl: './chatbot.component.scss'
 })
 export class ChatbotComponent implements AfterViewChecked {
+  private readonly welcomeMessage = 'Hello! How can I help you today?';
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   isOpen = false;
   userInput = '';
-  messages: Message[] = [
-    { text: 'Hello! How can I help you today?', sender: 'agent', timestamp: new Date() }
-  ];
+  messages: Message[] = [this.createAgentMessage(this.welcomeMessage)];
+
   isTyping = false;
 
   constructor(private geminiService: GeminiService) { }
+
+  private createAgentMessage(text: string): Message {
+    return { text, sender: 'agent', timestamp: new Date() };
+  }
 
   ngAfterViewChecked() {
     this.scrollToBottom();
@@ -41,6 +45,18 @@ export class ChatbotComponent implements AfterViewChecked {
 
   toggleChat() {
     this.isOpen = !this.isOpen;
+  }
+
+  startNewConversation() {
+    this.messages = [this.createAgentMessage(this.welcomeMessage)];
+    this.userInput = '';
+    this.isTyping = false;
+  }
+
+  clearChatHistory() {
+    this.messages = [];
+    this.userInput = '';
+    this.isTyping = false;
   }
 
   async sendMessage() {
@@ -72,3 +88,5 @@ export class ChatbotComponent implements AfterViewChecked {
     });
   }
 }
+
+

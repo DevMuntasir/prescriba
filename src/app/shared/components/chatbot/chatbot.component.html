@@ -1,4 +1,4 @@
-<!-- Chat Button -->
+﻿<!-- Chat Button -->
 <button (click)="toggleChat()"
   class="fixed bottom-6 right-6 bg-primary hover:bg-primaryAccent text-white p-4 rounded-full shadow-lg transition-all duration-300 z-50 flex items-center justify-center"
   [class.rotate-90]="isOpen">
@@ -17,8 +17,18 @@
 <div *ngIf="isOpen"
   class="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-2xl shadow-brand-card flex flex-col overflow-hidden z-50 border border-brand-border animate-fade-in-up">
   <!-- Header -->
-  <div class="bg-primary p-4 flex items-center gap-3">
+  <div class="bg-primary p-4 flex items-center justify-between gap-3">
     <h3 class="text-white font-semibold text-lg">Prescripto Assistant</h3>
+    <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+      <button type="button" (click)="startNewConversation()"
+        class="px-3 py-1 border border-white/40 text-white rounded-full hover:bg-white/20 transition-colors">
+        New Chat
+      </button>
+      <button type="button" (click)="clearChatHistory()"
+        class="px-3 py-1 border border-white/40 text-white rounded-full hover:bg-white/20 transition-colors">
+        Clear
+      </button>
+    </div>
   </div>
 
   <!-- Messages -->
