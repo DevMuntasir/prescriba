@@ -1,7 +1,8 @@
 import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GeminiService } from '../../services/gemini.service';
+import { GeminiService } from './gemini.service';
+import { MarkdownPipe } from '../../pipes/markdown.pipe';
 
 interface Message {
   text: string;
@@ -12,7 +13,7 @@ interface Message {
 @Component({
   selector: 'app-chatbot',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MarkdownPipe],
   templateUrl: './chatbot.component.html',
   styleUrl: './chatbot.component.scss'
 })
