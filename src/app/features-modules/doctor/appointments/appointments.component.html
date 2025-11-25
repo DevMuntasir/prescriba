@@ -21,7 +21,7 @@
         <div *ngIf="isLoadingAppointments" class="px-6 py-4 text-sm text-slate-600">Loading appointments...</div>
         <div *ngIf="appointmentsLoadError" class="px-6 py-4 text-sm text-red-700 bg-red-50 border-t border-red-100">{{ appointmentsLoadError }}</div>
         <ng-container *ngIf="!isLoadingAppointments && !appointmentsLoadError">
-        <table *ngIf="appointments.length > 0" class="w-full text-sm text-slate-700">
+        <table *ngIf="appointments?.length" class="w-full text-sm text-slate-700">
           <thead class="text-left bg-slate-100 text-slate-600">
             <tr>
               <th class="py-3 px-4 font-semibold">Serial</th>
@@ -39,7 +39,7 @@
               <td class="py-3 px-4">{{ appointment.patientName }}</td>
               <td class="py-3 px-4">{{ appointment.age }}</td>
               <td class="py-3 px-4">{{ appointment.gender }}</td>
-              <td class="py-3 px-4">{{ appointment.contactNumber }}</td>
+              <td class="py-3 px-4">{{ appointment.phoneNumber }}</td>
               <td class="py-3 px-4">{{ appointment.appointmentDate }}</td>
               <td class="py-3 px-4">
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
@@ -55,7 +55,7 @@
           </tbody>
         </table>
 
-        <div *ngIf="appointments.length === 0" class="px-6 py-12 text-center text-sm text-slate-500">
+        <div *ngIf="appointments?.length === 0" class="px-6 py-12 text-center text-sm text-slate-500">
           No appointments scheduled yet.
         </div>
         </ng-container>
@@ -85,7 +85,7 @@
         </div>
 
         <div *ngIf="!isLoadingChambers && !chamberLoadError && chambers.length === 0" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-          No hospitals found yet. Add a hospital from the Hospital tab to see it here.
+          No hospitals found yet. Add a hospital from the Hospital tab to see it here. <a routerLink="/doctor/hospital" class="text-brand-primary font-semibold">Hospitals/Chambers</a>
         </div>
 
         <div *ngIf="!isLoadingChambers" class="space-y-5">
@@ -128,7 +128,7 @@
             </div>
 
             <div *ngIf="!isLoadingSchedules && !scheduleLoadError && schedules.length === 0" class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              No saved schedules were found for this chamber.
+              No saved schedules were found for this chamber. <a routerLink="/doctor/schedule" class="text-brand-primary font-semibold">Add Schedule</a>
             </div>
 
             <div *ngIf="!isLoadingSchedules " class="mt-4 space-y-4">

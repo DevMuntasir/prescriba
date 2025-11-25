@@ -1,20 +1,19 @@
-import type { EntityDto, FullAuditedEntityDto } from '../models/base-entity';
-import type { ConsultancyType } from '../enums/consultancy-type.enum';
-import type { AppointmentType } from '../enums/appointment-type.enum';
-import type { AppointmentStatus } from '../enums/appointment-status.enum';
 import type { AppointmentPaymentStatus } from '../enums/appointment-payment-status.enum';
-import type { ChamberPaymentType } from '../enums/chamber-payment-type.enum';
-import type { DoctorTitle } from '../enums/doctor-title.enum';
+import type { AppointmentStatus } from '../enums/appointment-status.enum';
+import type { AppointmentType } from '../enums/appointment-type.enum';
+import type { AttachmentType } from '../enums/attachment-type.enum';
+import type { ConsultancyType } from '../enums/consultancy-type.enum';
 import type { DiagonsticServiceType } from '../enums/diagonstic-service-type.enum';
-import type { ServiceRequestStatus } from '../enums/service-request-status.enum';
+import type { DoctorTitle } from '../enums/doctor-title.enum';
+import type { EntityType } from '../enums/entity-type.enum';
+import type { FacilityEntityType } from '../enums/facility-entity-type.enum';
 import type { Gender } from '../enums/gender.enum';
 import type { MaritalStatus } from '../enums/marital-status.enum';
-import type { ScheduleType } from '../enums/schedule-type.enum';
-import type { EntityType } from '../enums/entity-type.enum';
-import type { AttachmentType } from '../enums/attachment-type.enum';
-import type { FacilityEntityType } from '../enums/facility-entity-type.enum';
 import type { OtpStatus } from '../enums/otp-status.enum';
 import type { PromoType } from '../enums/promo-type.enum';
+import type { ScheduleType } from '../enums/schedule-type.enum';
+import type { ServiceRequestStatus } from '../enums/service-request-status.enum';
+import type { EntityDto, FullAuditedEntityDto } from '../models/base-entity';
 
 export interface AccountDeteleResponsesDto {
   userName?: string;
@@ -91,7 +90,7 @@ export interface AgentSupervisorDto extends FullAuditedEntityDto<number> {
 
 export interface AppointmentDto extends FullAuditedEntityDto<number> {
   appointmentId: number | string;
-  appointmentSerial:number;
+  appointmentSerial: number;
   patientID: number;
   patientName: string;
   bloodGroup: string; // could be union later like "A" | "B" | "AB" | "O" | ...
@@ -131,38 +130,14 @@ export interface ExtendedAppointmentDto {
 }
 
 export interface AppointmentInputDto extends FullAuditedEntityDto<number> {
-  appointmentSerial?: string;
-  appointmentCode?: string;
-  doctorScheduleId?: number;
-  doctorProfileId?: number;
-  doctorName?: string;
-  doctorCode?: string;
-  patientProfileId?: number;
-  patientName?: string;
-  patientCode?: string;
-  consultancyType?: ConsultancyType;
-  doctorChamberId?: number;
-  doctorScheduleDaySessionId?: number;
-  scheduleDayofWeek?: string;
-  appointmentType?: AppointmentType;
-  appointmentDate?: string;
-  appointmentTime?: string;
-  doctorFeesSetupId?: number;
-  doctorFee?: number;
-  agentFee?: number;
-  platformFee?: number;
-  vatFee?: number;
-  totalAppointmentFee?: number;
-  appointmentStatus?: AppointmentStatus;
-  appointmentPaymentStatus?: AppointmentPaymentStatus;
-  chamberPaymentType?: ChamberPaymentType;
-  cancelledByEntityId?: number;
-  cancelledByRole?: string;
-  paymentTransactionId?: string;
-  appointmentCreatorId?: number;
-  appointmentCreatorCode?: string;
-  appointmentCreatorRole?: string;
-  isCousltationComplete?: boolean;
+  patientName: string,
+  gender: string,
+  age: number,
+  phoneNumber: string,
+  sessionId: number,
+  bloodGroup: string,
+  scheduleId: number,
+  appointmentDate: string
 }
 
 export interface CampaignDoctorDto extends FullAuditedEntityDto<number> {
@@ -478,7 +453,7 @@ export interface DoctorScheduleInputDto extends FullAuditedEntityDto<number> {
   doctorScheduleDaySession: DoctorScheduleDaySessionInputDto[];
   doctorFeesSetup: DoctorFeesSetupInputDto[];
   scheduleName?: string;
-  
+
 }
 
 export interface DoctorSpecializationDto extends FullAuditedEntityDto<number> {
@@ -577,7 +552,7 @@ export interface LoginResponseDto {
   roleName: string[];
   success: boolean;
   message?: string;
-  loginType:string
+  loginType: string
 }
 
 export interface MasterDoctorDto extends FullAuditedEntityDto<number> {

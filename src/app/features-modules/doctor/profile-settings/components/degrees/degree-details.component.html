@@ -1,0 +1,102 @@
+<section class="card">
+  <div class="card__header">
+    <div>
+      <h2>Education Details</h2>
+      <p>Add all professional degrees that you want to show on prescriptions.</p>
+    </div>
+  </div>
+
+  <div class="table-wrapper" *ngIf="degrees?.length; else emptyState">
+    <table>
+      <thead>
+        <tr>
+          <th>Degree</th>
+          <th>Institute</th>
+          <th>Passing Year</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let degree of degrees">
+          <td>
+            <strong>{{ getDegreeName(degree.degreeId) }}</strong>
+            <div class="muted">Duration: {{ degree.duration || '—' }} {{ degree.durationType || '' }}</div>
+          </td>
+          <td>
+            {{ degree.instituteName || '—' }}
+            <div class="muted">
+              {{ degree.instituteCity || '' }} {{ degree.instituteCountry || '' }}
+            </div>
+          </td>
+          <td>{{ degree.passingYear || '—' }}</td>
+          <td class="actions">
+            <button type="button" (click)="editDegree(degree)">Edit</button>
+            <button type="button" class="danger" (click)="deleteDegree(degree.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #emptyState>
+    <p class="muted">No degree records yet.</p>
+  </ng-template>
+
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      <span>Degree</span>
+      <select formControlName="degreeId">
+        <option value="" disabled>Select degree</option>
+        <option *ngFor="let option of degreeOptions" [value]="option.id">
+          {{ option.degreeName }}
+        </option>
+      </select>
+      <small *ngIf="form.get('degreeId')?.invalid && form.get('degreeId')?.touched">
+        Degree is required.
+      </small>
+    </label>
+
+    <label>
+      <span>Passing Year</span>
+      <input type="number" formControlName="passingYear" placeholder="2024" />
+    </label>
+
+    <label>
+      <span>Duration</span>
+      <input type="number" formControlName="duration" placeholder="3" />
+    </label>
+
+    <label>
+      <span>Duration Type</span>
+      <input type="text" formControlName="durationType" placeholder="Years" />
+    </label>
+
+    <label>
+      <span>Institute Name</span>
+      <input type="text" formControlName="instituteName" placeholder="Medical college" />
+    </label>
+
+    <label>
+      <span>City</span>
+      <input type="text" formControlName="instituteCity" />
+    </label>
+
+    <label>
+      <span>Country</span>
+      <input type="text" formControlName="instituteCountry" />
+    </label>
+
+    <label>
+      <span>Zip Code</span>
+      <input type="text" formControlName="zipCode" />
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="primary" [disabled]="saving || form.invalid || !doctorId">
+        {{ form.value.id ? 'Update' : 'Add Degree' }}
+      </button>
+      <button type="button" (click)="resetForm()">Clear</button>
+    </div>
+  </form>
+</section>

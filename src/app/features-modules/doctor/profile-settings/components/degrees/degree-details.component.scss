@@ -1,0 +1,104 @@
+:host {
+  display: block;
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  margin-top: 24px;
+}
+
+.card__header {
+  margin-bottom: 16px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+input,
+select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 9px 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+button.primary {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  background: #16a34a;
+  color: #fff;
+  font-weight: 600;
+}
+
+button.danger {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  background: #dc2626;
+  color: #fff;
+}
+
+button {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: transparent;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

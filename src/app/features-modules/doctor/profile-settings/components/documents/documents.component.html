@@ -1,0 +1,33 @@
+<section class="card">
+  <div class="card__header">
+    <div>
+      <h2>Documents</h2>
+      <p>Upload or replace your digital signature that appears on prescriptions.</p>
+    </div>
+  </div>
+
+  <div class="signature" *ngIf="!loading; else loadingState">
+    <ng-container *ngIf="currentSignatureUrl; else emptySignature">
+      <img [src]="currentSignatureUrl" alt="Doctor Signature" />
+    </ng-container>
+    <ng-template #emptySignature>
+      <p class="muted">No signature uploaded yet.</p>
+    </ng-template>
+  </div>
+  <ng-template #loadingState>
+    <p class="muted">Loading signature…</p>
+  </ng-template>
+
+  <div class="upload">
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onFileChange($event)"
+    />
+    <span class="muted" *ngIf="selectedFileName">{{ selectedFileName }}</span>
+    <button type="button" class="primary" (click)="upload()" [disabled]="uploading || !doctorId">
+      {{ uploading ? 'Uploading…' : 'Upload Signature' }}
+    </button>
+  </div>
+</section>

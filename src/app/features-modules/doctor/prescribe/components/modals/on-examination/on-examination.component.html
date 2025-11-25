@@ -1,83 +1,76 @@
-<form [formGroup]="vitalsForm" class="max-w-2xl mx-auto p-6">
-  <h2 mat-dialog-title class="border-b pb-2">
-    On Examination
+<div class="prescripto-modal max-w-[640px]">
+  <form [formGroup]="vitalsForm" class="w-full">
+    <header class="px-6 py-5 border-b border-brand-border bg-white">
+      <p class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">Vitals snapshot</p>
+      <h2 class="mt-1 text-2xl font-Roboto text-brand-neutral">On examination</h2>
+      <p class="mt-2 text-sm text-brand-neutral/70">
+        Enter the latest readings in a clean step-by-step flow. Each field is spaced for clarity so you never lose focus
+        during a consultation.
+      </p>
+    </header>
 
-  </h2>
-  <!-- Blood Pressure -->
-  <div class="flex items-center space-x-4 mt-3">
-    <label class="w-32 text-gray-700">Blood Pressure:</label>
-    <mat-form-field class="w-24">
-      <input matInput formControlName="systolic" placeholder="120" type="string">
-    </mat-form-field>
-    <span class="text-xl">/</span>
-    <mat-form-field class="w-24">
-      <input matInput formControlName="diastolic" placeholder="80" type="string">
-    </mat-form-field>
-    <span class="text-gray-600">mm Hg</span>
-  </div>
+    <mat-dialog-content class="px-6 py-5 space-y-5 bg-brand-surface">
+      <section class="rounded-2xl border border-brand-border bg-white p-4 space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="text-base font-semibold text-brand-neutral">Blood pressure</h3>
+          <span class="text-xs font-medium text-brand-neutral/60">mm Hg</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="text-sm text-brand-neutral/70 flex flex-col">
+            <span class="text-xs uppercase tracking-[0.3em]">Systolic</span>
+            <input matInput formControlName="systolic" placeholder="120" type="string"
+              class="prescripto-field prescripto-field--dense w-28 text-center" />
+          </label>
+          <span class="text-xl text-brand-neutral/40">/</span>
+          <label class="text-sm text-brand-neutral/70 flex flex-col">
+            <span class="text-xs uppercase tracking-[0.3em]">Diastolic</span>
+            <input matInput formControlName="diastolic" placeholder="80" type="string"
+              class="prescripto-field prescripto-field--dense w-28 text-center" />
+          </label>
+        </div>
+      </section>
 
-  <!-- Pulse -->
-  <div class="flex items-center space-x-4">
-    <label class="w-32 text-gray-700">Pulse:</label>
-    <mat-form-field class="w-60">
-      <input matInput formControlName="pulse" type="string">
-    </mat-form-field>
-    <span class="text-gray-600">BPM</span>
+      <section class="rounded-2xl border border-brand-border bg-white p-4 space-y-4">
+        <div class="grid gap-3 md:grid-cols-2">
+          <label class="flex flex-col gap-2 text-brand-neutral">
+            <span class="text-sm font-medium">Pulse</span>
+            <input matInput formControlName="pulse" type="string" placeholder="72"
+              class="prescripto-field" />
+            <span class="text-xs text-brand-neutral/50">Beats per minute</span>
+          </label>
+          <label class="flex flex-col gap-2 text-brand-neutral">
+            <span class="text-sm font-medium">Temperature</span>
+            <input matInput formControlName="temperature" type="string" placeholder="98.4"
+              class="prescripto-field" />
+            <span class="text-xs text-brand-neutral/50">&deg;F</span>
+          </label>
+        </div>
 
-  </div>
+        <div class="grid gap-3 md:grid-cols-2">
+          <label class="flex flex-col gap-2 text-brand-neutral">
+            <span class="text-sm font-medium">Weight</span>
+            <input matInput formControlName="weight" type="string" placeholder="65"
+              class="prescripto-field" />
+            <span class="text-xs text-brand-neutral/50">Kilograms</span>
+          </label>
+          <div class="flex flex-col gap-2 text-brand-neutral">
+            <span class="text-sm font-medium">Height</span>
+            <div class="flex flex-wrap items-center gap-3">
+              <input matInput formControlName="heightFeet" type="string" placeholder="5"
+                class="prescripto-field prescripto-field--dense w-20 text-center" />
+              <span class="text-sm text-brand-neutral/60">ft</span>
+              <input matInput formControlName="heightInches" type="string" placeholder="6"
+                class="prescripto-field prescripto-field--dense w-20 text-center" />
+              <span class="text-sm text-brand-neutral/60">in</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </mat-dialog-content>
 
-  <!-- Temperature -->
-  <div class="flex items-center space-x-4">
-    <label class="w-32 text-gray-700">Temperature:</label>
-    <mat-form-field class="w-60">
-      <input matInput formControlName="temperature" type="string">
-    </mat-form-field>
-    <span class="text-gray-600">°F</span>
-
-    <!-- <mat-select formControlName="tempUnit" class="w-20">
-        <mat-option value="F">°F</mat-option>
-        <mat-option value="C">°C</mat-option>
-      </mat-select>
-      <mat-checkbox formControlName="tempNormal" class="ml-4">
-        Normal
-      </mat-checkbox> -->
-  </div>
-
-  <!-- Weight -->
-  <div class="flex items-center space-x-4">
-    <label class="w-32 text-gray-700">Weight:</label>
-    <mat-form-field class="w-60">
-      <input matInput formControlName="weight" type="string">
-    </mat-form-field>
-    <mat-label class="text-gray-700">kg</mat-label>
-
-    <!-- <mat-select formControlName="weightUnit" class="w-20">
-        <mat-option value="kg">kg</mat-option>
-        <mat-option value="lbs">lbs</mat-option>
-      </mat-select>
-      <mat-checkbox formControlName="showWeightInPrescription" class="ml-4">
-        Show in prescription
-      </mat-checkbox> -->
-  </div>
-
-  <!-- Height -->
-  <div class="flex items-center space-x-4">
-    <label class="w-32 text-gray-700">Height:</label>
-    <mat-form-field class="w-24">
-      <input matInput formControlName="heightFeet" type="string">
-    </mat-form-field>
-    <span class="text-gray-600">ft</span>
-    <mat-form-field class="w-24">
-      <input matInput formControlName="heightInches" type="string">
-    </mat-form-field>
-    <span class="text-gray-600">inch</span>
-    <!-- <mat-checkbox formControlName="showHeightInPrescription" class="ml-4">
-        Show in prescription
-      </mat-checkbox> -->
-  </div>
-
-  <div class="flex gap-2 justify-end">
-    <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
-    <button class="btn-secondary" (click)="saveOnExamination()">Save</button>
-  </div>
-</form>
+    <mat-dialog-actions align="end" class="px-6 py-5 bg-white border-t border-brand-border flex items-center justify-end gap-2">
+      <button class="btn-secondary-light" type="button" (click)="closeDialog()">Cancel</button>
+      <button class="btn-secondary" type="button" (click)="saveOnExamination()">Save</button>
+    </mat-dialog-actions>
+  </form>
+</div>

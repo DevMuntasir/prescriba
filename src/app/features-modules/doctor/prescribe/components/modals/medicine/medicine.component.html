@@ -1,13 +1,28 @@
-<div class="chief-complaint-dialog w-[850px]">
-  <div class="flex bg-gray-200 items-center pl-4 py-4">
-    <h2 class="h-fit font-Roboto text-[20px] !mb-0 whitespace-nowrap">
-      Medicine
-    </h2>
-    <form (ngSubmit)="addMedicine({label:searchControl.value || '',value: 0})"
-      class="search-section flex-1 w-full flex items-center space-x-2 rounded-lg overflow-hidden bg-white border-[1px] shadow-lg mx-10">
-      <div class="w-full h-fit">
-        <input #searchInput class="text-[16px] px-3 py-3 w-full outline-none border-none" type="text" matInput
-          [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Search medicine...">
+<div class="prescripto-modal w-full max-w-[940px]">
+  <header class="prescripto-modal__header">
+    <div class="space-y-2">
+      <p class="prescripto-modal__pill">Medications</p>
+      <h2 class="prescripto-modal__title">Medicine</h2>
+      <p class="prescripto-modal__subhead">
+        Craft polished regimens with dosages, timing, and reminders aligned to your signature style.
+      </p>
+    </div>
+    <div class="prescripto-modal__stats">
+      <p class="prescripto-modal__stats-label">Selected</p>
+      <p class="prescripto-modal__stats-value">{{ selectedMedicines.length }}</p>
+    </div>
+  </header>
+
+  <section class="prescripto-modal__search">
+    <form (ngSubmit)="addMedicine({ label: searchControl.value || '', value: 0 })">
+      <div class="prescripto-modal__search-field">
+        <svg class="prescripto-modal__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+            d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4" />
+        </svg>
+        <input #searchInput type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
+          placeholder="Search medicine" />
         <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete">
           @for (medicine of filteredMedicines$| async; track medicine) {
           <mat-option (click)="addMedicine(medicine)" [value]="medicine">
@@ -15,103 +30,84 @@
           </mat-option>
           }
         </mat-autocomplete>
-
       </div>
-      <button class="bg-secondary text-white p-4" type="submit">
-        Add
-      </button>
+      <button class="btn-secondary w-full min-w-[150px] md:w-auto" type="submit">Add medicine</button>
     </form>
-  </div>
+    <p class="prescripto-modal__hint">Pin templates for morning or bedtime routines</p>
+  </section>
 
-  <mat-dialog-content>
-    @if (loading.noDataFound && selectedMedicines.length==0) {
-    No bookmark found for history!
-    }
+  <mat-dialog-content class="prescripto-modal__body">
     @if (loading.isSkelton) {
     <app-skelton />
     }@else {
-    <div class="medicine-chips flex flex-wrap gap-2 mb-4">
+    <section class="prescripto-modal__chip-set">
+      <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">Quick picks</div>
       <mat-chip-listbox multiple>
         @for (medicine of bookmarked; track medicine) {
-        <mat-chip-option [selected]="isMedicineSelected(medicine.label)"
+        <mat-chip-option class="prescripto-chip" [selected]="isMedicineSelected(medicine.label)"
           (selectionChange)="toggleMedicine($event, medicine)">
           {{ medicine.label }}
         </mat-chip-option>
         }
       </mat-chip-listbox>
-    </div>
+    </section>
     }
 
-
     @if (selectedMedicines.length > 0) {
-    <div class="selected-section">
-      <table class="w-full text-left border border-gray-300 bg-white">
-        <thead class="bg-gray-100">
+    <section class="prescripto-modal__selection overflow-x-auto">
+      <table class="prescripto-modal__table min-w-[760px]">
+        <thead>
           <tr>
-            <th class="p-2 border-b text-sm font-semibold text-gray-700">Medicine</th>
-            <th class="p-2 border-b text-sm font-semibold text-gray-700">Duration</th>
-            <th class="p-2 border-b text-sm font-semibold text-gray-700">Timing</th>
-            <th class="p-2 border-b text-sm font-semibold text-gray-700">Meal</th>
-            <th class="p-2 border-b text-sm font-semibold text-gray-700">Notes</th>
-            <th class="p-2 border-b text-sm font-semibold text-gray-700 text-center">Action</th>
+            <th>Medicine</th>
+            <th>Duration</th>
+            <th>Timing</th>
+            <th>Meal</th>
+            <th>Notes</th>
+            <th class="text-center">Action</th>
           </tr>
         </thead>
         <tbody>
           @for (medicine of selectedMedicines; track $index) {
-          <tr class="hover:bg-gray-50">
-            <!-- Medicine Name -->
-            <td class="p-2 border-b">
-              <input #medicineInput type="text" [(ngModel)]="medicine.name"
-                class="w-[200px] border border-gray-300 rounded-md px-3 py-2 bg-gray-100 text-sm focus:outline-none"
-                readonly (keydown.enter)="$event.preventDefault(); durationInput.focus()" />
+          <tr>
+            <td>
+              <input #medicineInput type="text" [(ngModel)]="medicine.name" readonly
+                class="prescripto-field prescripto-field--readonly w-[200px]"
+                (keydown.enter)="$event.preventDefault(); durationInput.focus()" />
             </td>
-
-            <!-- Duration -->
-            <td class="p-2 border-b">
+            <td>
               <input #durationInput cdkFocusInitial type="text" [(ngModel)]="medicine.duration" placeholder="3 days"
-                class="max-w-[100px] border border-gray-300 truncate rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="prescripto-field prescripto-field--dense max-w-[120px]"
                 (keydown.enter)="$event.preventDefault(); timingInput.focus()" />
             </td>
-
-            <!-- Timing (with autocomplete) -->
-            <td class="p-2 border-b">
-              <input placeholder="Timming" #timingInput type="text" [(ngModel)]="medicine.timming" placeholder="Timing"
-                [matAutocomplete]="auto"
-                class="max-w-[100px] border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+            <td>
+              <input placeholder="Timing" #timingInput type="text" [(ngModel)]="medicine.timming"
+                [matAutocomplete]="autoTiming"
+                class="prescripto-field prescripto-field--dense max-w-[140px]"
                 (keydown.enter)="$event.preventDefault(); mealSelect.focus()" />
-              <mat-autocomplete #auto="matAutocomplete">
+              <mat-autocomplete #autoTiming="matAutocomplete">
                 <mat-option *ngFor="let combo of mealCombinations" [value]="combo">
                   {{ combo }}
                 </mat-option>
               </mat-autocomplete>
             </td>
-
-            <!-- Meal (select) -->
-            <td class="p-2 border-b">
+            <td>
               <input #mealSelect placeholder="Meal" type="text" [(ngModel)]="medicine.mealTime"
                 [matAutocomplete]="autoMeal"
-                class="max-w-[120px] border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                class="prescripto-field prescripto-field--dense max-w-[140px]"
                 (keydown.enter)="$event.preventDefault(); notesInput.focus()" />
-
               <mat-autocomplete #autoMeal="matAutocomplete">
                 <mat-option class="text-[14px]" *ngFor="let time of mealTimes" [value]="time">
                   {{ time }}
                 </mat-option>
               </mat-autocomplete>
-
             </td>
-
-            <!-- Notes -->
-            <td class="p-2 border-b">
+            <td>
               <input #notesInput type="text" [(ngModel)]="medicine.notes" placeholder="Add notes"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                (keydown.enter)="$event.preventDefault(); saveBtn.focus()" />
+                class="prescripto-field" (keydown.enter)="$event.preventDefault(); saveBtn.focus()" />
             </td>
-
-            <!-- Delete Button -->
-            <td class="p-2 border-b text-center">
+            <td class="text-center">
               <button #removeButton type="button" (click)="removeMedicine(medicine)"
-                class="text-red-500 hover:text-red-700">
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-500 transition hover:bg-red-100">
                 <app-bin></app-bin>
               </button>
             </td>
@@ -119,15 +115,14 @@
           }
         </tbody>
       </table>
-    </div>
+    </section>
     }
-
-
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end" class="gap-2">
+  <mat-dialog-actions class="prescripto-modal__actions">
     <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
-    <button class="btn-secondary bg-primary" (click)="searchInput.focus()">Add More</button>
+    <button class="btn-secondary" (click)="searchInput.focus()">Add more</button>
     <button #saveBtn class="btn-secondary" (click)="save()">Save</button>
   </mat-dialog-actions>
 </div>
+

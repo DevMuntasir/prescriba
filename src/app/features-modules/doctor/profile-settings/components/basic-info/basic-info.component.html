@@ -1,0 +1,63 @@
+<section class="card">
+  <div class="card__header">
+    <div>
+      <h2>Basic Information</h2>
+      <p>Keep your public profile details accurate for patients.</p>
+    </div>
+    <button
+      type="button"
+      class="primary"
+      (click)="submit()"
+      [disabled]="saving || form.invalid || !profile?.id"
+    >
+      {{ saving ? 'Saving…' : 'Save changes' }}
+    </button>
+  </div>
+
+  <form class="form-grid" [formGroup]="form">
+    <label>
+      <span>Title</span>
+      <select formControlName="doctorTitle">
+        <option value="" disabled>Select title</option>
+        <option *ngFor="let option of titleOptions" [value]="option.value">
+          {{ option.name }}
+        </option>
+      </select>
+      <small *ngIf="form.get('doctorTitle')?.invalid && form.get('doctorTitle')?.touched">
+        Doctor title is required.
+      </small>
+    </label>
+
+    <label>
+      <span>Full Name</span>
+      <input type="text" formControlName="fullName" placeholder="Full name" />
+      <small *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched">
+        Full name is required.
+      </small>
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input type="email" formControlName="email" placeholder="Email address" />
+      <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+        Enter a valid email address.
+      </small>
+    </label>
+
+    <label>
+      <span>Mobile</span>
+      <input type="tel" formControlName="mobileNo" placeholder="Mobile number" />
+      <small *ngIf="form.get('mobileNo')?.invalid && form.get('mobileNo')?.touched">
+        Mobile number is required.
+      </small>
+    </label>
+
+    <label>
+      <span>BMDC Registration No.</span>
+      <input type="text" formControlName="bmdcRegNo" placeholder="BMDC no." />
+      <small *ngIf="form.get('bmdcRegNo')?.invalid && form.get('bmdcRegNo')?.touched">
+        BMDC number is required.
+      </small>
+    </label>
+  </form>
+</section>

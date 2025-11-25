@@ -78,6 +78,12 @@ export class InvestigationComponent {
   >;
   selectedItem: any[] = [];
 
+  loading = {
+    isSpinner: false,
+    isSkelton: false,
+    noDataFound: false,
+  };
+
   ngOnInit(): void {
     this.filteredResult = this.searchControl.valueChanges.pipe(
       startWith(''),
@@ -214,3 +220,4 @@ export class InvestigationComponent {
     this.dialogRef.close();
   }
 }
+

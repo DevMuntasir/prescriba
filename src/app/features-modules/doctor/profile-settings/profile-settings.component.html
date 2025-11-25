@@ -1,0 +1,35 @@
+<section class="profile-settings">
+  <header class="page-header">
+    <div>
+      <h1>Doctor Profile Settings</h1>
+      <p>Manage the data that patients and hospital admins can see.</p>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="state">Loading your profile…</div>
+  <div *ngIf="!loading && error" class="state state--error">{{ error }}</div>
+
+  <ng-container *ngIf="doctorProfile && !loading">
+    <app-doctor-basic-info
+      [profile]="doctorProfile"
+      (updated)="handleProfileUpdated()"
+    ></app-doctor-basic-info>
+
+    <app-doctor-degree-details
+      [doctorId]="doctorProfile.id ?? null"
+      [degrees]="doctorProfile.degrees"
+      (updated)="handleProfileUpdated()"
+    ></app-doctor-degree-details>
+
+    <app-doctor-specializations
+      [doctorId]="doctorProfile.id ?? null"
+      [specializations]="doctorProfile.doctorSpecialization"
+      (updated)="handleProfileUpdated()"
+    ></app-doctor-specializations>
+
+    <app-doctor-documents
+      [doctorId]="doctorProfile.id ?? null"
+      (updated)="handleProfileUpdated()"
+    ></app-doctor-documents>
+  </ng-container>
+</section>

@@ -1,0 +1,82 @@
+<section class="card">
+  <div class="card__header">
+    <div>
+      <h2>Specializations</h2>
+      <p>Tell patients about the procedures or services you provide.</p>
+    </div>
+  </div>
+
+  <div class="table-wrapper" *ngIf="specializations?.length; else spEmpty">
+    <table>
+      <thead>
+        <tr>
+          <th>Speciality</th>
+          <th>Specialization</th>
+          <th>Service Details</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let specialization of specializations">
+          <td>{{ getSpecialityName(specialization.specialityId) }}</td>
+          <td>{{ getSpecializationName(specialization.specializationId) }}</td>
+          <td>{{ specialization.serviceDetails || '—' }}</td>
+          <td class="actions">
+            <button type="button" (click)="edit(specialization)">Edit</button>
+            <button type="button" class="danger" (click)="delete(specialization.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #spEmpty>
+    <p class="muted">No specialization has been added yet.</p>
+  </ng-template>
+
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      <span>Speciality</span>
+      <select formControlName="specialityId">
+        <option value="" disabled>Select speciality</option>
+        <option *ngFor="let option of specialityOptions" [value]="option.id">
+          {{ option.specialityName }}
+        </option>
+      </select>
+      <small *ngIf="form.get('specialityId')?.invalid && form.get('specialityId')?.touched">
+        Speciality is required.
+      </small>
+    </label>
+
+    <label>
+      <span>Specialization</span>
+      <select formControlName="specializationId">
+        <option value="" disabled>Select specialization</option>
+        <option *ngFor="let option of specializationOptions" [value]="option.id">
+          {{ option.specializationName }}
+        </option>
+      </select>
+      <small *ngIf="form.get('specializationId')?.invalid && form.get('specializationId')?.touched">
+        Specialization is required.
+      </small>
+    </label>
+
+    <label class="full-span">
+      <span>Service Details</span>
+      <textarea formControlName="serviceDetails" rows="3" placeholder="Describe treatments, expertise, etc."></textarea>
+    </label>
+
+    <label>
+      <span>Document Name (optional)</span>
+      <input type="text" formControlName="documentName" />
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="primary" [disabled]="saving || form.invalid || !doctorId">
+        {{ form.value.id ? 'Update' : 'Add Specialization' }}
+      </button>
+      <button type="button" (click)="resetForm()">Clear</button>
+    </div>
+  </form>
+</section>

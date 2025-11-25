@@ -1,0 +1,53 @@
+:host {
+  display: block;
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  margin-top: 24px;
+}
+
+.signature {
+  min-height: 140px;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.signature img {
+  max-height: 120px;
+  object-fit: contain;
+}
+
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button.primary {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.muted {
+  color: #6b7280;
+}

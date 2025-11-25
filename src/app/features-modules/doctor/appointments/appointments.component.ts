@@ -8,6 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import type {
   AppointmentDto,
+  AppointmentInputDto,
   DoctorChamberDto,
   DoctorScheduleDto,
 } from 'src/app/api/dto-models/models';
@@ -25,7 +26,7 @@ export interface Appointment {
   patientName: string;
   age: number;
   gender: string;
-  contactNumber: string;
+  phoneNumber: string;
   appointmentDate: string;
   status: string;
 }
@@ -116,7 +117,7 @@ export class AppointmentsComponent implements OnInit {
       [Validators.required, Validators.min(0), Validators.max(120)],
     ],
     gender: ['Male', Validators.required],
-    contactNumber: [
+    phoneNumber: [
       '',
       [Validators.required, Validators.pattern(/^[0-9+\-\s]{6,20}$/)],
     ],
@@ -164,31 +165,8 @@ export class AppointmentsComponent implements OnInit {
     this.bookingDateError = undefined;
   }
 
-  submitAppointment(): void {
-    if (this.appointmentForm.invalid) {
-      this.appointmentForm.markAllAsTouched();
-      return;
-    }
-
-    const serial = this.generateSerial();
-    const formValue = this.appointmentForm.getRawValue();
-
-    const now = new Date();
-
-    const newAppointment: Appointment = {
-      serial,
-      patientName: formValue.patientName,
-      age: formValue.age ?? 0,
-      gender: formValue.gender,
-      contactNumber: formValue.contactNumber,
-      appointmentDate: now.toLocaleString(), // ok for now
-      status: 'Pending',
-    };
-
-    this.appointments = [...this.appointments, newAppointment];
-    this.lastGeneratedSerial = serial;
-    this.closeForm();
-  }
+ 
+  
 
   trackBySerial(_index: number, appointment: Appointment): string {
     return appointment.serial;
@@ -367,32 +345,18 @@ export class AppointmentsComponent implements OnInit {
   }
 
   private mapAppointmentDto(dto: AppointmentDto): Appointment {
-    debugger
-    const serial =
-      dto.appointmentSerial !== undefined && dto.appointmentSerial !== null
-        ? dto.appointmentSerial.toString()
-        : dto.serialNo !== undefined && dto.serialNo !== null
-          ? dto.serialNo.toString()
-          : dto.appointmentId?.toString() ?? 'N/A';
-
     return {
-      serial,
+      serial: dto.appointmentSerial?.toString() ?? 0,
       patientName: dto.patientName ?? 'Unknown patient',
       age: dto.patientAge ?? 0,
       gender: dto.gender ?? 'N/A',
-      contactNumber: dto.phoneNumber ?? 'N/A',
+      phoneNumber: dto.phoneNumber ?? 'N/A',
       appointmentDate: this.formatAppointmentDisplay(dto.appointmentDate),
-      status:
+      status: 
         dto.status ??
         dto.responseMessage ??
         (dto.responseSuccess === false ? 'Failed' : 'Pending'),
     };
-  }
-  private generateSerial(): string {
-    // FIX: previously "const serial = AP-;"
-    const serial = `AP-${String(this.serialCounter).padStart(3, '0')}`;
-    this.serialCounter += 1;
-    return serial;
   }
 
   private loadDoctorChambers(doctorId: number): void {
