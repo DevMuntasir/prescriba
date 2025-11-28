@@ -4,8 +4,7 @@ import {
 } from '@angular/core';
 
 import {
-  NgxEditorComponent, NgxEditorMenuComponent,
-  Editor, toDoc, toHTML, Toolbar
+  Editor, toDoc, toHTML, Toolbar, NgxEditorModule
 } from 'ngx-editor';
 
 import { FormsModule } from '@angular/forms';
@@ -15,11 +14,10 @@ import { ColorPickerDirective } from 'ngx-color-picker';  // ✅ directive impor
   selector: 'app-experience',
   standalone: true,
   imports: [
-    NgxEditorComponent,
-    NgxEditorMenuComponent,
+    NgxEditorModule,
     FormsModule,
     ColorPickerDirective,
-    
+
   ],
   templateUrl: './experience.component.html',
   styleUrl: './experience.component.scss'
@@ -38,11 +36,11 @@ export class ExperienceComponent implements OnInit, OnDestroy, OnChanges {
 
   toolbar: Toolbar = [
     ['bold', 'italic', 'underline'],
-    ['align_center','align_justify','align_left','align_right'],
+    ['align_center', 'align_justify', 'align_left', 'align_right'],
     ['ordered_list'],
     ['ordered_list', 'bullet_list'],
     ['link'],
-      [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
+    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
   ];
 
   pickedColor = '#ff0000';
