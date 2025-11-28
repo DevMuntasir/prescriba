@@ -19,7 +19,7 @@ export interface SessionBookingDialogResult {
   appointmentDate: string;
   patientName: string;
   gender: string;
-  age: number;
+  age: string;
   phone: string;
   bloodGroup: string;
   doctorProfileId: number;
@@ -37,7 +37,7 @@ export class SessionBookingDialogComponent {
   readonly bookingForm = this.fb.nonNullable.group({
     patientName: ['', [Validators.required, Validators.maxLength(80)]],
     age: [
-      null as number | null,
+      null as string | null,
       [Validators.required, Validators.min(0), Validators.max(120)],
     ],
     gender: ['Male', Validators.required],
@@ -71,7 +71,7 @@ export class SessionBookingDialogComponent {
       appointmentDate: this.data.appointmentDate,
       patientName: value.patientName,
       gender: value.gender,
-      age: value.age ?? 0,
+      age: value.age ?? '',
       phone: value.phone,
       bloodGroup: value.bloodGroup ?? '',
       doctorProfileId: this.data.doctorProfileId,
@@ -126,7 +126,7 @@ export class SessionBookingDialogComponent {
     const payload: CreateAppointmentPayload = {
       patientName: result.patientName.trim(),
       gender: result.gender,
-      age: result.age ?? 0,
+      age: String(result.age) ?? '',
       phoneNumber: result.phone,
       sessionId,
       bloodGroup: result.bloodGroup?.trim().toUpperCase() ?? '',

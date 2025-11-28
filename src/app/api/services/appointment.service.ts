@@ -24,7 +24,7 @@ export interface AppointmentListQuery {
 export interface CreateAppointmentPayload {
   patientName: string;
   gender: string;
-  age: number;
+  age: string;
   phoneNumber: string;
   sessionId: number;
   bloodGroup: string;
