@@ -1,95 +1,93 @@
+@use '../../profile-settings-theme' as theme;
+
 :host {
   display: block;
 }
 
-.card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 24px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-  margin-top: 24px;
+.profile-card {
+  @include theme.profile-card;
 }
 
-.table-wrapper {
-  overflow-x: auto;
-  margin-bottom: 20px;
+.profile-card__header {
+  @include theme.profile-card-header;
 }
 
-table {
+.profile-card__eyebrow {
+  @include theme.profile-card-eyebrow;
+}
+
+.profile-card__title {
+  @include theme.profile-card-title;
+}
+
+.profile-card__subtitle {
+  @include theme.profile-card-subtitle;
+}
+
+.profile-table-wrapper {
+  @include theme.profile-table-wrapper;
+}
+
+.profile-table {
+  @include theme.profile-table;
+}
+
+.profile-table__head {
+  @include theme.profile-table-head;
+}
+
+.profile-table__head-cell {
+  @include theme.profile-table-head-cell;
+}
+
+.profile-table__cell {
+  @include theme.profile-table-cell;
+}
+
+.profile-table__actions {
+  @include theme.profile-table-actions;
+}
+
+.profile-empty-state {
+  @include theme.profile-empty-state;
+}
+
+.profile-form {
+  @include theme.profile-form-grid(260px);
+}
+
+.profile-field-group {
+  @include theme.profile-field-group;
+}
+
+.profile-field-group--full {
+  @include theme.profile-field-group-full;
+}
+
+.profile-field {
+  @include theme.profile-field;
   width: 100%;
-  border-collapse: collapse;
 }
 
-th,
-td {
-  padding: 12px 8px;
-  border-bottom: 1px solid #f0f2f5;
-  text-align: left;
+.profile-field__error {
+  @include theme.profile-helper-text(error);
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
+.profile-form__actions {
+  @include theme.profile-form-actions;
 }
 
-.muted {
-  color: #6b7280;
+.profile-btn {
+  &--primary {
+    @include theme.profile-button-primary;
+  }
+
+  &--ghost {
+    @include theme.profile-button-ghost;
+  }
+
+  &--danger {
+    @include theme.profile-button-danger;
+  }
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 12px;
-}
-
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-label.full-span {
-  grid-column: 1 / -1;
-}
-
-textarea,
-input,
-select {
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 9px 12px;
-  font-size: 0.95rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-button {
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 8px 16px;
-  background: transparent;
-  cursor: pointer;
-}
-
-button.primary {
-  background: #0ea5e9;
-  color: #fff;
-  border-color: #0ea5e9;
-}
-
-button.danger {
-  background: #dc2626;
-  border-color: #dc2626;
-  color: #fff;
-}
-
-button[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-}

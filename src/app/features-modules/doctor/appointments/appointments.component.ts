@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -10,26 +11,30 @@ import type {
   AppointmentDto,
   AppointmentInputDto,
   DoctorChamberDto,
+  DoctorScheduleDaySessionDto,
   DoctorScheduleDto,
+  ExtendedAppointmentDto,
 } from 'src/app/api/dto-models/models';
 import { DoctorChamberService } from 'src/app/api/services/doctor-chamber.service';
 import { DoctorScheduleService } from 'src/app/api/services/doctor-schedule.service';
-import { AppointmentService, CreateAppointmentPayload } from 'src/app/api/services/appointment.service';
+import { AppointmentService, AppointmentListQuery, CreateAppointmentPayload } from 'src/app/api/services/appointment.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { Subject, takeUntil } from 'rxjs';
 import {
   SessionBookingDialogComponent,
   SessionBookingDialogResult,
 } from './session-booking-dialog/session-booking-dialog.component';
 
-export interface Appointment {
-  serial: string;
-  patientName: string;
-  age: number;
-  gender: string;
-  phoneNumber: string;
-  appointmentDate: string;
-  status: string;
-}
+// export interface AppointmentDto {
+//   id?: number | string;
+//   serialNo: string;
+//   patientName: string;
+//   age: number;
+//   gender: string;
+//   phoneNumber: string;
+//   appointmentDate: string;
+//   status: string;
+// }
 
 export interface ScheduleSessionView {
   id?: number | string;
@@ -51,13 +56,19 @@ export interface ScheduleSessionView {
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.scss'],
 })
-export class AppointmentsComponent implements OnInit {
+export class AppointmentsComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly doctorChamberService = inject(DoctorChamberService);
   private readonly doctorScheduleService = inject(DoctorScheduleService);
   private readonly appointmentService = inject(AppointmentService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
+  private readonly destroy$ = new Subject<void>();
+
+  private readonly defaultPageNumber = 1;
+  private readonly defaultPageSize = 10;
 
   chambers: DoctorChamberDto[] = [];
   isLoadingChambers = false;
@@ -75,6 +86,23 @@ export class AppointmentsComponent implements OnInit {
   isLoadingAppointments = false;
   appointmentsLoadError?: string;
 
+
+  readonly appointmentFiltersForm = this.fb.group({
+    search: [''],
+    scheduleId: [null as number | null],
+    sessionId: [null as number | null],
+    pageNumber: [this.defaultPageNumber],
+    pageSize: [this.defaultPageSize],
+  });
+
+  private currentAppointmentFilters: AppointmentListQuery = {
+    pageNumber: this.defaultPageNumber,
+    pageSize: this.defaultPageSize,
+  };
+
+  filterScheduleOptions: { id: number; label: string }[] = [];
+  filterSessionOptions: { id: number; label: string }[] = [];
+  private filterSchedules: DoctorScheduleDto[] = [];
 
   readonly todayDate = this.formatDateInput(new Date());
 
@@ -108,12 +136,12 @@ export class AppointmentsComponent implements OnInit {
     6: 'saturday',
   };
 
-  appointments: Appointment[] = [];
+  appointments: AppointmentDto[] = [];
 
   readonly appointmentForm = this.fb.nonNullable.group({
     patientName: ['', [Validators.required, Validators.maxLength(80)]],
-    age: [
-      null as number | null,
+    patientAge: [
+      null as string | null,
       [Validators.required, Validators.min(0), Validators.max(120)],
     ],
     gender: ['Male', Validators.required],
@@ -140,11 +168,19 @@ export class AppointmentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.doctorProfileId) {
-      this.loadDoctorChambers(this.doctorProfileId);
-    }
+    const doctorProfileId = this.doctorProfileId;
 
-    this.fetchAppointments();
+    this.initializeFilterSync();
+
+    if (doctorProfileId) {
+      this.loadDoctorChambers(doctorProfileId);
+      this.loadFilterSchedules(doctorProfileId);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openForm(): void {
@@ -165,11 +201,229 @@ export class AppointmentsComponent implements OnInit {
     this.bookingDateError = undefined;
   }
 
- 
-  
 
-  trackBySerial(_index: number, appointment: Appointment): string {
-    return appointment.serial;
+
+
+  applyAppointmentFilters(): void {
+    // Ensure page number and page size are valid positive integers
+    const rawPageNumber = this.appointmentFiltersForm.value.pageNumber;
+    const rawPageSize = this.appointmentFiltersForm.value.pageSize;
+
+    const validPageNumber = this.toPositiveNumber(rawPageNumber) ?? this.defaultPageNumber;
+    const validPageSize = this.toPositiveNumber(rawPageSize) ?? this.defaultPageSize;
+
+    // Update form with validated values
+    this.appointmentFiltersForm.patchValue(
+      {
+        pageNumber: validPageNumber,
+        pageSize: validPageSize,
+      },
+      { emitEvent: false }
+    );
+
+    const filters = this.buildFiltersFromForm();
+    this.updateUrlQueryParams(filters);
+  }
+
+  resetAppointmentFilters(): void {
+    this.appointmentFiltersForm.reset({
+      search: '',
+      scheduleId: null,
+      sessionId: null,
+      pageNumber: this.defaultPageNumber,
+      pageSize: this.defaultPageSize,
+    });
+    this.filterSessionOptions = [];
+    this.updateUrlQueryParams({
+      pageNumber: this.defaultPageNumber,
+      pageSize: this.defaultPageSize,
+    });
+  }
+
+  goToPage(pageNumber: number): void {
+    if (pageNumber < 1) return;
+
+    this.appointmentFiltersForm.patchValue(
+      { pageNumber },
+      { emitEvent: false }
+    );
+
+    const filters = this.buildFiltersFromForm();
+    this.updateUrlQueryParams(filters);
+  }
+
+  changePageSize(pageSize: number): void {
+    if (pageSize < 1) return;
+
+    this.appointmentFiltersForm.patchValue(
+      {
+        pageSize,
+        pageNumber: this.defaultPageNumber // Reset to first page when changing page size
+      },
+      { emitEvent: false }
+    );
+
+    const filters = this.buildFiltersFromForm();
+    this.updateUrlQueryParams(filters);
+  }
+
+  private initializeFilterSync(): void {
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((paramMap) => {
+      const filters = this.extractFiltersFromParams(paramMap);
+      this.currentAppointmentFilters = filters;
+      this.patchAppointmentFiltersForm(filters);
+      this.fetchAppointments(filters);
+    });
+
+    this.appointmentFiltersForm
+      .get('scheduleId')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        const scheduleId = this.toPositiveNumber(value) ?? null;
+        const currentSessionId =
+          this.toPositiveNumber(this.appointmentFiltersForm.value.sessionId) ?? null;
+        this.rebuildSessionOptions(scheduleId, currentSessionId);
+      });
+  }
+
+  private extractFiltersFromParams(paramMap: ParamMap): AppointmentListQuery {
+    const search = paramMap.get('search') ?? undefined;
+    const scheduleId = this.toPositiveNumber(paramMap.get('scheduleId'));
+    const sessionId = this.toPositiveNumber(paramMap.get('sessionId'));
+    const pageNumber =
+      this.toPositiveNumber(paramMap.get('pageNumber')) ?? this.defaultPageNumber;
+    const pageSize =
+      this.toPositiveNumber(paramMap.get('pageSize')) ?? this.defaultPageSize;
+
+    return {
+      search: search?.trim() ? search.trim() : undefined,
+      scheduleId,
+      sessionId,
+      pageNumber,
+      pageSize,
+    };
+  }
+
+  private patchAppointmentFiltersForm(filters: AppointmentListQuery): void {
+    this.appointmentFiltersForm.patchValue(
+      {
+        search: filters.search ?? '',
+        scheduleId: filters.scheduleId ?? null,
+        sessionId: filters.sessionId ?? null,
+        pageNumber: filters.pageNumber ?? this.defaultPageNumber,
+        pageSize: filters.pageSize ?? this.defaultPageSize,
+      },
+      { emitEvent: false }
+    );
+
+    this.rebuildSessionOptions(filters.scheduleId ?? null, filters.sessionId ?? null);
+  }
+
+  private buildFiltersFromForm(): AppointmentListQuery {
+    const { search, scheduleId, sessionId, pageNumber, pageSize } =
+      this.appointmentFiltersForm.value;
+
+    return {
+      search: search?.trim() ? search.trim() : undefined,
+      scheduleId: this.toPositiveNumber(scheduleId),
+      sessionId: this.toPositiveNumber(sessionId),
+      pageNumber: this.toPositiveNumber(pageNumber) ?? this.defaultPageNumber,
+      pageSize: this.toPositiveNumber(pageSize) ?? this.defaultPageSize,
+    };
+  }
+
+  private updateUrlQueryParams(filters: AppointmentListQuery): void {
+    const queryParams: Params = {
+      pageNumber: filters.pageNumber ?? this.defaultPageNumber,
+      pageSize: filters.pageSize ?? this.defaultPageSize,
+    };
+
+    if (filters.search) {
+      queryParams['search'] = filters.search;
+    }
+
+    if (filters.scheduleId) {
+      queryParams['scheduleId'] = filters.scheduleId;
+    }
+
+    if (filters.sessionId) {
+      queryParams['sessionId'] = filters.sessionId;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      replaceUrl: true,
+    });
+  }
+
+  private toPositiveNumber(value: unknown): number | undefined {
+    if (value === null || value === undefined || value === '') {
+      return undefined;
+    }
+
+    const parsed = typeof value === 'number' ? value : Number(value);
+    if (Number.isNaN(parsed) || parsed <= 0) {
+      return undefined;
+    }
+
+    return parsed;
+  }
+
+  private rebuildSessionOptions(
+    scheduleId: number | null,
+    desiredSessionId: number | null
+  ): void {
+    // Build new session options based on selected schedule
+    this.filterSessionOptions = this.buildSessionOptions(scheduleId);
+
+    // If no schedule is selected, clear the session selection
+    if (!scheduleId) {
+      this.appointmentFiltersForm.patchValue({ sessionId: null }, { emitEvent: false });
+      return;
+    }
+
+    // If desired session is not in the new options, clear it
+    if (
+      desiredSessionId &&
+      !this.filterSessionOptions.some((option) => option.id === desiredSessionId)
+    ) {
+      this.appointmentFiltersForm.patchValue({ sessionId: null }, { emitEvent: false });
+    }
+  }
+
+  private buildSessionOptions(
+    scheduleId: number | null
+  ): { id: number; label: string }[] {
+    if (!scheduleId) {
+      return [];
+    }
+
+    const schedule = this.filterSchedules.find((item) => item.id === scheduleId);
+    if (!schedule) {
+      return [];
+    }
+
+    return (schedule.doctorScheduleDaySession ?? [])
+      .filter((session) => typeof session.id === 'number')
+      .map((session) => ({
+        id: session.id as number,
+        label: this.buildSessionLabel(session),
+      }));
+  }
+
+  private buildSessionLabel(session: DoctorScheduleDaySessionDto): string {
+    const dayLabel = this.getDayLabel(session.scheduleDayofWeek) || 'Session';
+    const start = this.formatTimeLabel(session.startTime);
+    const end = this.formatTimeLabel(session.endTime);
+    return `${dayLabel} � ${start} - ${end}`.trim();
+  }
+
+
+
+
+  trackBySerial(_index: number, appointment: AppointmentDto): string {
+    return appointment.appointmentId?.toString() ?? '';
   }
 
   trackByChamber(index: number, chamber: DoctorChamberDto): number {
@@ -294,18 +548,19 @@ export class AppointmentsComponent implements OnInit {
         sessionId: session.id,
         appointmentDate: this.selectedBookingDate,
         scheduleName: session.scheduleName,
+        doctorProfileId: this.doctorProfileId,
         sessionTimeLabel: `${this.formatTimeLabel(
           session.startTime
         )} - ${this.formatTimeLabel(session.endTime)}`,
       },
     });
 
-   
+
 
     dialogRef.afterClosed().subscribe((result?: SessionBookingDialogResult) => {
       if (!result) return;
 
-    //call all apt funtion
+      this.fetchAppointments(this.currentAppointmentFilters);
     });
   }
 
@@ -322,41 +577,42 @@ export class AppointmentsComponent implements OnInit {
 
 
 
- 
 
-  private fetchAppointments(): void {
+
+  private fetchAppointments(filters?: AppointmentListQuery): void {
+    const doctorProfileId = this.doctorProfileId;
+    if (!doctorProfileId) {
+      return;
+    }
+
     this.isLoadingAppointments = true;
     this.appointmentsLoadError = undefined;
 
-    this.appointmentService.getAppointments().subscribe({
+    const effectiveFilters = filters ?? this.currentAppointmentFilters;
+    const query: AppointmentListQuery = {
+      pageNumber: effectiveFilters.pageNumber ?? this.defaultPageNumber,
+      pageSize: effectiveFilters.pageSize ?? this.defaultPageSize,
+      search: effectiveFilters.search,
+      scheduleId: effectiveFilters.scheduleId,
+      sessionId: effectiveFilters.sessionId,
+    };
+
+    this.appointmentService.getAppointments(doctorProfileId, query).subscribe({
       next: (response) => {
-        const normalized = response ?? [];
-        this.appointments = normalized?.results?.map((dto) =>
+        const normalized = this.normalizeAppointmentsResponse(response);
+
+        this.appointments = normalized.map((dto) =>
           this.mapAppointmentDto(dto)
         );
         this.isLoadingAppointments = false;
       },
       error: () => {
         this.isLoadingAppointments = false;
+        this.appointments = [];
         this.appointmentsLoadError =
           'Unable to load appointments right now. Please try again later.';
       },
     });
-  }
-
-  private mapAppointmentDto(dto: AppointmentDto): Appointment {
-    return {
-      serial: dto.appointmentSerial?.toString() ?? 0,
-      patientName: dto.patientName ?? 'Unknown patient',
-      age: dto.patientAge ?? 0,
-      gender: dto.gender ?? 'N/A',
-      phoneNumber: dto.phoneNumber ?? 'N/A',
-      appointmentDate: this.formatAppointmentDisplay(dto.appointmentDate),
-      status: 
-        dto.status ??
-        dto.responseMessage ??
-        (dto.responseSuccess === false ? 'Failed' : 'Pending'),
-    };
   }
 
   private loadDoctorChambers(doctorId: number): void {
@@ -387,8 +643,36 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
+  private loadFilterSchedules(doctorProfileId: number): void {
+    this.doctorScheduleService.getListByDoctorIdList(doctorProfileId).subscribe({
+      next: (response) => {
+        this.filterSchedules = response ?? [];
+        this.filterScheduleOptions = this.filterSchedules
+          .filter((schedule) => typeof schedule.id === 'number')
+          .map((schedule) => ({
+            id: schedule.id as number,
+            label:
+              schedule.scheduleName ??
+              schedule.chamber ??
+              `Schedule #${schedule.id}`,
+          }));
+
+        this.rebuildSessionOptions(
+          this.appointmentFiltersForm.value.scheduleId ?? null,
+          this.appointmentFiltersForm.value.sessionId ?? null
+        );
+      },
+      error: () => {
+        this.filterSchedules = [];
+        this.filterScheduleOptions = [];
+        this.filterSessionOptions = [];
+      },
+    });
+  }
+
   private loadSchedulesForChamber(chamberId: number): void {
-    if (!this.doctorProfileId) return;
+    const doctorProfileId = this.doctorProfileId;
+    if (!doctorProfileId) return;
 
     this.isLoadingSchedules = true;
     this.scheduleLoadError = undefined;
@@ -397,7 +681,7 @@ export class AppointmentsComponent implements OnInit {
     this.schedules = [];
 
     this.doctorScheduleService
-      .getScheduleDetailsByDoctorAndChamber(this.doctorProfileId, chamberId)
+      .getScheduleDetailsByDoctorAndChamber(doctorProfileId, chamberId)
       .subscribe({
         next: (response) => {
           this.schedules = response ?? [];
@@ -526,11 +810,45 @@ export class AppointmentsComponent implements OnInit {
 
     return parsed.toLocaleString();
   }
- public formatDateInput(date: Date): string {
+
+  public formatDateInput(date: Date): string {
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-}
 
+  private normalizeAppointmentsResponse(response: any): AppointmentDto[] {
+    if (!response) {
+      return [];
+    }
+
+    // If response has a result property that's an array, use that (ExtendedAppointmentDto)
+    if (response.result && Array.isArray(response.result)) {
+      return response.result;
+    }
+
+    // If response is already an array, return it
+    if (Array.isArray(response)) {
+      return response;
+    }
+
+    // If response has a data property that's an array, use that
+    if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    // If response has items property that's an array, use that
+    if (response.items && Array.isArray(response.items)) {
+      return response.items;
+    }
+
+    // Otherwise return empty array
+    return [];
+  }
+
+  private mapAppointmentDto(dto: AppointmentDto): AppointmentDto {
+    // The DTO is already in the correct format, just return it
+    return dto;
+  }
+}

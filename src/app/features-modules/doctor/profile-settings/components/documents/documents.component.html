@@ -1,33 +1,35 @@
-<section class="card">
-  <div class="card__header">
+<section class="profile-card">
+  <header class="profile-card__header">
     <div>
-      <h2>Documents</h2>
-      <p>Upload or replace your digital signature that appears on prescriptions.</p>
+      <p class="profile-card__eyebrow">Documents</p>
+      <h2 class="profile-card__title">Digital Signature</h2>
+      <p class="profile-card__subtitle">Upload or replace the signature that appears on prescriptions.</p>
     </div>
-  </div>
+  </header>
 
-  <div class="signature" *ngIf="!loading; else loadingState">
+  <div class="profile-signature" *ngIf="!loading; else loadingState">
     <ng-container *ngIf="currentSignatureUrl; else emptySignature">
       <img [src]="currentSignatureUrl" alt="Doctor Signature" />
     </ng-container>
     <ng-template #emptySignature>
-      <p class="muted">No signature uploaded yet.</p>
+      <p class="profile-text-muted">No signature uploaded yet.</p>
     </ng-template>
   </div>
   <ng-template #loadingState>
-    <p class="muted">Loading signature…</p>
+    <p class="profile-text-muted">Loading signature.</p>
   </ng-template>
 
-  <div class="upload">
+  <div class="profile-upload">
     <input
       #fileInput
+      class="profile-upload__input"
       type="file"
       accept="image/*"
       (change)="onFileChange($event)"
     />
-    <span class="muted" *ngIf="selectedFileName">{{ selectedFileName }}</span>
-    <button type="button" class="primary" (click)="upload()" [disabled]="uploading || !doctorId">
-      {{ uploading ? 'Uploading…' : 'Upload Signature' }}
+    <span class="profile-text-muted" *ngIf="selectedFileName">{{ selectedFileName }}</span>
+    <button type="button" class="profile-btn profile-btn--primary" (click)="upload()" [disabled]="uploading || !doctorId">
+      {{ uploading ? 'Uploading...' : 'Upload Signature' }}
     </button>
   </div>
 </section>

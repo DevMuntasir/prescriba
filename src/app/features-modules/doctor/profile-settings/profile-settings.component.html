@@ -1,12 +1,16 @@
 <section class="profile-settings">
   <header class="page-header">
     <div>
-      <h1>Doctor Profile Settings</h1>
-      <p>Manage the data that patients and hospital admins can see.</p>
+      <p class="page-header__eyebrow">Profile workspace</p>
+      <h1 class="page-header__title">Doctor Profile Settings</h1>
+      <p class="page-header__subtitle">
+        Manage every detail patients and admins see by keeping your professional information accurate and up to date.
+      </p>
     </div>
+
   </header>
 
-  <div *ngIf="loading" class="state">Loading your profile…</div>
+  <div *ngIf="loading" class="state">Loading your profile.</div>
   <div *ngIf="!loading && error" class="state state--error">{{ error }}</div>
 
   <ng-container *ngIf="doctorProfile && !loading">
@@ -31,5 +35,7 @@
       [doctorId]="doctorProfile.id ?? null"
       (updated)="handleProfileUpdated()"
     ></app-doctor-documents>
+
+<app-experience (saveDoc)="saveExperience($event)" [getDocs]="experience"></app-experience>
   </ng-container>
 </section>

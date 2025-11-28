@@ -1,0 +1,18 @@
+.color-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.color-btn {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #111;
+  background: #fff;
+}
+
+.color-btn.clear {
+  background: #f5f5f5;
+}

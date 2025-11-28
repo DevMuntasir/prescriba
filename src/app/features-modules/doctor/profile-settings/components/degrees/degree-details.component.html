@@ -1,37 +1,42 @@
-<section class="card">
-  <div class="card__header">
+<section class="profile-card">
+  <header class="profile-card__header">
     <div>
-      <h2>Education Details</h2>
-      <p>Add all professional degrees that you want to show on prescriptions.</p>
+      <p class="profile-card__eyebrow">Credentials</p>
+      <h2 class="profile-card__title">Education Details</h2>
+      <p class="profile-card__subtitle">Add every degree you would like to display on prescriptions.</p>
     </div>
-  </div>
+  </header>
 
-  <div class="table-wrapper" *ngIf="degrees?.length; else emptyState">
-    <table>
-      <thead>
+  <div class="profile-table-wrapper" *ngIf="degrees?.length; else emptyState">
+    <table class="profile-table">
+      <thead class="profile-table__head">
         <tr>
-          <th>Degree</th>
-          <th>Institute</th>
-          <th>Passing Year</th>
-          <th></th>
+          <th class="profile-table__head-cell">Degree</th>
+          <th class="profile-table__head-cell">Institute</th>
+          <th class="profile-table__head-cell">Passing Year</th>
+          <th class="profile-table__head-cell"></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let degree of degrees">
-          <td>
-            <strong>{{ getDegreeName(degree.degreeId) }}</strong>
-            <div class="muted">Duration: {{ degree.duration || '—' }} {{ degree.durationType || '' }}</div>
+          <td class="profile-table__cell">
+            <strong>{{ degree.degreeName }}</strong>
+            <div class="profile-text-muted">
+              Duration: {{ degree.duration || '-' }} {{ degree.durationType || '' }}
+            </div>
           </td>
-          <td>
-            {{ degree.instituteName || '—' }}
-            <div class="muted">
+          <td class="profile-table__cell">
+            {{ degree.instituteName || '-' }}
+            <div class="profile-text-muted">
               {{ degree.instituteCity || '' }} {{ degree.instituteCountry || '' }}
             </div>
           </td>
-          <td>{{ degree.passingYear || '—' }}</td>
-          <td class="actions">
-            <button type="button" (click)="editDegree(degree)">Edit</button>
-            <button type="button" class="danger" (click)="deleteDegree(degree.id)">
+          <td class="profile-table__cell">{{ degree.passingYear || '-' }}</td>
+          <td class="profile-table__cell profile-table__actions">
+            <button type="button" class="profile-btn profile-btn--ghost" (click)="editDegree(degree)">
+              Edit
+            </button>
+            <button type="button" class="profile-btn profile-btn--danger" (click)="deleteDegree(degree.id)">
               Delete
             </button>
           </td>
@@ -40,63 +45,63 @@
     </table>
   </div>
   <ng-template #emptyState>
-    <p class="muted">No degree records yet.</p>
+    <div class="profile-empty-state">No degree records yet.</div>
   </ng-template>
 
-  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-    <label>
+  <form class="profile-form" [formGroup]="form" (ngSubmit)="submit()">
+    <label class="profile-field-group">
       <span>Degree</span>
-      <select formControlName="degreeId">
+      <select class="profile-field" formControlName="degreeId">
         <option value="" disabled>Select degree</option>
         <option *ngFor="let option of degreeOptions" [value]="option.id">
           {{ option.degreeName }}
         </option>
       </select>
-      <small *ngIf="form.get('degreeId')?.invalid && form.get('degreeId')?.touched">
+      <small class="profile-field__error" *ngIf="form.get('degreeId')?.invalid && form.get('degreeId')?.touched">
         Degree is required.
       </small>
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Passing Year</span>
-      <input type="number" formControlName="passingYear" placeholder="2024" />
+      <input class="profile-field" type="number" formControlName="passingYear" placeholder="2024" />
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Duration</span>
-      <input type="number" formControlName="duration" placeholder="3" />
+      <input class="profile-field" type="number" formControlName="duration" placeholder="3" />
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Duration Type</span>
-      <input type="text" formControlName="durationType" placeholder="Years" />
+      <input class="profile-field" type="text" formControlName="durationType" placeholder="Years" />
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Institute Name</span>
-      <input type="text" formControlName="instituteName" placeholder="Medical college" />
+      <input class="profile-field" type="text" formControlName="instituteName" placeholder="Medical college" />
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>City</span>
-      <input type="text" formControlName="instituteCity" />
+      <input class="profile-field" type="text" formControlName="instituteCity" placeholder="City" />
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Country</span>
-      <input type="text" formControlName="instituteCountry" />
+      <input class="profile-field" type="text" formControlName="instituteCountry" placeholder="Country" />
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Zip Code</span>
-      <input type="text" formControlName="zipCode" />
+      <input class="profile-field" type="text" formControlName="zipCode" placeholder="Postal / ZIP" />
     </label>
 
-    <div class="form-actions">
-      <button type="submit" class="primary" [disabled]="saving || form.invalid || !doctorId">
+    <div class="profile-form__actions">
+      <button type="submit" class="profile-btn profile-btn--primary" [disabled]="saving || form.invalid || !doctorId">
         {{ form.value.id ? 'Update' : 'Add Degree' }}
       </button>
-      <button type="button" (click)="resetForm()">Clear</button>
+      <button type="button" class="profile-btn profile-btn--ghost" (click)="resetForm()">Clear</button>
     </div>
   </form>
 </section>

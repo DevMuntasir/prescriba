@@ -1,15 +1,8 @@
-<div class="prescripto-modal">
+
   <header class="prescripto-modal__header">
     <div class="space-y-2">
       <p class="prescripto-modal__pill">Symptoms</p>
       <h2 class="prescripto-modal__title">Chief complaint</h2>
-      <p class="prescripto-modal__subhead">
-        Capture what the patient reports in their own words so it flows naturally into your assessment.
-      </p>
-    </div>
-    <div class="prescripto-modal__stats">
-      <p class="prescripto-modal__stats-label">Selected</p>
-      <p class="prescripto-modal__stats-value">{{ selectedComplaints.length }}</p>
     </div>
   </header>
 
@@ -21,7 +14,7 @@
           <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
             d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4" />
         </svg>
-        <input type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
+        <input class="!pl-[40px]" type="text" matInput [formControl]="searchControl"  [matAutocomplete]="auto"
           placeholder="Search complaints" />
         <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete">
           @for (complaint of filteredChiefComplaints | async; track complaint.value) {
@@ -31,7 +24,7 @@
           }
         </mat-autocomplete>
       </div>
-      <button [disabled]="isAddComplients"
+      <button [disabled]="isAddButtonDisabled"
         class="btn-secondary w-full min-w-[150px] md:w-auto disabled:bg-gray-200 disabled:text-gray-500" type="submit">
         {{ isAddComplients ? 'Adding...' : 'Add complaint' }}
       </button>
@@ -108,4 +101,4 @@
     <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
     <button #saveButton class="btn-secondary" (click)="saveComplaints()">Save</button>
   </mat-dialog-actions>
-</div>
+

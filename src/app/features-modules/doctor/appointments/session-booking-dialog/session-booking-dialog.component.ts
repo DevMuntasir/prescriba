@@ -10,6 +10,7 @@ export interface SessionBookingDialogData {
   appointmentDate: string;
   scheduleName?: string;
   sessionTimeLabel?: string;
+  doctorProfileId: number;
 }
 
 export interface SessionBookingDialogResult {
@@ -21,6 +22,7 @@ export interface SessionBookingDialogResult {
   age: number;
   phone: string;
   bloodGroup: string;
+  doctorProfileId: number;
 }
 
 @Component({
@@ -72,6 +74,7 @@ export class SessionBookingDialogComponent {
       age: value.age ?? 0,
       phone: value.phone,
       bloodGroup: value.bloodGroup ?? '',
+      doctorProfileId: this.data.doctorProfileId,
     };
     if (this.data.sessionId) {
       this.createAppointmentFromDialogResult(this.data, payload)
@@ -129,6 +132,7 @@ export class SessionBookingDialogComponent {
       bloodGroup: result.bloodGroup?.trim().toUpperCase() ?? '',
       scheduleId,
       appointmentDate: appointmentDateIso,
+      doctorProfileId: result.doctorProfileId,
     };
 
     this.isCreatingAppointment = true;

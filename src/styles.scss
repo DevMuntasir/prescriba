@@ -294,7 +294,11 @@ input[type="number"] {
 
 
   .prescripto-modal {
-    @apply w-full max-w-[900px] rounded-2xl bg-white border border-brand-border shadow-brand-soft flex flex-col overflow-hidden;
+    @apply w-full max-w-[900px]  rounded-2xl bg-white border border-brand-border shadow-brand-soft flex flex-col overflow-hidden;
+  }
+
+  .prescripto-modal > form {
+    @apply flex flex-col flex-1;
   }
 
   .prescripto-modal__header {
@@ -350,7 +354,7 @@ input[type="number"] {
   }
 
   .prescripto-modal__body {
-    @apply px-6 py-5 space-y-4 bg-brand-surface;
+    @apply px-6 py-5 space-y-4 bg-brand-surface flex-1 overflow-y-auto;
   }
 
   .prescripto-modal__chip-set {
@@ -396,7 +400,7 @@ input[type="number"] {
   }
 
   .prescripto-modal__actions {
-    @apply px-6 py-5 bg-white border-t border-brand-border flex items-center justify-end gap-2;
+    @apply px-6 py-5 bg-white border-t border-brand-border flex items-center justify-end gap-2 sticky bottom-0 z-10;
   }
 
   .prescripto-field {

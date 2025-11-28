@@ -24,7 +24,7 @@ import {
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { forkJoin, map, Subscription } from 'rxjs';
+import { forkJoin, map, of, Subscription } from 'rxjs';
 
 import { AppointmentService, DoctorChamberService, DoctorProfileService, DoctorScheduleService } from 'src/app/api/services';
 import { environment } from 'src/environments/environment';
@@ -130,7 +130,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     const doctorProfileId = this.AuthService.authInfo().id ?? null;
     this.doctorProfileId = doctorProfileId
     this.prescriptionService.setPreHand(true);
-    this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
+    // this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
     this.prescribeForm.get('uploadImage')?.valueChanges.subscribe((res) =>
       res !== '' || res !== undefined
         ? (this.uploadImage = {
@@ -146,9 +146,10 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     this.ActivatedRoute.queryParams.subscribe((params) => {
       if (params['aptId']) {
         this.prescriptionService.setAppointmentId(Number(params['aptId']));
+        this.loadAppointmentDataForPrehandByDrId(doctorProfileId,Number(params['aptId']) );
       } else {
         this.prescriptionService.setPreHand(true);
-        this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
+        this.loadAppointmentDataForPrehandByDrId(doctorProfileId, null);
       }
     });
   }
@@ -171,7 +172,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadAppointmentDataForPrehandByDrId(doctorProfileId: number) {
+  loadAppointmentDataForPrehandByDrId(doctorProfileId: number, appointmentId: number | null) {
     this.isLoading = true;
     forkJoin({
       doctorDetails: this.DoctorProfileService.getDoctorByProfileId(
@@ -199,7 +200,13 @@ export class PrescribeComponent implements OnInit, OnDestroy {
       ).pipe(
         map((chambers) => chambers?.filter(chamber => chamber.isVisibleOnPrescription === true) ?? [])
       ),
-
+     appointmentInfo: appointmentId
+      ? this.AppointmentService.getAppointmentById(appointmentId).pipe(
+        map(({results}) => ({
+          ...results,
+        }))
+      )
+      : of(null),
       // schedule: doctorScheduleId
       //   ? this.DoctorScheduleService.g(doctorScheduleId).pipe(
       //     map((schedule) => {
@@ -332,7 +339,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         ),
 
       // appointmentDetails: this.AppointmentService.getAppointmentById(1),
-    }).subscribe(({ doctorDetails, chambers, signature }) => {
+    }).subscribe(({ doctorDetails, chambers,appointmentInfo, signature }) => {
       this.prescriptionService.setDoctorInfo({
         doctorName:
           doctorDetails.doctorTitleName + ' ' + doctorDetails.fullName,
@@ -341,6 +348,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         degree: doctorDetails.degrees,
         qualification: doctorDetails.qualifications || null,
         areaOfExperties: doctorDetails.areaOfExperties || null,
+        expertise: doctorDetails.expertise || null,
         bmdc: doctorDetails.bmdcRegNo || null,
         chamber: chambers || [],
         schedule: [],
@@ -348,6 +356,19 @@ export class PrescribeComponent implements OnInit, OnDestroy {
       });
 
       this.isLoading = false;
+      if (appointmentInfo) {
+        console.log(appointmentInfo);
+        
+        this.prescriptionService.setPatientInfo({
+          patientName: appointmentInfo.patientName,
+          patientAge: appointmentInfo.patientAge,
+          patientGender: appointmentInfo.gender,
+          patientProfileId: appointmentInfo.patientID,
+          patientCode: '',
+          patientPhoneNo: appointmentInfo.phoneNumber,
+          patientBloodGroup: appointmentInfo.bloodGroup,
+        });
+      }
     });
   }
 
@@ -390,7 +411,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
   }
   openDynamicDialog(type: string, content: any) {
     const dialogRef = this.dialog.open(DynamicModalComponent, {
-      maxWidth: '850px',
+      width: '850px',
       height: '95vh',
       data: { type, content, form: this.prescribeForm },
       // disableClose: true,

@@ -3,14 +3,9 @@
     <div class="space-y-2">
       <p class="prescripto-modal__pill">Medications</p>
       <h2 class="prescripto-modal__title">Medicine</h2>
-      <p class="prescripto-modal__subhead">
-        Craft polished regimens with dosages, timing, and reminders aligned to your signature style.
-      </p>
+      
     </div>
-    <div class="prescripto-modal__stats">
-      <p class="prescripto-modal__stats-label">Selected</p>
-      <p class="prescripto-modal__stats-value">{{ selectedMedicines.length }}</p>
-    </div>
+    
   </header>
 
   <section class="prescripto-modal__search">
@@ -21,19 +16,21 @@
           <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
             d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4" />
         </svg>
-        <input #searchInput type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
+        <input #searchInput class="!pl-[40px]" type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
           placeholder="Search medicine" />
         <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete">
           @for (medicine of filteredMedicines$| async; track medicine) {
           <mat-option (click)="addMedicine(medicine)" [value]="medicine">
-            {{ medicine.label }}
+            <span class="inline-flex items-center gap-2">
+              {{ medicine.label }}
+
+            </span>
           </mat-option>
           }
         </mat-autocomplete>
       </div>
       <button class="btn-secondary w-full min-w-[150px] md:w-auto" type="submit">Add medicine</button>
     </form>
-    <p class="prescripto-modal__hint">Pin templates for morning or bedtime routines</p>
   </section>
 
   <mat-dialog-content class="prescripto-modal__body">
@@ -69,10 +66,20 @@
         <tbody>
           @for (medicine of selectedMedicines; track $index) {
           <tr>
-            <td>
+            <td class=" relative">
               <input #medicineInput type="text" [(ngModel)]="medicine.name" readonly
-                class="prescripto-field prescripto-field--readonly w-[200px]"
+                class="prescripto-field prescripto-field--readonly w-[350px]"
                 (keydown.enter)="$event.preventDefault(); durationInput.focus()" />
+              <button matButton="elevated" #tooltip="matTooltip" class=" absolute  top-1/2 -translate-y-1/2 right-2" matTooltip="Info about the action"
+                [matTooltipPosition]="'above'">
+
+                <svg class=" bg-brand-primary rounded-full" width="20" height="20" viewBox="0 0 24 24" fill="green"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8" />
+                  <path d="M12 8.5h.01" stroke="white" stroke-width="2" stroke-linecap="round" />
+                  <path d="M11 11.5h1v5h1" stroke="white" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </button>
             </td>
             <td>
               <input #durationInput cdkFocusInitial type="text" [(ngModel)]="medicine.duration" placeholder="3 days"
@@ -80,10 +87,12 @@
                 (keydown.enter)="$event.preventDefault(); timingInput.focus()" />
             </td>
             <td>
-              <input placeholder="Timing" #timingInput type="text" [(ngModel)]="medicine.timming"
-                [matAutocomplete]="autoTiming"
-                class="prescripto-field prescripto-field--dense max-w-[140px]"
-                (keydown.enter)="$event.preventDefault(); mealSelect.focus()" />
+              <div class="inline-flex items-center gap-2">
+                <input placeholder="Timing" #timingInput type="text" [(ngModel)]="medicine.timming"
+                  [matAutocomplete]="autoTiming" class="prescripto-field prescripto-field--dense max-w-[140px]"
+                  (keydown.enter)="$event.preventDefault(); mealSelect.focus()" />
+
+              </div>
               <mat-autocomplete #autoTiming="matAutocomplete">
                 <mat-option *ngFor="let combo of mealCombinations" [value]="combo">
                   {{ combo }}
@@ -92,8 +101,7 @@
             </td>
             <td>
               <input #mealSelect placeholder="Meal" type="text" [(ngModel)]="medicine.mealTime"
-                [matAutocomplete]="autoMeal"
-                class="prescripto-field prescripto-field--dense max-w-[140px]"
+                [matAutocomplete]="autoMeal" class="prescripto-field prescripto-field--dense max-w-[140px]"
                 (keydown.enter)="$event.preventDefault(); notesInput.focus()" />
               <mat-autocomplete #autoMeal="matAutocomplete">
                 <mat-option class="text-[14px]" *ngFor="let time of mealTimes" [value]="time">
@@ -125,4 +133,3 @@
     <button #saveBtn class="btn-secondary" (click)="save()">Save</button>
   </mat-dialog-actions>
 </div>
-

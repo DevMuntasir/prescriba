@@ -1,29 +1,33 @@
-<section class="card">
-  <div class="card__header">
+<section class="profile-card">
+  <header class="profile-card__header">
     <div>
-      <h2>Specializations</h2>
-      <p>Tell patients about the procedures or services you provide.</p>
+      <p class="profile-card__eyebrow">Expertise</p>
+      <h2 class="profile-card__title">Specializations</h2>
+      <p class="profile-card__subtitle">Tell patients about the procedures or services you provide.</p>
     </div>
-  </div>
+  </header>
 
-  <div class="table-wrapper" *ngIf="specializations?.length; else spEmpty">
-    <table>
-      <thead>
+  <div class="profile-table-wrapper" *ngIf="specializations?.length; else spEmpty">
+    <table class="profile-table">
+      <thead class="profile-table__head">
         <tr>
-          <th>Speciality</th>
-          <th>Specialization</th>
-          <th>Service Details</th>
-          <th></th>
+          <th class="profile-table__head-cell">Speciality</th>
+          <th class="profile-table__head-cell">Specialization</th>
+          <th class="profile-table__head-cell">Service Details</th>
+          <th class="profile-table__head-cell"></th>
         </tr>
       </thead>
       <tbody>
+
         <tr *ngFor="let specialization of specializations">
-          <td>{{ getSpecialityName(specialization.specialityId) }}</td>
-          <td>{{ getSpecializationName(specialization.specializationId) }}</td>
-          <td>{{ specialization.serviceDetails || '—' }}</td>
-          <td class="actions">
-            <button type="button" (click)="edit(specialization)">Edit</button>
-            <button type="button" class="danger" (click)="delete(specialization.id)">
+          <td class="profile-table__cell">{{ getSpecialityName(specialization.specialityId) }}</td>
+          <td class="profile-table__cell">{{ getSpecializationName(specialization.specializationId) }}</td>
+          <td class="profile-table__cell">{{ specialization.serviceDetails || '-' }}</td>
+          <td class="profile-table__cell profile-table__actions">
+            <button type="button" class="profile-btn profile-btn--ghost" (click)="edit(specialization)">
+              Edit
+            </button>
+            <button type="button" class="profile-btn profile-btn--danger" (click)="delete(specialization.id)">
               Delete
             </button>
           </td>
@@ -32,51 +36,56 @@
     </table>
   </div>
   <ng-template #spEmpty>
-    <p class="muted">No specialization has been added yet.</p>
+    <div class="profile-empty-state">No specialization has been added yet.</div>
   </ng-template>
 
-  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-    <label>
+  <form class="profile-form" [formGroup]="form" (ngSubmit)="submit()">
+    <label class="profile-field-group">
       <span>Speciality</span>
-      <select formControlName="specialityId">
+      <select class="profile-field" formControlName="specialityId">
         <option value="" disabled>Select speciality</option>
         <option *ngFor="let option of specialityOptions" [value]="option.id">
           {{ option.specialityName }}
         </option>
       </select>
-      <small *ngIf="form.get('specialityId')?.invalid && form.get('specialityId')?.touched">
+      <small class="profile-field__error" *ngIf="form.get('specialityId')?.invalid && form.get('specialityId')?.touched">
         Speciality is required.
       </small>
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Specialization</span>
-      <select formControlName="specializationId">
+      <select class="profile-field" formControlName="specializationId">
         <option value="" disabled>Select specialization</option>
         <option *ngFor="let option of specializationOptions" [value]="option.id">
           {{ option.specializationName }}
         </option>
       </select>
-      <small *ngIf="form.get('specializationId')?.invalid && form.get('specializationId')?.touched">
+      <small class="profile-field__error" *ngIf="form.get('specializationId')?.invalid && form.get('specializationId')?.touched">
         Specialization is required.
       </small>
     </label>
 
-    <label class="full-span">
+    <label class="profile-field-group profile-field-group--full">
       <span>Service Details</span>
-      <textarea formControlName="serviceDetails" rows="3" placeholder="Describe treatments, expertise, etc."></textarea>
+      <textarea
+        class="profile-field"
+        formControlName="serviceDetails"
+        rows="3"
+        placeholder="Describe treatments, expertise, etc."
+      ></textarea>
     </label>
 
-    <label>
+    <label class="profile-field-group">
       <span>Document Name (optional)</span>
-      <input type="text" formControlName="documentName" />
+      <input class="profile-field" type="text" formControlName="documentName" placeholder="Document name" />
     </label>
 
-    <div class="form-actions">
-      <button type="submit" class="primary" [disabled]="saving || form.invalid || !doctorId">
+    <div class="profile-form__actions">
+      <button type="submit" class="profile-btn profile-btn--primary" [disabled]="saving || form.invalid || !doctorId">
         {{ form.value.id ? 'Update' : 'Add Specialization' }}
       </button>
-      <button type="button" (click)="resetForm()">Clear</button>
+      <button type="button" class="profile-btn profile-btn--ghost" (click)="resetForm()">Clear</button>
     </div>
   </form>
 </section>

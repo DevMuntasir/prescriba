@@ -37,6 +37,8 @@ export class DoctorBasicInfoComponent implements OnChanges {
   @Output() updated = new EventEmitter<void>();
 
   readonly titleOptions = doctorTitleOptions;
+  readonly specialityOptions = [];
+
   saving = false;
   readonly form: FormGroup;
 
@@ -51,6 +53,13 @@ export class DoctorBasicInfoComponent implements OnChanges {
       email: ['', [Validators.required, Validators.email]],
       mobileNo: ['', [Validators.required, Validators.minLength(6)]],
       bmdcRegNo: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
+      address: ['', Validators.required],
+      bmdcRegExpiryDate: [null, Validators.required],
+      identityNumber: ['', Validators.required],
+      specialityId: [null],
+
     });
   }
 
@@ -79,12 +88,21 @@ export class DoctorBasicInfoComponent implements OnChanges {
       email: formValue.email?.trim(),
       mobileNo: formValue.mobileNo?.trim(),
       bmdcRegNo: formValue.bmdcRegNo?.trim(),
+      city: formValue.city?.trim(),
+      country: formValue.country?.trim(),
+      address: formValue.address?.trim(),
+      bmdcRegExpiryDate: formValue.bmdcRegExpiryDate,
+      profileStep: this.profile.profileStep,
+      identityNumber: formValue.identityNumber?.trim(),
+      specialityId: this.toNumber(formValue.specialityId),
       degrees: (this.profile.degrees ?? []) as DoctorDegreeInputDto[],
       doctorSpecialization: (this.profile.doctorSpecialization ?? []) as DoctorSpecializationInputDto[],
+      isActive: true,
+
     };
 
     this.saving = true;
-    this.doctorProfileService.updateDoctorProfile(payload).subscribe({
+    this.doctorProfileService.update(payload).subscribe({
       next: () => {
         this.saving = false;
         this.toaster.customToast('Basic information updated successfully.', 'success');
@@ -112,7 +130,19 @@ export class DoctorBasicInfoComponent implements OnChanges {
       email: profile.email ?? '',
       mobileNo: profile.mobileNo ?? '',
       bmdcRegNo: profile.bmdcRegNo ?? '',
+      city: profile.city ?? '',
+      country: profile.country ?? '',
+      address: profile.address ?? '',
+      bmdcRegExpiryDate: this.formatDateForInput(profile.bmdcRegExpiryDate),
+      identityNumber: profile.identityNumber ?? '',
+      specialityId: profile.specialityId ?? null,
     });
+  }
+
+  private formatDateForInput(dateString: string | undefined | null): string | null {
+    if (!dateString) return null;
+    // Extract YYYY-MM-DD from ISO string or return as is if already in that format
+    return dateString.split('T')[0];
   }
 
   private toNumber(value: unknown): number | undefined {

@@ -38,7 +38,7 @@ export class DoctorDocumentsComponent implements OnChanges {
     private documentsService: DocumentsAttachmentService,
     private http: HttpClient,
     private toaster: TosterService
-  ) {}
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['doctorId'] && this.doctorId) {
@@ -113,7 +113,14 @@ export class DoctorDocumentsComponent implements OnChanges {
             return;
           }
 
-          const cleanedPath = attachment.path.replace(/wwwroot/gi, '');
+          // Remove wwwroot (case insensitive) and normalize slashes
+          let cleanedPath = attachment.path.replace(/wwwroot/gi, '').replace(/\\/g, '/');
+
+          // Ensure no leading slash to prevent double slashes when joining
+          if (cleanedPath.startsWith('/')) {
+            cleanedPath = cleanedPath.substring(1);
+          }
+
           this.currentSignatureUrl = `${environment.apis.default.url}/${cleanedPath}`;
         },
         error: () => {

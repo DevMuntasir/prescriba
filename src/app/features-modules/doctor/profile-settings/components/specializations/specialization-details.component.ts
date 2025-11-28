@@ -130,6 +130,7 @@ export class DoctorSpecializationDetailsComponent implements OnInit {
       specializationId: this.toNumber(value.specializationId),
       serviceDetails: value.serviceDetails?.trim(),
       documentName: value.documentName?.trim(),
+      isDeleted: false,
     };
 
     this.saving = true;
@@ -156,21 +157,21 @@ export class DoctorSpecializationDetailsComponent implements OnInit {
 
   getSpecialityName(id?: number): string {
     if (!id) {
-      return '—';
+      return 'ï¿½';
     }
     return (
       this.specialityOptions.find((item) => item.id === id)?.specialityName ??
-      '—'
+      'ï¿½'
     );
   }
 
   getSpecializationName(id?: number): string {
     if (!id) {
-      return '—';
+      return 'ï¿½';
     }
     return (
       this.allSpecializations.find((item) => item.id === id)?.specializationName ??
-      '—'
+      'ï¿½'
     );
   }
 

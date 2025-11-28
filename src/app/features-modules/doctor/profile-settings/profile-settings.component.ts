@@ -9,6 +9,7 @@ import { DoctorBasicInfoComponent } from './components/basic-info/basic-info.com
 import { DoctorDegreeDetailsComponent } from './components/degrees/degree-details.component';
 import { DoctorSpecializationDetailsComponent } from './components/specializations/specialization-details.component';
 import { DoctorDocumentsComponent } from './components/documents/documents.component';
+import { ExperienceComponent } from './components/experience/experience.component';
 
 @Component({
   selector: 'app-profile-settings',
@@ -21,6 +22,7 @@ import { DoctorDocumentsComponent } from './components/documents/documents.compo
     DoctorDegreeDetailsComponent,
     DoctorSpecializationDetailsComponent,
     DoctorDocumentsComponent,
+    ExperienceComponent
   ],
 })
 export class ProfileSettingsComponent implements OnInit {
@@ -32,6 +34,7 @@ export class ProfileSettingsComponent implements OnInit {
   doctorProfile: DoctorProfileDto | null = null;
   loading = true;
   error?: string;
+  experience!: string;
 
   ngOnInit(): void {
     const authInfo = this.authService.authInfo();
@@ -44,6 +47,7 @@ export class ProfileSettingsComponent implements OnInit {
     }
 
     this.loadProfile(doctorId);
+    this.getDoctorExpertise(doctorId);
   }
 
   handleProfileUpdated(): void {
@@ -74,4 +78,40 @@ export class ProfileSettingsComponent implements OnInit {
       },
     });
   }
+
+
+  saveExperience(docString:string) {
+    if (!this.doctorProfile?.id) {
+      return;
+    }
+      this.doctorProfileService
+        .updateExpertiseByIdAndExpertise(this.doctorProfile?.id, docString)
+        .subscribe({
+          next: (res) => {
+            this.toaster.customToast(
+              'Successfully update your expertise!',
+              'success'
+            );
+          },
+          error: () => {
+            this.toaster.customToast('Something went wrong!', 'error');
+          },
+        });
+    } 
+  
+  getDoctorExpertise(doctorId: number) {
+    if (!doctorId) {
+      return;
+    }
+    this.doctorProfileService
+      .getDoctorByProfileId(doctorId)
+      .subscribe((res) => {
+        this.experience = res.expertise ? res.expertise : '';
+      });
+  }
+
+
+
+
+
 }

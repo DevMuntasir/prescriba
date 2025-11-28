@@ -51,6 +51,7 @@ export class PrescriptionService {
         schedule: [''],
         bmdc: [''],
         signature: [''],
+        expertise: [''],
       }),
       chiefComplaints: this.fb.array([]),
       history: this.fb.array([]),
@@ -168,10 +169,8 @@ export class PrescriptionService {
       const formExam = form.get('examination') as FormArray;
 
       if (formExam.length > 0) {
-        // প্রথমটা রিপ্লেস করবে
         formExam.at(0).patchValue(onExam.value);
       } else {
-        // যদি একদম না থাকে তখন শুধু প্রথমবার add করবে
         formExam.push(onExam);
       }
 
@@ -255,6 +254,7 @@ export class PrescriptionService {
     chamber?: any[];
     schedule?: any[];
     signature?: string | null;
+    expertise?: string | null;
   }) {
     this.prescribeForm.update((form) => {
       form.patchValue({ doctor });
@@ -292,6 +292,7 @@ export class PrescriptionService {
     this.printForm();
   }
   resetForm(): void {
+   
     this.prescribeForm.update((form) => {
       const currentDoctor = form.get('doctor')?.value;
       const appointmentCode = form.get('appointmentCode')?.value;

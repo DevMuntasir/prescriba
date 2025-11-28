@@ -28,6 +28,7 @@ export class ChiefComplaintsService {
     });
   }
   createChiefComplaints(name: string): Observable<any> {
+    debugger
     return this.http.post<any>(`${this.baseUrl}/create-chief-complaint`, {
       symptomName: name,
       description: '',

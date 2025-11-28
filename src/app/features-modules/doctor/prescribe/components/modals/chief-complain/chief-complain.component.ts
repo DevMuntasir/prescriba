@@ -73,7 +73,6 @@ interface Complaint {
 })
 export class ChiefComplainComponent implements OnInit {
   @Input() data: any;
-
   searchControl = new FormControl('');
   selectedComplaints: Complaint[] = [];
   durationOptions = [
@@ -102,6 +101,11 @@ export class ChiefComplainComponent implements OnInit {
     noDataFound: false,
   };
   isAddComplients = false;
+
+  get isAddButtonDisabled(): boolean {
+    const value = this.searchControl.value ?? '';
+    return this.isAddComplients || !value.trim();
+  }
 
   constructor(
     public dialogRef: MatDialogRef<ChiefComplainComponent>,
@@ -183,44 +187,60 @@ export class ChiefComplainComponent implements OnInit {
   }
 
   addComplaint(complaint: { label: string; value: number }): void {
+    const label = (complaint.label ?? '').trim();
+    if (!label) {
+      return;
+    }
+
+    const value = complaint.value ?? 0;
+    this.searchControl.setValue('');
+
+    if (value && this.selectedComplaints.some((c) => c.id === value)) {
+      return;
+    }
+
     this.isAddComplients = true;
-    if (
-      !this.selectedComplaints.some((c) => c.id === complaint.value) &&
-      complaint.value
-    ) {
+
+    if (value) {
       this.selectedComplaints.push({
-        name: complaint.label,
+        name: label,
         duration: '',
         days: 0,
         notes: '',
-        id: complaint.value || 0,
+        id: value,
       });
-      this.bookmarkedComplaints.push({
-        label: complaint.label,
-        value: complaint.value || 0,
-      });
-      this.isAddComplients = false;
-    }
-    if (!complaint.value) {
-      this.ChiefComplaintsService.createChiefComplaints(
-        complaint.label
-      ).subscribe((res) => {
-        this.isAddComplients = false;
 
+      if (!this.bookmarkedComplaints.some((item) => item.value === value)) {
+        this.bookmarkedComplaints.push({
+          label,
+          value,
+        });
+      }
+
+      this.isAddComplients = false;
+      return;
+    }
+
+    this.ChiefComplaintsService.createChiefComplaints(label).subscribe({
+      next: (res) => {
         this.selectedComplaints.push({
-          name: complaint.label,
+          name: label,
           duration: '',
           days: 0,
           notes: '',
           id: res.results,
         });
         this.bookmarkedComplaints.push({
-          label: complaint.label,
+          label,
           value: res.results,
         });
         this.TosterService.customToast(res.message, 'success');
-      });
-    }
+        this.isAddComplients = false;
+      },
+      error: () => {
+        this.isAddComplients = false;
+      },
+    });
   }
   @ViewChildren('durationInput') durationInputs!: QueryList<ElementRef>;
   onselect(complaint: MatAutocompleteSelectedEvent) {
@@ -228,9 +248,9 @@ export class ChiefComplainComponent implements OnInit {
       const lastInput = this.durationInputs.last;
       lastInput?.nativeElement.focus();
     }, 0);
-    if (complaint.option.value.label.length > 3) {
-      this.addComplaint(complaint.option.value);
-      this.displayWith(complaint.option.value);
+    const selected = complaint.option.value;
+    if ((selected.label ?? '').trim().length > 3) {
+      this.addComplaint(selected);
     }
   }
   displayWith(c: { label: string; value: number }): string {
@@ -279,3 +299,4 @@ export class ChiefComplainComponent implements OnInit {
     this.dialogRef.close();
   }
 }
+

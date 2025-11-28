@@ -89,13 +89,13 @@ export interface AgentSupervisorDto extends FullAuditedEntityDto<number> {
 }
 
 export interface AppointmentDto extends FullAuditedEntityDto<number> {
-  appointmentId: number | string;
+  appointmentId: number ;
   appointmentSerial: number;
   patientID: number;
   patientName: string;
   bloodGroup: string; // could be union later like "A" | "B" | "AB" | "O" | ...
   gender: string;     // could be "Male" | "Female" | "Other"
-  patientAge: number;
+  patientAge: string;
   sessionId: number;
   scheduleId: number;
   phoneNumber: string;

@@ -1,10 +1,11 @@
 export const serviceBaseUrl = 'http://localhost:3000';
 export const USER_SECRATE = 'prescriba@@2024';
-const apiUrl = 'http://103.125.255.81:5001';
+const apiUrl = 'https://swapi.prescriptoobd.com';
 export const authenticationApi =
-  'http://103.125.255.81:5003';
+  'https://authapi.prescriptoobd.com';
 export const prescriptionApi =
-  'http://103.125.255.81:5002';
+  'https://prescriptionapi.prescriptoobd.com';
+  
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgGxETAbT-oRu_RewaNHeoEJGqU49hMyU",

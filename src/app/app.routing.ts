@@ -7,6 +7,7 @@ import { SignupComponent } from './core-modules/auth/signup/signup.component';
 import { DoctorLayoutComponent } from './layout-module/doctor-layout.component';
 import { isAuth } from './auth-guard/auth.service';
 import { AdminUploadComponent } from './shared/components/chatbot/admin/admin-upload.component';
+import { SupperAdminLoginComponent } from './core-modules/auth/supper-admin-login/supper-admin-login.component';
 
 export const appRoutes: Route[] = [
   {
@@ -42,6 +43,25 @@ export const appRoutes: Route[] = [
           import(
             './features-modules/admin/admin-dashboard/admin-dashboard.module'
           ).then((m) => m.AdminDashboardModule),
+      },
+    ],
+  },
+  {
+    path: 'ps-supper-admin',
+    children: [
+      {
+        path: '',
+        canActivate: [routerGuard],
+        component: SupperAdminLoginComponent,
+      },
+      {
+        path: 'dashboard',
+        // canActivate: [isAuth],
+        // data: { roles: ['supperadmin'] },
+        loadChildren: () =>
+          import(
+            './features-modules/supper-admin/supper-admin-dashboard/supper-admin-dashboard.component'
+          ).then((m) => m.SupperAdminDashboardComponent),
       },
     ],
   },
