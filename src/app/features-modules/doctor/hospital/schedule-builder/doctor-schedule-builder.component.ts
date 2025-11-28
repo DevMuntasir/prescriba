@@ -18,6 +18,7 @@ import {
 import type {
   DoctorChamberDto,
   DoctorScheduleDto,
+  DoctorScheduleDaySessionDto,
   DoctorScheduleInputDto,
 } from 'src/app/api/dto-models/models';
 import { ConsultancyType, consultancyTypeOptions } from 'src/app/api/enums/consultancy-type.enum';
@@ -41,6 +42,7 @@ interface ScheduleSessionDraft {
   startTime: string;
   endTime: string;
   noOfPatients?: number | null;
+  sourceSessionId?: number | null;
 }
 
 @Component({
@@ -98,6 +100,7 @@ export class DoctorScheduleBuilderComponent
 
   sessionDrafts: ScheduleSessionDraft[] = [];
   existingSchedules: DoctorScheduleDto[] = [];
+  existingSessionsByDay: Record<DayOfWeek, DoctorScheduleDaySessionDto[]> = this.createEmptySessionsByDay();
   existingScheduleError?: string;
 
   isSubmitting = false;
@@ -105,6 +108,8 @@ export class DoctorScheduleBuilderComponent
 
   private readonly selectedDays = new Set<DayOfWeek>();
   private sessionDraftId = 0;
+  private editingScheduleId: number | null = null;
+  private hasManualDaySelection = false;
   private selectedChamberId: number | null = null;
   private chamberControlSubscription?: Subscription;
 
@@ -121,6 +126,12 @@ export class DoctorScheduleBuilderComponent
           this.loadExistingSchedules();
         } else {
           this.existingSchedules = [];
+          this.existingSessionsByDay = this.createEmptySessionsByDay();
+          this.syncSelectedDaysFromExistingSessions();
+          this.sessionDrafts = [];
+          this.sessionDraftId = 0;
+          this.hasManualDaySelection = false;
+          this.hydrateSessionDraftsFromExistingSchedule();
         }
       });
 
@@ -159,6 +170,34 @@ export class DoctorScheduleBuilderComponent
     return this.sessionDrafts.length > 0;
   }
 
+  get hasSelectedDays(): boolean {
+    return this.selectedDays.size > 0;
+  }
+
+  get selectedExistingSessionsFlat(): {
+    day: DayOfWeek;
+    session: DoctorScheduleDaySessionDto;
+  }[] {
+    if (!this.hasSelectedDays) {
+      return [];
+    }
+
+    const rows: { day: DayOfWeek; session: DoctorScheduleDaySessionDto }[] = [];
+
+    this.daysOfWeek.forEach(({ value }) => {
+      if (!this.selectedDays.has(value)) {
+        return;
+      }
+
+      const sessionsForDay = this.existingSessionsByDay[value] ?? [];
+      sessionsForDay.forEach((session) => {
+        rows.push({ day: value, session });
+      });
+    });
+
+    return rows;
+  }
+
   get selectedChamberName(): string {
     const match = this.chambers.find(
       (chamber) => (chamber.id ?? null) === (this.selectedChamberId ?? null)
@@ -166,11 +205,20 @@ export class DoctorScheduleBuilderComponent
     return match?.chamberName ?? 'Select chamber';
   }
 
+  get isEditingExistingSchedule(): boolean {
+    return !!this.editingScheduleId;
+  }
+
   dayIsSelected(day: DayOfWeek): boolean {
     return this.selectedDays.has(day);
   }
 
   toggleDay(day: DayOfWeek, checked: boolean): void {
+    if (!this.hasManualDaySelection) {
+      this.selectedDays.clear();
+      this.hasManualDaySelection = true;
+    }
+
     if (checked) {
       this.selectedDays.add(day);
     } else {
@@ -278,7 +326,7 @@ export class DoctorScheduleBuilderComponent
     }
 
     const formValue = this.scheduleDetailsForm.getRawValue();
-    const payload: DoctorScheduleInputDto = {
+    const payloadBase: DoctorScheduleInputDto = {
       doctorProfileId: this.doctorId,
       doctorChamberId: formValue.doctorChamberId ?? undefined,
       scheduleName: formValue.scheduleName?.trim() || undefined,
@@ -288,6 +336,7 @@ export class DoctorScheduleBuilderComponent
       offDayFrom: null,
       offDayTo: null,
       doctorScheduleDaySession: this.sessionDrafts.map((session) => ({
+        id: session.sourceSessionId ?? undefined,
         scheduleDayofWeek: session.day,
         startTime: session.startTime,
         endTime: session.endTime,
@@ -297,19 +346,36 @@ export class DoctorScheduleBuilderComponent
       doctorFeesSetup: [],
     };
 
+    const editingScheduleId = this.editingScheduleId;
+    const payload = editingScheduleId
+      ? { ...payloadBase, id: editingScheduleId }
+      : payloadBase;
+
     this.isSubmitting = true;
-    this.doctorScheduleService.create(payload).subscribe({
-      next: (createdSchedule) => {
-        this.toaster.customToast('Schedule saved successfully.', 'success');
-        this.existingSchedules = [createdSchedule, ...this.existingSchedules];
-        this.scheduleCreated.emit(createdSchedule);
+    const request$ = editingScheduleId
+      ? this.doctorScheduleService.update(editingScheduleId, payload)
+      : this.doctorScheduleService.create(payload);
+
+    request$.subscribe({
+      next: (responseSchedule) => {
+        this.toaster.customToast(
+          editingScheduleId
+            ? 'Schedule updated successfully.'
+            : 'Schedule saved successfully.',
+          'success'
+        );
+        this.upsertExistingSchedule(responseSchedule);
+        this.rebuildExistingSessionsByDay();
+        this.scheduleCreated.emit(responseSchedule);
         this.isSubmitting = false;
         this.close();
       },
       error: () => {
         this.isSubmitting = false;
         this.toaster.customToast(
-          'Could not save the schedule. Please try again later.',
+          editingScheduleId
+            ? 'Could not update the schedule. Please try again later.'
+            : 'Could not save the schedule. Please try again later.',
           'error'
         );
       },
@@ -346,6 +412,137 @@ export class DoctorScheduleBuilderComponent
       (item) => item.value.toLowerCase() === day.toLowerCase()
     );
     return match?.label ?? day;
+  }
+
+  private createEmptySessionsByDay(): Record<DayOfWeek, DoctorScheduleDaySessionDto[]> {
+    return this.daysOfWeek.reduce(
+      (acc, day) => {
+        acc[day.value] = [];
+        return acc;
+      },
+      {} as Record<DayOfWeek, DoctorScheduleDaySessionDto[]>
+    );
+  }
+
+  private rebuildExistingSessionsByDay(): void {
+    const lookup = this.createEmptySessionsByDay();
+
+    this.existingSchedules.forEach((schedule) => {
+      schedule.doctorScheduleDaySession?.forEach((session) => {
+        const normalizedDay = this.normalizeDayOfWeek(
+          session.scheduleDayofWeek ?? undefined
+        );
+        if (!normalizedDay) {
+          return;
+        }
+
+        lookup[normalizedDay].push(session);
+      });
+    });
+
+    this.existingSessionsByDay = lookup;
+    this.syncSelectedDaysFromExistingSessions();
+  }
+
+  private normalizeDayOfWeek(day?: string | null): DayOfWeek | null {
+    if (!day) {
+      return null;
+    }
+
+    const normalized = this.daysOfWeek.find(
+      (item) => item.value.toLowerCase() === day.toLowerCase()
+    );
+    return normalized?.value ?? null;
+  }
+
+  private hydrateSessionDraftsFromExistingSchedule(): void {
+    const primarySchedule = this.getPrimaryScheduleForEditing();
+    this.editingScheduleId = primarySchedule?.id ?? null;
+    this.hasManualDaySelection = false;
+
+    if (!primarySchedule) {
+      this.editingScheduleId = null;
+      return;
+    }
+
+    const drafts: ScheduleSessionDraft[] = [];
+    this.sessionDraftId = 0;
+
+    primarySchedule.doctorScheduleDaySession?.forEach((session) => {
+      const day = this.normalizeDayOfWeek(session.scheduleDayofWeek ?? undefined);
+      if (!day || !session.startTime || !session.endTime) {
+        return;
+      }
+
+      drafts.push({
+        id: ++this.sessionDraftId,
+        day,
+        startTime: session.startTime,
+        endTime: session.endTime,
+        noOfPatients: session.noOfPatients ?? null,
+        sourceSessionId: session.id ?? undefined,
+      });
+    });
+
+    this.sessionDrafts = drafts;
+
+    this.scheduleDetailsForm.patchValue(
+      {
+        scheduleName: primarySchedule.scheduleName ?? '',
+        scheduleType: primarySchedule.scheduleType ?? ScheduleType.Regular,
+        consultancyType:
+          primarySchedule.consultancyType ?? ConsultancyType.Chamber,
+        isActive: primarySchedule.isActive ?? true,
+      },
+      { emitEvent: false }
+    );
+  }
+
+  private getPrimaryScheduleForEditing(): DoctorScheduleDto | null {
+    if (!this.existingSchedules.length) {
+      return null;
+    }
+
+    const activeSchedule = this.existingSchedules.find(
+      (schedule) => schedule.isActive !== false
+    );
+
+    return activeSchedule ?? this.existingSchedules[0];
+  }
+
+  private upsertExistingSchedule(updated: DoctorScheduleDto): void {
+    if (!updated.id) {
+      this.existingSchedules = [updated, ...this.existingSchedules];
+      return;
+    }
+
+    const index = this.existingSchedules.findIndex(
+      (schedule) => schedule.id === updated.id
+    );
+
+    if (index === -1) {
+      this.existingSchedules = [updated, ...this.existingSchedules];
+      return;
+    }
+
+    const collection = [...this.existingSchedules];
+    collection[index] = updated;
+    this.existingSchedules = collection;
+  }
+
+  private syncSelectedDaysFromExistingSessions(): void {
+    if (this.hasManualDaySelection) {
+      return;
+    }
+
+    this.selectedDays.clear();
+
+    this.daysOfWeek.forEach(({ value }) => {
+      const sessions = this.existingSessionsByDay[value] ?? [];
+      if (sessions.length > 0) {
+        this.selectedDays.add(value);
+      }
+    });
   }
 
   private syncFormState(): void {
@@ -391,8 +588,12 @@ export class DoctorScheduleBuilderComponent
     this.sessionDrafts = [];
     this.sessionDraftId = 0;
     this.selectedDays.clear();
+    this.hasManualDaySelection = false;
     this.existingSchedules = [];
+    this.existingSessionsByDay = this.createEmptySessionsByDay();
+    this.syncSelectedDaysFromExistingSessions();
     this.existingScheduleError = undefined;
+    this.editingScheduleId = null;
   }
 
   private canLoadExistingSchedules(): boolean {
@@ -406,6 +607,9 @@ export class DoctorScheduleBuilderComponent
 
     this.isExistingScheduleLoading = true;
     this.existingScheduleError = undefined;
+    this.existingSessionsByDay = this.createEmptySessionsByDay();
+    this.hasManualDaySelection = false;
+    this.syncSelectedDaysFromExistingSessions();
 
     this.doctorScheduleService
       .getScheduleDetailsByDoctorAndChamber(
@@ -415,10 +619,20 @@ export class DoctorScheduleBuilderComponent
       .subscribe({
         next: (response) => {
           this.existingSchedules = response ?? [];
+          this.hasManualDaySelection = false;
+          this.rebuildExistingSessionsByDay();
+          this.hydrateSessionDraftsFromExistingSchedule();
           this.isExistingScheduleLoading = false;
         },
         error: () => {
           this.isExistingScheduleLoading = false;
+          this.existingSessionsByDay = this.createEmptySessionsByDay();
+          this.syncSelectedDaysFromExistingSessions();
+          this.editingScheduleId = null;
+          this.hasManualDaySelection = false;
+          if (this.sessionDrafts.length === 0) {
+            this.sessionDraftId = 0;
+          }
           this.existingScheduleError =
             'Unable to load existing schedules for this chamber.';
         },

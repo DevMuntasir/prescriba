@@ -1,0 +1,68 @@
+@use '../../profile-settings-theme' as theme;
+
+:host {
+  display: block;
+}
+
+.profile-card {
+  @include theme.profile-card;
+}
+
+.profile-card__header {
+  @include theme.profile-card-header;
+}
+
+.profile-card__eyebrow {
+  @include theme.profile-card-eyebrow;
+}
+
+.profile-card__title {
+  @include theme.profile-card-title;
+}
+
+.profile-card__subtitle {
+  @include theme.profile-card-subtitle;
+}
+
+.profile-signature {
+  @include theme.profile-dashed-panel;
+  min-height: 180px;
+  text-align: center;
+}
+
+.profile-signature img {
+  max-height: 140px;
+  width: auto;
+  object-fit: contain;
+}
+
+.profile-upload {
+  @include theme.profile-upload-row;
+}
+
+.profile-upload__input {
+  @include theme.profile-field;
+  max-width: 320px;
+}
+
+.profile-upload__input::file-selector-button {
+  margin-right: 1rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--brand-surface);
+  color: var(--brand-primary);
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.profile-text-muted {
+  @include theme.profile-muted-text;
+}
+
+.profile-btn {
+  &--primary {
+    @include theme.profile-button-primary;
+  }
+}
+

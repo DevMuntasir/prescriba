@@ -41,6 +41,7 @@ export class HospitalComponent {
 
   doctorProfileId: number | null = null;
   isFormOpen = false;
+  editingChamberId: number | null = null;
 
   isScheduleBuilderOpen = false;
   selectedScheduleChamberId: number | null = null;
@@ -87,15 +88,42 @@ export class HospitalComponent {
     return null;
   }
 
-  openForm(): void {
+  openForm(chamber?: DoctorChamberDto): void {
     if (this.chamberForm.disabled) {
       return;
     }
+
+    if (chamber) {
+      // Edit mode - populate form with existing data
+      this.editingChamberId = chamber.id ?? null;
+      this.chamberForm.patchValue({
+        chamberName: chamber.chamberName ?? '',
+        address: chamber.address ?? '',
+        city: chamber.city ?? '',
+        zipCode: chamber.zipCode ?? '',
+        country: chamber.country ?? '',
+        isVisibleOnPrescription: chamber.isVisibleOnPrescription ?? true,
+      });
+    } else {
+      // Create mode - reset form
+      this.editingChamberId = null;
+      this.chamberForm.reset({
+        chamberName: '',
+        address: '',
+        city: '',
+        zipCode: '',
+        country: '',
+        isVisibleOnPrescription: true,
+      });
+    }
+
     this.isFormOpen = true;
   }
 
   closeForm(): void {
     this.isFormOpen = false;
+    this.editingChamberId = null;
+    this.chamberForm.reset();
   }
 
   onSubmit(): void {
@@ -118,28 +146,43 @@ export class HospitalComponent {
     };
 
     this.isSaving = true;
-    this.doctorChamberService.create(payload).subscribe({
+
+    // Check if we're editing or creating
+    const operation = this.editingChamberId
+      ? this.doctorChamberService.update(this.editingChamberId, payload)
+      : this.doctorChamberService.create(payload);
+
+    operation.subscribe({
       next: (chamber) => {
+        const isEditing = !!this.editingChamberId;
+
         this.toaster.customToast(
-          'Hospital/Chamber information saved successfully.',
+          isEditing
+            ? 'Hospital/Chamber information updated successfully.'
+            : 'Hospital/Chamber information saved successfully.',
           'success'
         );
-        this.chamberForm.reset({
-          chamberName: '',
-          address: '',
-          city: '',
-          zipCode: '',
-          country: payload.country,
-          isVisibleOnPrescription: true,
-        });
-        this.chambers = [chamber, ...this.chambers];
+
+        if (isEditing) {
+          // Update the chamber in the list
+          const index = this.chambers.findIndex(c => c.id === this.editingChamberId);
+          if (index !== -1) {
+            this.chambers[index] = chamber;
+          }
+        } else {
+          // Add new chamber to the beginning of the list
+          this.chambers = [chamber, ...this.chambers];
+        }
+
         this.isSaving = false;
         this.closeForm();
       },
       error: () => {
         this.isSaving = false;
         this.toaster.customToast(
-          'Could not save the hospital information. Please try again.',
+          this.editingChamberId
+            ? 'Could not update the hospital information. Please try again.'
+            : 'Could not save the hospital information. Please try again.',
           'error'
         );
       },
@@ -163,7 +206,7 @@ export class HospitalComponent {
     this.isScheduleBuilderOpen = false;
   }
 
-  handleScheduleCreated(_: DoctorScheduleDto): void {   this.isScheduleBuilderOpen = false;  }
+  handleScheduleCreated(_: DoctorScheduleDto): void { this.isScheduleBuilderOpen = false; }
 
   trackByChamber(index: number, chamber: DoctorChamberDto): number {
     return chamber.id ?? index;

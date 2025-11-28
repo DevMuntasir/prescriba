@@ -1,8 +1,9 @@
 <app-profile-onboarding-modal [open]="showProfileOnboarding" [profile]="authenticatedUserDetails"
   [saving]="savingProfile" (completed)="handleProfileCompletion($event)"></app-profile-onboarding-modal>
 
-<div class="min-h-screen bg-brand-surface px-4 py-6 sm:px-6 lg:px-8">
-  <div class="mx-auto flex max-w-[1200px] flex-col gap-8">
+<ng-container *ngIf="!isInitialLoading; else dashboardLoading">
+  <div class="min-h-screen bg-brand-surface px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-[1200px] flex-col gap-8">
     <app-welcome-header [userInfo]="authenticatedUserDetails"></app-welcome-header>
 
     <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -170,5 +171,13 @@
         </div>
       </div>
     </section>
+    </div>
   </div>
-</div>
+</ng-container>
+
+<ng-template #dashboardLoading>
+  <div class="dashboard-loading-state" role="status" aria-live="polite">
+    <span class="dashboard-loading-state__spinner" aria-hidden="true"></span>
+    <p class="dashboard-loading-state__label">Loading your dashboard...</p>
+  </div>
+</ng-template>

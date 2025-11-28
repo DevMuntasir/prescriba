@@ -22,18 +22,20 @@
           <span><strong>Height</strong> {{ item.heightFeet }}.{{ item.heightInches }}</span>
         }
       </div>
-    } @else {
+    } 
+    <!-- @else {
       <p class="section-card__empty">No vitals recorded yet.</p>
-    }
+    } -->
   } @else {
     <ul class="section-card__list">
       @for (item of items; track $index) {
         <li>
           {{ formatItem(item) }}
         </li>
-      } @empty {
-        <li class="section-card__empty">No data added yet.</li>
       }
+       <!-- @empty {
+        <li class="section-card__empty">No data added yet.</li>
+      } -->
     </ul>
   }
 </div>

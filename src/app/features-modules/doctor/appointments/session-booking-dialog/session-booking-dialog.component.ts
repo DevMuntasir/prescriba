@@ -1,9 +1,8 @@
 import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AppointmentService, CreateAppointmentPayload } from 'src/app/api';
 import { ScheduleSessionView } from '../appointments.component';
-import { CommonModule } from '@angular/common';
 
 export interface SessionBookingDialogData {
   scheduleId?: number;
@@ -11,6 +10,7 @@ export interface SessionBookingDialogData {
   appointmentDate: string;
   scheduleName?: string;
   sessionTimeLabel?: string;
+  doctorProfileId: number;
 }
 
 export interface SessionBookingDialogResult {
@@ -19,9 +19,10 @@ export interface SessionBookingDialogResult {
   appointmentDate: string;
   patientName: string;
   gender: string;
-  age: number;
+  age: string;
   phone: string;
   bloodGroup: string;
+  doctorProfileId: number;
 }
 
 @Component({
@@ -32,11 +33,11 @@ export interface SessionBookingDialogResult {
 })
 export class SessionBookingDialogComponent {
   private readonly fb = inject(FormBuilder);
-isSuccessAppointmentCreate:boolean = false
+  isSuccessAppointmentCreate: boolean = false
   readonly bookingForm = this.fb.nonNullable.group({
     patientName: ['', [Validators.required, Validators.maxLength(80)]],
     age: [
-      null as number | null,
+      null as string | null,
       [Validators.required, Validators.min(0), Validators.max(120)],
     ],
     gender: ['Male', Validators.required],
@@ -70,9 +71,10 @@ isSuccessAppointmentCreate:boolean = false
       appointmentDate: this.data.appointmentDate,
       patientName: value.patientName,
       gender: value.gender,
-      age: value.age ?? 0,
+      age: value.age ?? '',
       phone: value.phone,
       bloodGroup: value.bloodGroup ?? '',
+      doctorProfileId: this.data.doctorProfileId,
     };
     if (this.data.sessionId) {
       this.createAppointmentFromDialogResult(this.data, payload)
@@ -124,12 +126,13 @@ isSuccessAppointmentCreate:boolean = false
     const payload: CreateAppointmentPayload = {
       patientName: result.patientName.trim(),
       gender: result.gender,
-      age: result.age ?? 0,
+      age: String(result.age) ?? '',
       phoneNumber: result.phone,
       sessionId,
       bloodGroup: result.bloodGroup?.trim().toUpperCase() ?? '',
       scheduleId,
       appointmentDate: appointmentDateIso,
+      doctorProfileId: result.doctorProfileId,
     };
 
     this.isCreatingAppointment = true;
@@ -137,7 +140,7 @@ isSuccessAppointmentCreate:boolean = false
 
     this.appointmentService.createAppointment(payload).subscribe({
       next: (created) => {
-        this.isSuccessAppointmentCreate=true
+        this.isSuccessAppointmentCreate = true
         this.isCreatingAppointment = false;
         // this.dialogRef.close(payload);
       },

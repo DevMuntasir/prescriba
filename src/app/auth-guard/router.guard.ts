@@ -34,6 +34,8 @@ class RouterGuard {
         return '/ps-admin/dashboard';
       case 'doctor':
         return '/doctor/dashboard';
+      case 'supperadmin':
+        return '/ps-supper-admin/dashboard';
       default:
         return '/';
     }
@@ -44,6 +46,12 @@ class RouterGuard {
 
     if (value === 'sgadmin') {
       return 'admin';
+    }
+    if (value === 'sgdoctor') {
+      return 'doctor';
+    }
+    if (value === 'sgsupperadmin') {
+      return 'supperadmin';
     }
 
     return value;

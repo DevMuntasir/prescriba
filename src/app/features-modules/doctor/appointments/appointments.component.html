@@ -3,61 +3,140 @@
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-2">
         <p class="text-sm uppercase tracking-[0.3em] text-brand-primary font-semibold">Appointments</p>
-        <h1 class="text-3xl font-bold text-slate-900">Today's queue</h1>
-        <p class="text-slate-600 max-w-2xl text-base">Monitor every appointment at a glance and quickly add walk-in patients when needed.</p>
+        <h1 class="text-3xl font-bold text-slate-900">All Appointments</h1>
+
       </div>
-      <button type="button" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
+      <button type="button"
+        class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
         (click)="openForm()">
         + New appointment
       </button>
     </header>
 
-    <div *ngIf="lastGeneratedSerial" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+    <div *ngIf="lastGeneratedSerial"
+      class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
       Appointment created successfully. Serial: <span class="font-semibold">{{ lastGeneratedSerial }}</span>
     </div>
 
     <section class="bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50">
+      <div class="border-b border-slate-100 px-6 py-4">
+        <form [formGroup]="appointmentFiltersForm" (ngSubmit)="applyAppointmentFilters()" class="space-y-4">
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase  text-slate-500">
+              Search
+              <input type="text" formControlName="search"
+                class="rounded-sm border border-slate-200 px-4 py-2 text-sm text-slate-700"
+                placeholder="Search by patient or phone" />
+            </label>
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase  text-slate-500">
+              Schedule
+              <select formControlName="scheduleId"
+                class="rounded-sm border border-slate-200 px-4 py-2 text-sm text-slate-700 bg-white">
+                <option [ngValue]="null">All schedules</option>
+                <option *ngFor="let option of filterScheduleOptions" [ngValue]="option.id">
+                  {{ option.label }}
+                </option>
+              </select>
+            </label>
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase  text-slate-500">
+              Session
+              <select formControlName="sessionId"
+                class="rounded-sm border border-slate-200 px-4 py-2 text-sm text-slate-700 bg-white"
+                [disabled]="filterSessionOptions.length === 0">
+                <option [ngValue]="null">All sessions</option>
+                <option *ngFor="let option of filterSessionOptions" [ngValue]="option.id">
+                  {{ option.label }}
+                </option>
+              </select>
+            </label>
+
+            <div class="flex flex-wrap items-center justify-end gap-3 col-span-2">
+              <button type="button"
+                class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600"
+                (click)="resetAppointmentFilters()">
+                Reset
+              </button>
+              <button type="submit"
+                class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30">
+                Apply filters
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
       <div class="overflow-x-auto">
         <div *ngIf="isLoadingAppointments" class="px-6 py-4 text-sm text-slate-600">Loading appointments...</div>
-        <div *ngIf="appointmentsLoadError" class="px-6 py-4 text-sm text-red-700 bg-red-50 border-t border-red-100">{{ appointmentsLoadError }}</div>
+        <div *ngIf="appointmentsLoadError" class="px-6 py-4 text-sm text-red-700 bg-red-50 border-t border-red-100">{{
+          appointmentsLoadError }}</div>
         <ng-container *ngIf="!isLoadingAppointments && !appointmentsLoadError">
-        <table *ngIf="appointments.length > 0" class="w-full text-sm text-slate-700">
-          <thead class="text-left bg-slate-100 text-slate-600">
-            <tr>
-              <th class="py-3 px-4 font-semibold">Serial</th>
-              <th class="py-3 px-4 font-semibold">Patient</th>
-              <th class="py-3 px-4 font-semibold">Age</th>
-              <th class="py-3 px-4 font-semibold">Gender</th>
-              <th class="py-3 px-4 font-semibold">Contact</th>
-              <th class="py-3 px-4 font-semibold">Date &amp; Time</th>
-              <th class="py-3 px-4 font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let appointment of appointments; trackBy: trackBySerial" class="border-b border-slate-100">
-              <td class="py-3 px-4 font-semibold text-slate-900">{{ appointment.serial }}</td>
-              <td class="py-3 px-4">{{ appointment.patientName }}</td>
-              <td class="py-3 px-4">{{ appointment.age }}</td>
-              <td class="py-3 px-4">{{ appointment.gender }}</td>
-              <td class="py-3 px-4">{{ appointment.contactNumber }}</td>
-              <td class="py-3 px-4">{{ appointment.appointmentDate }}</td>
-              <td class="py-3 px-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
-                  [ngClass]="{
+          <table *ngIf="appointments?.length" class="w-full text-sm text-slate-700">
+            <thead class="text-left bg-slate-100 text-slate-600">
+              <tr>
+                <th class="py-3 px-4 font-semibold">Serial</th>
+                <th class="py-3 px-4 font-semibold">Patient</th>
+                <th class="py-3 px-4 font-semibold">Age</th>
+                <th class="py-3 px-4 font-semibold">Gender</th>
+                <th class="py-3 px-4 font-semibold">Contact</th>
+                <th class="py-3 px-4 font-semibold">Date &amp; Time</th>
+                <th class="py-3 px-4 font-semibold">Status</th>
+                <th class="py-3 px-4 font-semibold">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let appointment of appointments; trackBy: trackBySerial" class="border-b border-slate-100">
+                <td class="py-3 px-4 font-semibold text-slate-900">{{ appointment.serialNo }}</td>
+                <td class="py-3 px-4">{{ appointment.patientName }}</td>
+                <td class="py-3 px-4">{{ appointment.patientAge }}</td>
+                <td class="py-3 px-4">{{ appointment.gender }}</td>
+                <td class="py-3 px-4">{{ appointment.phoneNumber }}</td>
+                <td class="py-3 px-4">{{ appointment.appointmentDate }}</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
                     'bg-emerald-100 text-emerald-700': appointment.status === 'Confirmed',
                     'bg-blue-100 text-blue-700': appointment.status === 'Checked In',
                     'bg-amber-100 text-amber-700': appointment.status === 'Pending'
                   }">
-                  {{ appointment.status }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    {{ appointment.status }}
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <a class="px-3 py-1 rounded-full bg-emerald-50 text-brand-primary font-semibold"
+                    [routerLink]="['/doctor/build-prescription']" [queryParams]="{ aptId: appointment.appointmentId }">
+                    Create Prescription
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-        <div *ngIf="appointments.length === 0" class="px-6 py-12 text-center text-sm text-slate-500">
-          No appointments scheduled yet.
-        </div>
+          <div *ngIf="appointments?.length === 0" class="px-6 py-12 text-center text-sm text-slate-500">
+            No appointments found matching your filters.
+          </div>
+
+          <!-- Pagination Controls -->
+          <div *ngIf="appointments?.length"
+            class="border-t border-slate-100 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="text-sm text-slate-600">
+              Page <strong>{{ appointmentFiltersForm.value.pageNumber }}</strong>
+              • Showing <strong>{{ appointments.length }}</strong> appointments
+              • Page size: <strong>{{ appointmentFiltersForm.value.pageSize }}</strong>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button"
+                class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="(appointmentFiltersForm.value.pageNumber ?? 1) <= 1"
+                (click)="goToPage((appointmentFiltersForm.value.pageNumber ?? 1) - 1)">
+                Previous
+              </button>
+              <button type="button"
+                class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="appointments.length < (appointmentFiltersForm.value.pageSize ?? 10)"
+                (click)="goToPage((appointmentFiltersForm.value.pageNumber ?? 1) + 1)">
+                Next
+              </button>
+            </div>
+          </div>
         </ng-container>
       </div>
     </section>
@@ -72,73 +151,77 @@
           <p class="text-sm uppercase tracking-[0.4em] text-brand-primary font-semibold">Hospitals</p>
           <h2 class="text-2xl font-bold text-slate-900">Your chambers</h2>
         </div>
-        <button type="button" class="px-3 py-1 rounded-full bg-emerald-50 text-brand-primary font-semibold" (click)="closeForm()">Close</button>
+        <button type="button" class="px-3 py-1 rounded-full bg-emerald-50 text-brand-primary font-semibold"
+          (click)="closeForm()">Close</button>
       </header>
 
       <div class="flex-1 overflow-y-auto px-6 pb-8 pt-6 space-y-4">
-        <div *ngIf="isLoadingChambers" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+        <div *ngIf="isLoadingChambers"
+          class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
           Loading your hospitals...
         </div>
 
-        <div *ngIf="!isLoadingChambers && chamberLoadError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div *ngIf="!isLoadingChambers && chamberLoadError"
+          class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {{ chamberLoadError }}
         </div>
 
-        <div *ngIf="!isLoadingChambers && !chamberLoadError && chambers.length === 0" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-          No hospitals found yet. Add a hospital from the Hospital tab to see it here.
+        <div *ngIf="!isLoadingChambers && !chamberLoadError && chambers.length === 0"
+          class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+          No hospitals found yet. Add a hospital from the Hospital tab to see it here. <a routerLink="/doctor/hospital"
+            class="text-brand-primary font-semibold">Hospitals/Chambers</a>
         </div>
 
-        <div *ngIf="!isLoadingChambers && chambers.length > 0" class="space-y-5">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <article
-              *ngFor="let chamber of chambers; trackBy: trackByChamber"
-              (click)="onChamberSelected(chamber)"
-              class="rounded-2xl border border-slate-100 bg-white p-3 cursor-pointer transition hover:shadow-lg"
-              [ngClass]="isChamberSelected(chamber.id ?? null)
+        <div *ngIf="!isLoadingChambers" class="space-y-5">
+          <div class=" space-y-2">
+            <label for="" class=" font-Roboto text-sm mb-2 ">
+              Select chamber
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <article *ngFor="let chamber of chambers; trackBy: trackByChamber" (click)="onChamberSelected(chamber)"
+                class="rounded-xl  bg-brand-primary/5 border-brand-primary/30 border-[1px] p-3 cursor-pointer transition hover:shadow-lg"
+                [ngClass]="isChamberSelected(chamber.id ?? null)
                 ? 'border-brand-primary shadow-brand-primary/30 shadow-lg ring-2 ring-brand-primary/20'
                 : 'hover:border-brand-primary/40'">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h3 class="text-md font-Roboto text-slate-900">{{ chamber.chamberName }}</h3>
-                  <p class="text-sm text-slate-500">{{ chamber.address }}</p>
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 class="text-md font-Roboto text-brand-primary">{{ chamber.chamberName }}</h3>
+                    <p class="text-sm text-brand-primary/80">{{ chamber.address }}</p>
+                  </div>
+                  <span *ngIf="isChamberSelected(chamber.id ?? null)" class="text-xs font-semibold text-brand-primary">
+                    Selected
+                  </span>
                 </div>
-                <span *ngIf="isChamberSelected(chamber.id ?? null)" class="text-xs font-semibold text-brand-primary">
-                  Selected
-                </span>
-              </div>
-            </article>
+              </article>
+            </div>
           </div>
 
-          <section class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4" *ngIf="selectedChamber as activeChamber; else selectChamberNote">
-            <!-- <header class="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p class="text-xs uppercase tracking-[0.3em] text-brand-primary font-semibold">Weekly availability</p>
-                <h3 class="text-xl font-semibold text-slate-900">{{ activeChamber.chamberName }}</h3>
-                <p class="text-sm text-slate-500">{{ activeChamber.address }}</p>
-              </div>
-              <span class="text-xs text-slate-500">ID: {{ activeChamber.id }}</span>
-            </header> -->
+          <section class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+            *ngIf="selectedChamber as activeChamber; else selectChamberNote">
 
-            <div *ngIf="isLoadingSchedules" class="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <div *ngIf="isLoadingSchedules"
+              class="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
               Loading schedules for this chamber...
             </div>
 
-            <div *ngIf="scheduleLoadError" class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div *ngIf="scheduleLoadError"
+              class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {{ scheduleLoadError }}
             </div>
 
-            <div *ngIf="!isLoadingSchedules && !scheduleLoadError && schedules.length === 0" class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              No saved schedules were found for this chamber.
+            <div *ngIf="!isLoadingSchedules && !scheduleLoadError && schedules.length === 0"
+              class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              No saved schedules were found for this chamber. <a routerLink="/doctor/schedule"
+                class="text-brand-primary font-semibold">Add Schedule</a>
             </div>
 
-            <div *ngIf="!isLoadingSchedules && !scheduleLoadError && schedules.length > 0" class="mt-4 space-y-4">
+            <div *ngIf="!isLoadingSchedules " class="mt-4 space-y-4">
               <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Week days</p>
                 <div class="mt-2 flex flex-wrap gap-2">
                   <button type="button" *ngFor="let day of weekDays" (click)="selectWeekDay(day.key)"
                     [disabled]="!hasSessionsForDay(day.key)"
-                    class="px-3 py-1 rounded-full border text-sm font-semibold transition"
-                    [ngClass]="{
+                    class="px-3 py-1 rounded-full border text-sm font-semibold transition" [ngClass]="{
                       'bg-brand-primary text-white border-brand-primary shadow-sm shadow-brand-primary/40': selectedWeekDay === day.key,
                       'border-emerald-300 bg-emerald-50 text-emerald-800': selectedWeekDay !== day.key && hasSessionsForDay(day.key),
                       'border-slate-200 text-slate-400 cursor-not-allowed opacity-60': !hasSessionsForDay(day.key)
@@ -151,10 +234,8 @@
               <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Pick appointment date</p>
                 <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <input type="date" class="rounded-xl border border-slate-200 px-4 py-2 text-sm"
-                    [min]="todayDate"
-                    [value]="selectedBookingDate ?? ''"
-                    (change)="handleBookingDateChange($any($event.target).value)" />
+                  <input type="date" class="rounded-xl border border-slate-200 px-4 py-2 text-sm" [min]="todayDate"
+                    [value]="selectedBookingDate ?? ''" (change)="handleBookingDateChange($any($event.target).value)" />
                   <span class="text-sm text-slate-600" *ngIf="selectedBookingDate">
                     Selected: {{ selectedBookingDate | date: 'fullDate' }}
                   </span>
@@ -164,23 +245,22 @@
 
               <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Available sessions</p>
-                <!-- <div *ngIf="isCreatingAppointment" class="mt-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">Creating appointment...</div> -->
-                <!-- <div *ngIf="appointmentCreationError" class="mt-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-xs text-red-700">{{ appointmentCreationError }}</div> -->
-                <div *ngIf="sessionsForSelectedDay.length === 0" class="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+                <div *ngIf="sessionsForSelectedDay.length === 0"
+                  class="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
                   Select a highlighted day to view its sessions.
                 </div>
 
                 <div *ngIf="sessionsForSelectedDay.length > 0" class="mt-3 space-y-3">
                   <article *ngFor="let session of sessionsForSelectedDay; trackBy: trackBySession"
                     class="rounded-2xl border border-slate-200 bg-white p-4 cursor-pointer transition hover:shadow-md focus-within:ring-2 focus-within:ring-brand-primary"
-                    role="button"
-                    tabindex="0"
-                    (click)="openSessionBooking(session)"
+                    role="button" tabindex="0" (click)="openSessionBooking(session)"
                     (keydown)="onSessionKeydown($event, session)">
                     <header class="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <h4 class="text-sm font-semibold text-slate-900">{{ session.scheduleName || 'Untitled schedule' }}</h4>
-                        <p class="text-xs text-slate-500">{{ session.scheduleTypeName || '&mdash;' }} &middot; {{ session.consultancyTypeName || '&mdash;' }}</p>
+                        <h4 class="text-sm font-semibold text-slate-900">{{ session.scheduleName || 'Untitled schedule'
+                          }}</h4>
+                        <p class="text-xs text-slate-500">{{ session.scheduleTypeName || '&mdash;' }} &middot; {{
+                          session.consultancyTypeName || '&mdash;' }}</p>
                       </div>
                       <span class="px-3 py-1 rounded-full text-xs font-semibold"
                         [ngClass]="session.isActive === false ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'">
@@ -188,8 +268,10 @@
                       </span>
                     </header>
                     <div class="mt-3 text-sm text-slate-700">
-                      <strong class="text-base text-brand-primary">{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</strong>
-                      <span *ngIf="session.noOfPatients" class="ml-3 text-xs text-slate-500">{{ session.noOfPatients }} patients</span>
+                      <strong class="text-base text-brand-primary">{{ formatTimeLabel(session.startTime) }} - {{
+                        formatTimeLabel(session.endTime) }}</strong>
+                      <span *ngIf="session.noOfPatients" class="ml-3 text-xs text-slate-500">{{ session.noOfPatients }}
+                        patients</span>
                     </div>
                     <footer class="mt-3 text-xs text-slate-500" *ngIf="selectedBookingDate">
                       Click to create an appointment for {{ selectedBookingDate | date: 'fullDate' }}.
@@ -209,4 +291,3 @@
     </div>
   </div>
 </div>
-

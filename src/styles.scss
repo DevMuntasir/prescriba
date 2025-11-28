@@ -198,6 +198,9 @@ body::-webkit-scrollbar-thumb {
   .label {
     @apply block font-medium text-[14px] text-[#07074D];
   }
+
+
+
 }
 
 .btn-three {
@@ -288,4 +291,127 @@ input[type="number"] {
   color: inherit;
 }
 
+
+
+  .prescripto-modal {
+    @apply w-full max-w-[900px]  rounded-2xl bg-white border border-brand-border shadow-brand-soft flex flex-col overflow-hidden;
+  }
+
+  .prescripto-modal > form {
+    @apply flex flex-col flex-1;
+  }
+
+  .prescripto-modal__header {
+    @apply px-6 py-5 border-b border-brand-border bg-white flex flex-wrap items-start justify-between gap-4;
+  }
+
+  .prescripto-modal__pill {
+    @apply text-xs uppercase tracking-[0.35em] text-brand-neutral/50 font-semibold;
+  }
+
+  .prescripto-modal__title {
+    @apply text-2xl font-Roboto text-brand-neutral;
+  }
+
+  .prescripto-modal__subhead {
+    @apply text-sm text-brand-neutral/70 max-w-2xl;
+  }
+
+  .prescripto-modal__stats {
+    @apply text-right;
+  }
+
+  .prescripto-modal__stats-label {
+    @apply text-xs uppercase tracking-[0.35em] text-brand-neutral/50 font-semibold;
+  }
+
+  .prescripto-modal__stats-value {
+    @apply text-3xl font-semibold text-brand-neutral;
+  }
+
+  .prescripto-modal__search {
+    @apply px-6 py-5 bg-brand-surface border-b border-brand-border;
+  }
+
+  .prescripto-modal__search form {
+    @apply flex flex-col gap-3 md:flex-row md:items-center;
+  }
+
+  .prescripto-modal__search-field {
+    @apply relative flex-1;
+  }
+
+  .prescripto-modal__search-field input {
+    @apply w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-base font-Roboto text-brand-neutral placeholder:text-brand-neutral/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary;
+  }
+
+  .prescripto-modal__search-icon {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-brand-neutral/40;
+  }
+
+  .prescripto-modal__hint {
+    @apply mt-2 text-[11px] uppercase tracking-[0.35em] text-brand-neutral/40 font-semibold;
+  }
+
+  .prescripto-modal__body {
+    @apply px-6 py-5 space-y-4 bg-brand-surface flex-1 overflow-y-auto;
+  }
+
+  .prescripto-modal__chip-set {
+    @apply rounded-2xl border border-brand-border bg-white px-4 py-4 space-y-3;
+  }
+
+  .prescripto-chip {
+    --mdc-chip-label-text-color: var(--brand-neutral);
+    --mdc-chip-selected-label-text-color: var(--brand-primary);
+    --mdc-chip-container-color: transparent;
+    --mdc-chip-selected-container-color: rgba(6, 180, 139, 0.12);
+    --mdc-chip-outline-color: rgba(15, 23, 42, 0.15);
+    --mdc-chip-selected-outline-color: rgba(6, 180, 139, 0.4);
+    @apply text-sm font-medium px-4 py-2 rounded-full border border-brand-border bg-white hover:border-brand-primary transition-colors duration-150;
+  }
+
+  .prescripto-modal__empty {
+    @apply flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-border bg-white px-6 py-10 text-center text-brand-neutral/70;
+  }
+
+  .prescripto-modal__selection {
+    @apply rounded-2xl border border-brand-border bg-white shadow-brand-soft overflow-hidden;
+  }
+
+  .prescripto-modal__table {
+    @apply w-full;
+  }
+
+  .prescripto-modal__table thead {
+    @apply bg-brand-surface text-brand-neutral/60;
+  }
+
+  .prescripto-modal__table th {
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .prescripto-modal__table td {
+    @apply px-4 py-3 align-top;
+  }
+
+  .prescripto-modal__table tbody tr + tr td {
+    @apply border-t border-slate-100;
+  }
+
+  .prescripto-modal__actions {
+    @apply px-6 py-5 bg-white border-t border-brand-border flex items-center justify-end gap-2 sticky bottom-0 z-10;
+  }
+
+  .prescripto-field {
+    @apply w-full rounded-xl border border-brand-border bg-white px-4 py-2 text-sm text-brand-neutral placeholder:text-brand-neutral/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary;
+  }
+
+  .prescripto-field--readonly {
+    @apply bg-brand-surface font-semibold;
+  }
+
+  .prescripto-field--dense {
+    @apply py-1.5 text-xs;
+  }
 

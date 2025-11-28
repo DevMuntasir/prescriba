@@ -1,0 +1,247 @@
+@mixin profile-card {
+  border: 1px solid var(--brand-border);
+  border-radius: 28px;
+  padding: clamp(24px, 3vw, 40px);
+  background: var(--brand-white);
+  box-shadow: 0 32px 80px rgba(6, 180, 139, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2vw, 32px);
+}
+
+@mixin profile-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+@mixin profile-card-eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(31, 42, 55, 0.55);
+}
+
+@mixin profile-card-title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-weight: 600;
+  color: var(--brand-neutral);
+}
+
+@mixin profile-card-subtitle {
+  margin: 0.35rem 0 0;
+  color: rgba(31, 42, 55, 0.65);
+  font-size: 0.95rem;
+  max-width: 52ch;
+}
+
+@mixin profile-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@mixin profile-form-grid($min: 240px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min, 1fr));
+  gap: 1.5rem;
+}
+
+@mixin profile-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--brand-neutral);
+  font-family: 'Roboto', 'Poppins', sans-serif;
+  font-size: 0.85rem;
+}
+
+@mixin profile-field-group-full {
+  grid-column: 1 / -1;
+}
+
+@mixin profile-field {
+  border: 1px solid var(--brand-border);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--brand-white);
+  color: var(--brand-neutral);
+  font-size: 0.95rem;
+  font-family: 'Roboto', 'Poppins', sans-serif;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &::placeholder {
+    color: rgba(31, 42, 55, 0.4);
+  }
+
+  &:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(6, 180, 139, 0.18);
+    outline: none;
+    background: var(--brand-white);
+  }
+}
+
+@mixin profile-helper-text($variant: info) {
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-top: -0.25rem;
+
+  @if $variant == error {
+    color: #e11d48;
+  } @else {
+    color: rgba(31, 42, 55, 0.65);
+  }
+}
+
+@mixin profile-muted-text {
+  color: rgba(31, 42, 55, 0.6);
+  font-size: 0.9rem;
+}
+
+@mixin profile-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@mixin profile-button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@mixin profile-button-primary {
+  @include profile-button-base;
+  background-image: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-accent));
+  color: #fff;
+  box-shadow: 0 18px 45px rgba(6, 180, 139, 0.3);
+}
+
+@mixin profile-button-ghost {
+  @include profile-button-base;
+  background: var(--brand-surface);
+  color: var(--brand-primary);
+  border-color: rgba(6, 180, 139, 0.35);
+}
+
+@mixin profile-button-danger {
+  @include profile-button-base;
+  background-image: linear-gradient(135deg, #fb7185, #f43f5e);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(248, 113, 113, 0.3);
+}
+
+@mixin profile-table-wrapper {
+  border: 1px solid var(--brand-border);
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--brand-white);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+@mixin profile-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+@mixin profile-table-head {
+  background: var(--brand-surface);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: rgba(31, 42, 55, 0.55);
+}
+
+@mixin profile-table-head-cell {
+  padding: 0.85rem 1.25rem;
+}
+
+@mixin profile-table-cell {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(214, 235, 223, 0.8);
+  vertical-align: top;
+  color: var(--brand-neutral);
+  font-size: 0.95rem;
+}
+
+@mixin profile-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+@mixin profile-empty-state {
+  border: 1px dashed var(--brand-border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  text-align: center;
+  background: var(--brand-surface);
+  color: rgba(31, 42, 55, 0.6);
+  font-weight: 500;
+}
+
+@mixin profile-dashed-panel {
+  border: 2px dashed var(--brand-border);
+  border-radius: 24px;
+  padding: clamp(16px, 3vw, 32px);
+  background: var(--brand-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin profile-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+@mixin profile-state($variant: info) {
+  padding: 0.85rem 1.25rem;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid rgba(6, 180, 139, 0.35);
+  color: var(--brand-neutral);
+  background: rgba(6, 180, 139, 0.12);
+
+  @if $variant == error {
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(254, 226, 226, 0.8);
+    color: #b91c1c;
+  }
+}
+

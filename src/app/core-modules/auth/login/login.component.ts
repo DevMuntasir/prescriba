@@ -99,75 +99,36 @@ export class LoginComponent implements OnInit {
 
       const credential = await signInWithPopup(this.firebaseAuth, provider);
       const user = credential.user;
-      console.log(user);
 
       if (!user) throw new Error('Google authentication failed.');
 
       const idToken = await user.getIdToken();
       this.authApi.loginApiByGoogleToken(idToken).subscribe({
         next: (response) => {
-          console.log(response);
+          if (!response) {
+            this.handleGoogleAuthFailure('Google authentication failed.');
+            return;
+          }
 
-          if (!response) throw new Error('Google authentication failed.');
-          this.handleDoctorProfile(response.results);
+          this.handleDoctorProfile(response.results, true);
         },
-        error: (error) => {
-          throw new Error('Google authentication failed.');
-        }
-      })
-
-
-
-
-      return
-      const authInfo = {
-        fullName: user.displayName || user.email || 'Google User',
-        name: user.displayName || 'Google User',
-        userId: user.uid,
-        email: user.email,
-        photoURL: user.photoURL,
-        userType: 'doctor',
-        password: 'Coppa@123',
-      };
-      // email
-      // : 
-      // "user.@soowgood.com"
-      // name
-      // : 
-      // "Muntasir Udoy"
-      // password
-      // : 
-      // "Coppa@123"
-      // phoneNumber
-      // : 
-      // "01877332323"
-      // roleId
-      // : 
-      // "Doctor"
-      // surname
-      // : 
-      // "default"
-      // userName
-      // : 
-      // "01877332323"
-
-
-
-
-      this.normalAuth.setAuthInfoInLocalStorage(authInfo);
-      localStorage.setItem('access', JSON.stringify(idToken));
-      localStorage.setItem('refreshToken', JSON.stringify(user.refreshToken));
-
-      this.router.navigate(['/doctor/dashboard']);
-      this.toasterService.customToast('Signed in with Google successfully.', 'success');
+        error: () => {
+          this.handleGoogleAuthFailure('Google authentication failed.');
+        },
+      });
     } catch (error: any) {
       const message =
         error?.message || 'Unable to complete Google sign-in. Please try again.';
-      this.toasterService.customToast(message, 'error');
-    } finally {
-      this.googleAuthLoading = false;
+      this.handleGoogleAuthFailure(message);
     }
   }
+
+  private handleGoogleAuthFailure(message: string) {
+    this.googleAuthLoading = false;
+    this.toasterService.customToast(message, 'error');
+  }
+
+
 
   /** 🔹 Login Form */
   initForm() {
@@ -239,17 +200,21 @@ export class LoginComponent implements OnInit {
   }
 
   /** 🔹 Handle Doctor Profile after successful login */
-  handleDoctorProfile(userInfo: LoginResponseDto) {
+  handleDoctorProfile(userInfo: LoginResponseDto, isGoogleLogin = false) {
 
     if (userInfo.userName || userInfo.userEmail) {
-      const fetchProfile$ = userInfo.loginType === 'google' ?
-      this.doctorProfileService.getByUserEmail(userInfo.userEmail)
-        : this.doctorProfileService.getByUserName(userInfo.userName)
-        
+      const fetchProfile$ =
+        userInfo.loginType === 'google'
+          ? this.doctorProfileService.getByUserEmail(userInfo.userEmail)
+          : this.doctorProfileService.getByUserName(userInfo.userName);
+
       fetchProfile$.subscribe({
         next: (patientDto: PatientProfileDto) => {
           const saveLocalStorage = {
-            fullName: userInfo.loginType === 'google' ? userInfo.userEmail : patientDto.fullName,
+            fullName:
+              userInfo.loginType === 'google'
+                ? userInfo.userEmail
+                : patientDto.fullName,
             userId: patientDto.userId,
             id: patientDto.id,
             userType: 'doctor',
@@ -268,16 +233,25 @@ export class LoginComponent implements OnInit {
           this.btnLoading = false;
           this.otp.update((p) => ({ ...p, isLoading: false }));
           this.normalAuth.setOtpLoader(false);
+          if (isGoogleLogin) {
+            this.googleAuthLoading = false;
+          }
         },
         error: (err: any) => {
           console.error(err);
           this.btnLoading = false;
+          if (isGoogleLogin) {
+            this.handleGoogleAuthFailure('Unable to load doctor profile. Please try again.');
+          }
         },
       });
     } else {
       this.btnLoading = false;
       this.otp.update((p) => ({ ...p, isLoading: false }));
       this.toasterService.customToast('Username not found!', 'error');
+      if (isGoogleLogin) {
+        this.googleAuthLoading = false;
+      }
     }
   }
 
@@ -312,3 +286,4 @@ export class LoginComponent implements OnInit {
   //   this.updateQueryParam('');
   // }
 }
+

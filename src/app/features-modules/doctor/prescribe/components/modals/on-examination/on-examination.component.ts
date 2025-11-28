@@ -15,7 +15,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { PrescriptionService } from '../../../services/prescription.service';
 
@@ -32,6 +32,7 @@ import { PrescriptionService } from '../../../services/prescription.service';
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
+    MatDialogModule
   ],
   templateUrl: './on-examination.component.html',
 })

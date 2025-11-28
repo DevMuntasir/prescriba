@@ -1,0 +1,93 @@
+@use '../../profile-settings-theme' as theme;
+
+:host {
+  display: block;
+}
+
+.profile-card {
+  @include theme.profile-card;
+}
+
+.profile-card__header {
+  @include theme.profile-card-header;
+}
+
+.profile-card__eyebrow {
+  @include theme.profile-card-eyebrow;
+}
+
+.profile-card__title {
+  @include theme.profile-card-title;
+}
+
+.profile-card__subtitle {
+  @include theme.profile-card-subtitle;
+}
+
+.profile-table-wrapper {
+  @include theme.profile-table-wrapper;
+}
+
+.profile-table {
+  @include theme.profile-table;
+}
+
+.profile-table__head {
+  @include theme.profile-table-head;
+}
+
+.profile-table__head-cell {
+  @include theme.profile-table-head-cell;
+}
+
+.profile-table__cell {
+  @include theme.profile-table-cell;
+}
+
+.profile-table__actions {
+  @include theme.profile-table-actions;
+}
+
+.profile-empty-state {
+  @include theme.profile-empty-state;
+}
+
+.profile-form {
+  @include theme.profile-form-grid(260px);
+}
+
+.profile-field-group {
+  @include theme.profile-field-group;
+}
+
+.profile-field-group--full {
+  @include theme.profile-field-group-full;
+}
+
+.profile-field {
+  @include theme.profile-field;
+  width: 100%;
+}
+
+.profile-field__error {
+  @include theme.profile-helper-text(error);
+}
+
+.profile-form__actions {
+  @include theme.profile-form-actions;
+}
+
+.profile-btn {
+  &--primary {
+    @include theme.profile-button-primary;
+  }
+
+  &--ghost {
+    @include theme.profile-button-ghost;
+  }
+
+  &--danger {
+    @include theme.profile-button-danger;
+  }
+}
+

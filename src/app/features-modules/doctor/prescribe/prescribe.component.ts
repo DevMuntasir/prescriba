@@ -24,9 +24,9 @@ import {
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { forkJoin, map, Subscription } from 'rxjs';
+import { forkJoin, map, of, Subscription } from 'rxjs';
 
-import { AppointmentService, DoctorProfileService } from 'src/app/api/services';
+import { AppointmentService, DoctorChamberService, DoctorProfileService, DoctorScheduleService } from 'src/app/api/services';
 import { environment } from 'src/environments/environment';
 
 import { DocumentsAttachmentService } from './../../../api/services/documents-attachment.service';
@@ -98,8 +98,10 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     private DoctorProfileService: DoctorProfileService,
     private AuthService: AuthService,
     private DocumentsAttachmentService: DocumentsAttachmentService,
-    private AppointmentService : AppointmentService,
-    private ActivatedRoute : ActivatedRoute
+    private AppointmentService: AppointmentService,
+    private ActivatedRoute: ActivatedRoute,
+    private DoctorChamberService: DoctorChamberService,
+    private DoctorScheduleService: DoctorScheduleService,
   ) { }
 
   addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
@@ -128,7 +130,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     const doctorProfileId = this.AuthService.authInfo().id ?? null;
     this.doctorProfileId = doctorProfileId
     this.prescriptionService.setPreHand(true);
-    this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
+    // this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
     this.prescribeForm.get('uploadImage')?.valueChanges.subscribe((res) =>
       res !== '' || res !== undefined
         ? (this.uploadImage = {
@@ -141,12 +143,13 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         })
     );
 
-        this.ActivatedRoute.queryParams.subscribe((params) => {
+    this.ActivatedRoute.queryParams.subscribe((params) => {
       if (params['aptId']) {
         this.prescriptionService.setAppointmentId(Number(params['aptId']));
+        this.loadAppointmentDataForPrehandByDrId(doctorProfileId,Number(params['aptId']) );
       } else {
         this.prescriptionService.setPreHand(true);
-        this.loadAppointmentDataForPrehandByDrId(doctorProfileId);
+        this.loadAppointmentDataForPrehandByDrId(doctorProfileId, null);
       }
     });
   }
@@ -169,7 +172,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadAppointmentDataForPrehandByDrId(doctorProfileId: number) {
+  loadAppointmentDataForPrehandByDrId(doctorProfileId: number, appointmentId: number | null) {
     this.isLoading = true;
     forkJoin({
       doctorDetails: this.DoctorProfileService.getDoctorByProfileId(
@@ -192,8 +195,132 @@ export class PrescribeComponent implements OnInit, OnDestroy {
           ),
         }))
       ),
+      chambers: this.DoctorChamberService.getListByDoctorId(
+        doctorProfileId
+      ).pipe(
+        map((chambers) => chambers?.filter(chamber => chamber.isVisibleOnPrescription === true) ?? [])
+      ),
+     appointmentInfo: appointmentId
+      ? this.AppointmentService.getAppointmentById(appointmentId).pipe(
+        map(({results}) => ({
+          ...results,
+        }))
+      )
+      : of(null),
+      // schedule: doctorScheduleId
+      //   ? this.DoctorScheduleService.g(doctorScheduleId).pipe(
+      //     map((schedule) => {
+      //       const sessions =
+      //         schedule?.doctorScheduleDaySession
+      //           ?.filter(
+      //             (day) =>
+      //               day.scheduleDayofWeek && day.startTime && day.endTime
+      //           )
+      //           ?.map((day) => ({
+      //             day: day.scheduleDayofWeek!,
+      //             startTime: day.startTime!,
+      //             endTime: day.endTime || day.startTime,
+      //           })) || [];
 
+      //       const groupedByDay: {
+      //         [key: string]: { startTime: string; endTime: string }[];
+      //       } = {};
 
+      //       sessions.forEach(({ day, startTime, endTime }) => {
+      //         if (!groupedByDay[day]) {
+      //           groupedByDay[day] = [];
+      //         }
+
+      //         if (
+      //           !groupedByDay[day].some(
+      //             (item) =>
+      //               item.startTime === startTime &&
+      //               item.endTime === endTime
+      //           )
+      //         ) {
+      //           groupedByDay[day].push({
+      //             startTime,
+      //             endTime: endTime || '',
+      //           });
+      //         }
+      //       });
+
+      //       const groupedSchedule = Object.entries(groupedByDay).map(
+      //         ([day, times]) => {
+      //           const sortedTimes = times.sort((a, b) => {
+      //             const t1 = new Date(
+      //               `1970-01-01T${this.convertTo24(a.startTime)}`
+      //             );
+      //             const t2 = new Date(
+      //               `1970-01-01T${this.convertTo24(b.startTime)}`
+      //             );
+      //             return t1.getTime() - t2.getTime();
+      //           });
+
+      //           return {
+      //             day,
+      //             startTime: sortedTimes[0].startTime,
+      //             endTime: sortedTimes[sortedTimes.length - 1].endTime,
+      //           };
+      //         }
+      //       );
+
+      //       const optimizedSchedule = [];
+      //       let currentRange = {
+      //         start: groupedSchedule[0]?.day,
+      //         end: groupedSchedule[0]?.day,
+      //         startTime: groupedSchedule[0]?.startTime,
+      //         endTime: groupedSchedule[0]?.endTime,
+      //       };
+
+      //       for (let i = 1; i < groupedSchedule.length; i++) {
+      //         const current = groupedSchedule[i];
+
+      //         const isConsecutive = this.isConsecutiveDays(
+      //           currentRange.end,
+      //           current.day
+      //         );
+      //         const isSameTime =
+      //           current.startTime === currentRange.startTime &&
+      //           current.endTime === currentRange.endTime;
+
+      //         if (isConsecutive && isSameTime) {
+      //           currentRange.end = current.day;
+      //         } else {
+      //           if (currentRange.start === currentRange.end) {
+      //             optimizedSchedule.push({
+      //               start: currentRange.start,
+      //               end: currentRange.start,
+      //               startTime: currentRange.startTime,
+      //               endTime: currentRange.endTime,
+      //             });
+      //           } else {
+      //             optimizedSchedule.push({ ...currentRange });
+      //           }
+      //           currentRange = {
+      //             start: current.day,
+      //             end: current.day,
+      //             startTime: current.startTime,
+      //             endTime: current.endTime,
+      //           };
+      //         }
+      //       }
+
+      //       if (currentRange.start === currentRange.end) {
+      //         optimizedSchedule.push({
+      //           start: currentRange.start,
+      //           end: currentRange.start,
+      //           startTime: currentRange.startTime,
+      //           endTime: currentRange.endTime,
+      //         });
+      //       } else {
+      //         optimizedSchedule.push({ ...currentRange });
+      //       }
+
+      //       return optimizedSchedule;
+      //     })
+      //   )
+      //   : of([]),
       signature:
         this.DocumentsAttachmentService.getAttachmentInfoByEntityTypeAndEntityIdAndAttachmentType(
           'Doctor',
@@ -212,7 +339,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         ),
 
       // appointmentDetails: this.AppointmentService.getAppointmentById(1),
-    }).subscribe(({ doctorDetails, signature }) => {
+    }).subscribe(({ doctorDetails, chambers,appointmentInfo, signature }) => {
       this.prescriptionService.setDoctorInfo({
         doctorName:
           doctorDetails.doctorTitleName + ' ' + doctorDetails.fullName,
@@ -221,13 +348,27 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         degree: doctorDetails.degrees,
         qualification: doctorDetails.qualifications || null,
         areaOfExperties: doctorDetails.areaOfExperties || null,
+        expertise: doctorDetails.expertise || null,
         bmdc: doctorDetails.bmdcRegNo || null,
-        chamber: [],
+        chamber: chambers || [],
         schedule: [],
         signature: signature[0] || '',
       });
 
       this.isLoading = false;
+      if (appointmentInfo) {
+        console.log(appointmentInfo);
+        
+        this.prescriptionService.setPatientInfo({
+          patientName: appointmentInfo.patientName,
+          patientAge: appointmentInfo.patientAge,
+          patientGender: appointmentInfo.gender,
+          patientProfileId: appointmentInfo.patientID,
+          patientCode: '',
+          patientPhoneNo: appointmentInfo.phoneNumber,
+          patientBloodGroup: appointmentInfo.bloodGroup,
+        });
+      }
     });
   }
 
@@ -270,8 +411,8 @@ export class PrescribeComponent implements OnInit, OnDestroy {
   }
   openDynamicDialog(type: string, content: any) {
     const dialogRef = this.dialog.open(DynamicModalComponent, {
-      maxWidth: '850px',
-      maxHeight: '95vh',
+      width: '850px',
+      height: '95vh',
       data: { type, content, form: this.prescribeForm },
       // disableClose: true,
       panelClass: 'custom-modal',

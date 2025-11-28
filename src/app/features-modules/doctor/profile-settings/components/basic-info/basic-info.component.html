@@ -1,0 +1,106 @@
+<section class="profile-card">
+  <header class="profile-card__header">
+    <div>
+      <p class="profile-card__eyebrow">Identity</p>
+      <h2 class="profile-card__title">Basic Information</h2>
+      <p class="profile-card__subtitle">Keep your public profile details accurate for patients.</p>
+    </div>
+    <div class="profile-card__actions">
+      <button
+        type="button"
+        class="profile-btn profile-btn--primary"
+        (click)="submit()"
+        [disabled]="saving || form.invalid || !profile?.id"
+      >
+        {{ saving ? 'Saving...' : 'Save changes' }}
+      </button>
+    </div>
+  </header>
+
+  <form class="profile-form" [formGroup]="form">
+    <label class="profile-field-group">
+      <span>Title</span>
+      <select class="profile-field" formControlName="doctorTitle">
+        <option value="" disabled>Select title</option>
+        <option *ngFor="let option of titleOptions" [value]="option.value">
+          {{ option.name }}
+        </option>
+      </select>
+      <small class="profile-field__error" *ngIf="form.get('doctorTitle')?.invalid && form.get('doctorTitle')?.touched">
+        Doctor title is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>Full Name</span>
+      <input class="profile-field" type="text" formControlName="fullName" placeholder="Full name" />
+      <small class="profile-field__error" *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched">
+        Full name is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>Email</span>
+      <input class="profile-field" type="email" formControlName="email" placeholder="Email address" />
+      <small class="profile-field__error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+        Enter a valid email address.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>Mobile</span>
+      <input class="profile-field" type="tel" formControlName="mobileNo" placeholder="Mobile number" />
+      <small class="profile-field__error" *ngIf="form.get('mobileNo')?.invalid && form.get('mobileNo')?.touched">
+        Mobile number is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>City</span>
+      <input class="profile-field" type="text" formControlName="city" placeholder="City" />
+      <small class="profile-field__error" *ngIf="form.get('city')?.invalid && form.get('city')?.touched">
+        City is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>Country</span>
+      <input class="profile-field" type="text" formControlName="country" placeholder="Country" />
+      <small class="profile-field__error" *ngIf="form.get('country')?.invalid && form.get('country')?.touched">
+        Country is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group profile-field-group--full">
+      <span>Address</span>
+      <input class="profile-field" type="text" formControlName="address" placeholder="Street, area, hospital" />
+      <small class="profile-field__error" *ngIf="form.get('address')?.invalid && form.get('address')?.touched">
+        Address is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>BMDC Registration Expiry Date</span>
+      <input class="profile-field" type="date" formControlName="bmdcRegExpiryDate" />
+      <small class="profile-field__error" *ngIf="form.get('bmdcRegExpiryDate')?.invalid && form.get('bmdcRegExpiryDate')?.touched">
+        BMDC registration expiry date is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>Identity Number</span>
+      <input class="profile-field" type="text" formControlName="identityNumber" placeholder="Identity number" />
+      <small class="profile-field__error" *ngIf="form.get('identityNumber')?.invalid && form.get('identityNumber')?.touched">
+        Identity number is required.
+      </small>
+    </label>
+
+    <label class="profile-field-group">
+      <span>BMDC Registration No.</span>
+      <input class="profile-field" type="text" formControlName="bmdcRegNo" placeholder="BMDC no." />
+      <small class="profile-field__error" *ngIf="form.get('bmdcRegNo')?.invalid && form.get('bmdcRegNo')?.touched">
+        BMDC number is required.
+      </small>
+    </label>
+  </form>
+</section>

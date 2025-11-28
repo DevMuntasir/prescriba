@@ -12,15 +12,25 @@ export interface AppointmentPatientQuery {
   pageSize?: number;
 }
 
+
+export interface AppointmentListQuery {
+  pageNumber?: number;
+  pageSize?: number;
+  search?: string;
+  sessionId?: number;
+  scheduleId?: number;
+}
+
 export interface CreateAppointmentPayload {
   patientName: string;
   gender: string;
-  age: number;
+  age: string;
   phoneNumber: string;
   sessionId: number;
   bloodGroup: string;
   scheduleId: number;
   appointmentDate: string;
+  doctorProfileId: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -67,14 +77,40 @@ export class AppointmentService {
       );
   }
 
-  getAppointmentById(id: number): Observable<AppointmentDto> {
-    return this.http.get<AppointmentDto>(
-      `${this.prescriptionBaseUrl}/api/2025-20/appointment/get-by-id/${id}`
+  getAppointmentById(id: number): Observable<ApiResponse<AppointmentDto>> {
+    return this.http.get<ApiResponse<AppointmentDto>>(
+      `${this.prescriptionBaseUrl}/api/2025-20/appointment/get-by-id?id=${id}`
     );
   }
-  getAppointments(): Observable<ApiResponse<AppointmentDto[]>> {
+  getAppointments(
+    doctorProfileId: number,
+    query?: AppointmentListQuery
+  ): Observable<ApiResponse<AppointmentDto[]>> {
+    let params = new HttpParams().set('doctorId', String(doctorProfileId));
+
+    if (query?.pageNumber !== undefined) {
+      params = params.set('pageNumber', String(query.pageNumber));
+    }
+
+    if (query?.pageSize !== undefined) {
+      params = params.set('pageSize', String(query.pageSize));
+    }
+
+    if (query?.search) {
+      params = params.set('search', query.search);
+    }
+
+    if (query?.sessionId !== undefined) {
+      params = params.set('sessionId', String(query.sessionId));
+    }
+
+    if (query?.scheduleId !== undefined) {
+      params = params.set('scheduleId', String(query.scheduleId));
+    }
+
     return this.http.get<ApiResponse<AppointmentDto[]>>(
-      `${this.prescriptionBaseUrl}/api/2025-20/appointment/get-all`
+      `${this.prescriptionBaseUrl}/api/2025-20/appointment/appointment-get-by-doctorId`,
+      { params }
     );
   }
   createAppointment(
