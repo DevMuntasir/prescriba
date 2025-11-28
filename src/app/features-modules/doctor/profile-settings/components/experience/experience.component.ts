@@ -8,7 +8,6 @@ import {
 } from 'ngx-editor';
 
 import { FormsModule } from '@angular/forms';
-import { ColorPickerDirective } from 'ngx-color-picker';  // ✅ directive import
 
 @Component({
   selector: 'app-experience',
@@ -16,7 +15,6 @@ import { ColorPickerDirective } from 'ngx-color-picker';  // ✅ directive impor
   imports: [
     NgxEditorModule,
     FormsModule,
-    ColorPickerDirective,
 
   ],
   templateUrl: './experience.component.html',
