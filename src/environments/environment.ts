@@ -1,11 +1,8 @@
 export const serviceBaseUrl = 'http://localhost:3000';
 export const USER_SECRATE = 'prescriba@@2024';
 const apiUrl = 'https://swapi.prescriptoobd.com';
-export const authenticationApi =
-  'https://authapi.prescriptoobd.com';
-export const prescriptionApi =
-  'https://prescriptionapi.prescriptoobd.com';
-  
+export const authenticationApi = 'https://authapi.prescriptoobd.com';
+export const prescriptionApi = 'https://prescriptionapi.prescriptoobd.com';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDgGxETAbT-oRu_RewaNHeoEJGqU49hMyU",
@@ -16,7 +13,6 @@ const firebaseConfig = {
   appId: "1:302266124373:web:509f5caba085710b2cacdc",
   measurementId: "G-DDGD4G0L2T"
 };
-
 
 export const environment = {
   production: false,
