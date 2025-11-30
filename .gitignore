@@ -54,3 +54,5 @@ Thumbs.db
 /.vs/SoowGood_New_FrontEnd/v17/.wsuo
 /.vs/slnx.sqlite
 dist.zip
+
+.env
