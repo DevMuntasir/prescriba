@@ -1,6 +1,6 @@
-<div class="min-h-screen bg-brand-surface py-10">
-  <div class="max-w-6xl mx-auto space-y-8 px-4">
-    <header class="flex flex-wrap items-center justify-between gap-4">
+<div [ngClass]="{'min-h-screen bg-brand-surface py-10': !embedded, 'profile-card': embedded}">
+  <div [ngClass]="{'max-w-6xl mx-auto space-y-8 px-4': !embedded, 'space-y-6': embedded}">
+    <header class="flex flex-wrap items-center justify-between gap-4" *ngIf="!embedded; else embeddedHeader">
       <div class="space-y-2">
         <p class="text-sm uppercase tracking-[0.3em] text-brand-primary font-semibold">Hospitals & chambers</p>
         <h1 class="text-3xl font-bold text-slate-900">Manage your locations</h1>
@@ -25,7 +25,23 @@
       </div>
     </header>
 
-    <section class="bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50 p-8 space-y-5">
+    <ng-template #embeddedHeader>
+      <header class="profile-card__header">
+        <div>
+          <p class="profile-card__eyebrow">Locations</p>
+          <h2 class="profile-card__title">Hospitals & Chambers</h2>
+          <p class="profile-card__subtitle">Manage your consultation locations.</p>
+        </div>
+        <div class="profile-card__actions">
+          <button type="button" class="profile-btn profile-btn--primary" (click)="openForm()">
+            + Add Hospital
+          </button>
+        </div>
+      </header>
+    </ng-template>
+
+    <section
+      [ngClass]="{'bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50 p-8 space-y-5': !embedded, 'space-y-5': embedded}">
       <div *ngIf="loadError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
         {{ loadError }}
       </div>
@@ -41,7 +57,7 @@
             d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
         </svg>
         <p class="mt-3 text-sm font-medium text-brand-neutral">No hospitals added yet</p>
-        <p class="mt-1 text-xs text-brand-neutralSoft">Use the �New hospital� button to capture your first location.</p>
+        <p class="mt-1 text-xs text-brand-neutralSoft">Use the “New hospital” button to capture your first location.</p>
       </div>
 
       <div *ngIf="!isLoadingList && !loadError && hasChambers" class="space-y-4">

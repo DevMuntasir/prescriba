@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -20,6 +20,7 @@ import { DoctorScheduleBuilderComponent } from './schedule-builder/doctor-schedu
   styleUrls: ['./hospital.component.scss'],
 })
 export class HospitalComponent {
+  @Input() embedded = false;
   private readonly formBuilder = inject(FormBuilder);
   private readonly doctorChamberService = inject(DoctorChamberService);
   private readonly authService = inject(AuthService);

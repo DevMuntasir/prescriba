@@ -1,13 +1,8 @@
-<div
-  *ngIf="open"
-  class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-neutral/80 bg-opacity-70 backdrop-blur-sm px-4 py-8"
->
+<div *ngIf="open"
+  class="fixed inset-0 z-[100] flex items-center justify-center bg-brand-neutral/80 bg-opacity-70 backdrop-blur-sm px-4 py-8">
   <div
     class="onboarding-modal relative w-full max-w-4xl rounded-3xl bg-white p-8 shadow-[0_45px_85px_rgba(6,180,139,0.18)]"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="onboarding-modal-title"
-  >
+    role="dialog" aria-modal="true" aria-labelledby="onboarding-modal-title">
     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 id="onboarding-modal-title" class="text-xl font-semibold text-brand-primary">
@@ -25,32 +20,25 @@
     <div class="mt-6 flex flex-wrap items-center gap-3">
       <ng-container *ngFor="let label of steps; let idx = index">
         <div class="flex items-center gap-2">
-          <span
-            class="grid h-8 w-8 place-items-center rounded-full text-sm font-semibold"
-            [ngClass]="{
+          <span class="grid h-8 w-8 place-items-center rounded-full text-sm font-semibold" [ngClass]="{
               'bg-brand-primary text-white': idx <= currentStep,
               'bg-brand-neutral/10 text-brand-neutral/70': idx > currentStep
-            }"
-          >
+            }">
             {{ idx + 1 }}
           </span>
-          <span
-            class="text-sm font-medium"
-            [ngClass]="{ 'text-brand-primary': idx === currentStep, 'text-brand-neutral/70': idx !== currentStep }"
-          >
+          <span class="text-sm font-medium"
+            [ngClass]="{ 'text-brand-primary': idx === currentStep, 'text-brand-neutral/70': idx !== currentStep }">
             {{ label }}
           </span>
         </div>
-        <span
-          *ngIf="idx < steps.length - 1"
-          class="hidden h-px flex-1 bg-brand-neutral/20 sm:block"
-        ></span>
+        <span *ngIf="idx < steps.length - 1" class="hidden h-px flex-1 bg-brand-neutral/20 sm:block"></span>
       </ng-container>
     </div>
 
     <form class="mt-8 space-y-6" [formGroup]="form" (ngSubmit)="submit()">
       <ng-container [ngSwitch]="currentStep">
-        <section *ngSwitchCase="0" formGroupName="basicInfo" class="rounded-3xl border border-brand-primary/10 bg-brand-surface/40 p-6">
+        <section *ngSwitchCase="0" formGroupName="basicInfo"
+          class="rounded-3xl border border-brand-primary/10 bg-brand-surface/40 p-6">
           <div class="mb-6 flex items-center gap-3">
             <span class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary">
               <span class="text-lg font-semibold">ID</span>
@@ -61,68 +49,38 @@
             </div>
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
-            <ng-container *ngFor="let field of ['bmdcRegNo','bmdcRegExpiryDate','address','city','zipCode','country','identityNumber','specialityName']">
+            <ng-container
+              *ngFor="let field of ['bmdcRegNo','bmdcRegExpiryDate','address','city','zipCode','country','identityNumber','specialityName']">
               <div [ngSwitch]="field">
                 <label class="mb-2 block text-sm font-medium text-brand-neutral">{{ basicInfoLabels[field] }}</label>
                 <ng-container [ngSwitch]="field">
-                  <input
-                    *ngSwitchCase="'bmdcRegNo'"
-                    type="text"
-                    placeholder="Enter your BMDC number"
+                  <input *ngSwitchCase="'bmdcRegNo'" type="text" placeholder="Enter your BMDC number"
                     formControlName="bmdcRegNo"
-                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <input
-                    *ngSwitchCase="'bmdcRegExpiryDate'"
-                    type="date"
-                    formControlName="bmdcRegExpiryDate"
-                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <input
-                    *ngSwitchCase="'address'"
-                    type="text"
-                    placeholder="Runway Road Dhaka"
-                    formControlName="address"
-                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <input
-                    *ngSwitchCase="'city'"
-                    type="text"
-                    placeholder="Enter city"
-                    formControlName="city"
-                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <input
-                    *ngSwitchCase="'zipCode'"
-                    type="text"
-                    placeholder="1216"
-                    formControlName="zipCode"
-                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <select
-                    *ngSwitchCase="'country'"
-                    formControlName="country"
-                    class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  >
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                  <input *ngSwitchCase="'bmdcRegExpiryDate'" type="date" formControlName="bmdcRegExpiryDate"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                  <input *ngSwitchCase="'address'" type="text" placeholder="Runway Road Dhaka" formControlName="address"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                  <input *ngSwitchCase="'city'" type="text" placeholder="Enter city" formControlName="city"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                  <input *ngSwitchCase="'zipCode'" type="text" placeholder="1216" formControlName="zipCode"
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                  <select *ngSwitchCase="'country'" formControlName="country"
+                    class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
                     <option *ngFor="let country of countries" [ngValue]="country">{{ country }}</option>
                   </select>
-                  <input
-                    *ngSwitchCase="'identityNumber'"
-                    type="text"
-                    placeholder="Identity Number (Passport/NID)"
+                  <input *ngSwitchCase="'identityNumber'" type="text" placeholder="Identity Number (Passport/NID)"
                     formControlName="identityNumber"
-                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <select
-                    *ngSwitchDefault
-                    formControlName="specialityName"
-                    class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  >
+                    class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                  <select *ngSwitchDefault formControlName="specialityName"
+                    class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
                     <option value="" disabled>Select speciality</option>
-                    <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality">{{ speciality.specialityName }}</option>
+                    <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality">{{
+                      speciality.specialityName }}</option>
                   </select>
                 </ng-container>
-                <p class="mt-1 text-xs text-red-500" *ngIf="basicInfoGroup.get(field)?.touched && basicInfoGroup.get(field)?.invalid">
+                <p class="mt-1 text-xs text-red-500"
+                  *ngIf="basicInfoGroup.get(field)?.touched && basicInfoGroup.get(field)?.invalid">
                   {{ basicInfoLabels[field] }} is required.
                 </p>
               </div>
@@ -134,7 +92,8 @@
           <div class="rounded-3xl border border-brand-primary/10 bg-white p-6 shadow-sm">
             <div class="mb-5 flex flex-wrap items-center gap-3">
               <div class="flex items-center gap-3">
-                <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary">??</span>
+                <span
+                  class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary">??</span>
                 <div>
                   <p class="text-sm font-semibold text-brand-neutral">Medical educational info</p>
                   <p class="text-xs text-brand-neutral/60">List each degree so patients can trust your expertise.</p>
@@ -146,14 +105,12 @@
             </div>
 
             <div formArrayName="degrees" class="space-y-4">
-              <div
-                *ngFor="let degree of degreesArray.controls; let idx = index"
-                [formGroupName]="idx"
-                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5"
-              >
+              <div *ngFor="let degree of degreesArray.controls; let idx = index" [formGroupName]="idx"
+                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5">
                 <div class="flex flex-wrap items-center gap-3">
                   <div class="flex flex-1 items-center gap-3">
-                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary text-white text-sm font-semibold">
+                    <span
+                      class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary text-white text-sm font-semibold">
                       {{ idx + 1 }}
                     </span>
                     <div>
@@ -161,76 +118,70 @@
                       <p class="text-xs text-brand-neutral/60">Provide the credential details</p>
                     </div>
                   </div>
-                  <button
-                    type="button"
+                  <button type="button"
                     class="text-xs font-semibold text-brand-neutral/60 transition hover:text-red-500"
-                    *ngIf="degreesArray.length > 1"
-                    (click)="removeDegree(idx)"
-                  >
+                    *ngIf="degreesArray.length > 1" (click)="removeDegree(idx)">
                     Remove
                   </button>
                 </div>
 
                 <div class="mt-4 grid gap-4 md:grid-cols-2">
                   <div>
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Degree</label>
-                    <select
-                      formControlName="degreeId"
-                      (change)="onDegreeSelected(idx)"
-                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    >
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Degree</label>
+                    <select formControlName="degreeId" (change)="onDegreeSelected(idx)"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
                       <option value="" disabled>Select Degree</option>
-                      <option *ngFor="let degree of degreeOptions" [ngValue]="degree?.id">{{ degree?.degreeName }}</option>
+                      <option *ngFor="let degree of degreeOptions" [ngValue]="degree?.id">{{ degree?.degreeName }}
+                      </option>
                     </select>
-                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('degreeId')?.touched && degree.get('degreeId')?.invalid">
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="degree.get('degreeId')?.touched && degree.get('degreeId')?.invalid">
                       Degree is required.
                     </p>
                   </div>
                   <div>
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Passing Year</label>
-                    <input
-                      type="number"
-                      placeholder="2000"
-                      formControlName="passingYear"
-                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    />
-                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('passingYear')?.touched && degree.get('passingYear')?.invalid">
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Passing
+                      Year</label>
+                    <input type="number" placeholder="2000" formControlName="passingYear"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="degree.get('passingYear')?.touched && degree.get('passingYear')?.invalid">
                       Enter a valid year (e.g. 2000).
                     </p>
                   </div>
                   <div>
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute Name</label>
-                    <input
-                      type="text"
-                      placeholder="Institute Name"
-                      formControlName="instituteName"
-                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    />
-                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('instituteName')?.touched && degree.get('instituteName')?.invalid">
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute
+                      Name</label>
+                    <input type="text" placeholder="Institute Name" formControlName="instituteName"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="degree.get('instituteName')?.touched && degree.get('instituteName')?.invalid">
                       Institute name is required.
                     </p>
                   </div>
                   <div>
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute City</label>
-                    <input
-                      type="text"
-                      placeholder="City"
-                      formControlName="instituteCity"
-                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    />
-                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('instituteCity')?.touched && degree.get('instituteCity')?.invalid">
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute
+                      City</label>
+                    <input type="text" placeholder="City" formControlName="instituteCity"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="degree.get('instituteCity')?.touched && degree.get('instituteCity')?.invalid">
                       City is required.
                     </p>
                   </div>
                   <div>
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute Country</label>
-                    <select
-                      formControlName="instituteCountry"
-                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    >
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Institute
+                      Country</label>
+                    <select formControlName="instituteCountry"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
                       <option *ngFor="let country of countries" [ngValue]="country">{{ country }}</option>
                     </select>
-                    <p class="mt-1 text-xs text-red-500" *ngIf="degree.get('instituteCountry')?.touched && degree.get('instituteCountry')?.invalid">
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="degree.get('instituteCountry')?.touched && degree.get('instituteCountry')?.invalid">
                       Country is required.
                     </p>
                   </div>
@@ -238,11 +189,9 @@
               </div>
             </div>
 
-            <button
-              type="button"
+            <button type="button"
               class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:border-brand-primary hover:bg-brand-primary/5"
-              (click)="addDegree()"
-            >
+              (click)="addDegree()">
               + Add Degree
             </button>
           </div>
@@ -262,14 +211,12 @@
             </div>
 
             <div formArrayName="specializations" class="space-y-4">
-              <div
-                *ngFor="let specialization of specializationsArray.controls; let idx = index"
-                [formGroupName]="idx"
-                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5"
-              >
+              <div *ngFor="let specialization of specializationsArray.controls; let idx = index" [formGroupName]="idx"
+                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5">
                 <div class="flex flex-wrap items-center gap-3">
                   <div class="flex flex-1 items-center gap-3">
-                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary text-sm font-semibold">
+                    <span
+                      class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary text-sm font-semibold">
                       {{ idx + 1 }}
                     </span>
                     <div>
@@ -277,63 +224,285 @@
                       <p class="text-xs text-brand-neutral/60">Document your expertise</p>
                     </div>
                   </div>
-                  <button
-                    type="button"
+                  <button type="button"
                     class="text-xs font-semibold text-brand-neutral/60 transition hover:text-red-500"
-                    *ngIf="specializationsArray.length > 1"
-                    (click)="removeSpecialization(idx)"
-                  >
+                    *ngIf="specializationsArray.length > 1" (click)="removeSpecialization(idx)">
                     Remove
                   </button>
                 </div>
 
                 <div class="mt-4 grid gap-4 md:grid-cols-3">
                   <div class="md:col-span-1">
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Speciality</label>
-                    <select
-                      formControlName="specialityId"
-                      (change)="onSpecialitySelected(idx)"
-                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    >
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Speciality</label>
+                    <select formControlName="specialityId" (change)="onSpecialitySelected(idx)"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
                       <option value="" disabled>Select speciality</option>
-   
-                      <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality?.id">{{ speciality?.specialityName }}</option>
+
+                      <option *ngFor="let speciality of specialityOptions" [ngValue]="speciality?.id">{{
+                        speciality?.specialityName }}</option>
                     </select>
-                    <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specialityId')?.touched && specialization.get('specialityId')?.invalid">
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="specialization.get('specialityId')?.touched && specialization.get('specialityId')?.invalid">
                       Speciality is required.
                     </p>
                   </div>
                   <div class="md:col-span-1">
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Department</label>
-                    <input
-                      type="text"
-                      placeholder="Department"
-                      formControlName="specializationName"
-                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    />
-                    <p class="mt-1 text-xs text-red-500" *ngIf="specialization.get('specializationName')?.touched && specialization.get('specializationName')?.invalid">
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Department</label>
+                    <input type="text" placeholder="Department" formControlName="specializationName"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="specialization.get('specializationName')?.touched && specialization.get('specializationName')?.invalid">
                       Department is required.
                     </p>
                   </div>
                   <div class="md:col-span-1">
-                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Document Name</label>
-                    <input
-                      type="text"
-                      placeholder="Document Name"
-                      formControlName="documentName"
-                      class="w-full rounded-xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                    />
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Document
+                      Name</label>
+                    <input type="text" placeholder="Document Name" formControlName="documentName"
+                      class="w-full rounded-xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <button
-              type="button"
+            <button type="button"
               class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:border-brand-primary hover:bg-brand-primary/5"
-              (click)="addSpecialization()"
-            >
+              (click)="addSpecialization()">
               + Add Specialization
+            </button>
+          </div>
+        </section>
+
+        <section *ngSwitchCase="2" class="space-y-6">
+          <div class="rounded-3xl border border-brand-primary/10 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary">🏥</span>
+                <div>
+                  <p class="text-sm font-semibold text-brand-neutral">Hospital & Chamber info</p>
+                  <p class="text-xs text-brand-neutral/60">Add your consultation locations.</p>
+                </div>
+              </div>
+              <span class="rounded-full bg-brand-primary/5 px-3 py-1 text-xs font-semibold text-brand-primary">
+                {{ chambersArray.length }} location{{ chambersArray.length > 1 ? 's' : '' }}
+              </span>
+            </div>
+
+            <div formArrayName="chambers" class="space-y-4">
+              <div *ngFor="let chamber of chambersArray.controls; let idx = index" [formGroupName]="idx"
+                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5">
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex flex-1 items-center gap-3">
+                    <span
+                      class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary text-white text-sm font-semibold">
+                      {{ idx + 1 }}
+                    </span>
+                    <div>
+                      <p class="text-sm font-semibold text-brand-neutral">Location {{ idx + 1 }}</p>
+                      <p class="text-xs text-brand-neutral/60">Provide hospital/chamber details</p>
+                    </div>
+                  </div>
+                  <button type="button"
+                    class="text-xs font-semibold text-brand-neutral/60 transition hover:text-red-500"
+                    *ngIf="chambersArray.length > 1" (click)="removeChamber(idx)">
+                    Remove
+                  </button>
+                </div>
+
+                <div class="mt-4 grid gap-4 md:grid-cols-2">
+                  <div class="md:col-span-2">
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Hospital/Chamber
+                      Name</label>
+                    <input type="text" placeholder="e.g. Apollo Hospitals, Dhanmondi" formControlName="chamberName"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="chamber.get('chamberName')?.touched && chamber.get('chamberName')?.invalid">
+                      Chamber name is required.
+                    </p>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Street
+                      Address</label>
+                    <input type="text" placeholder="Building number, street name" formControlName="address"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="chamber.get('address')?.touched && chamber.get('address')?.invalid">
+                      Address is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">City</label>
+                    <input type="text" placeholder="City name" formControlName="city"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="chamber.get('city')?.touched && chamber.get('city')?.invalid">
+                      City is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Zip
+                      Code</label>
+                    <input type="text" placeholder="Postal code" formControlName="zipCode"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="chamber.get('zipCode')?.touched && chamber.get('zipCode')?.invalid">
+                      Zip code is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Country</label>
+                    <select formControlName="country"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
+                      <option *ngFor="let country of countries" [ngValue]="country">{{ country }}</option>
+                    </select>
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="chamber.get('country')?.touched && chamber.get('country')?.invalid">
+                      Country is required.
+                    </p>
+                  </div>
+                  <div class="flex items-center">
+                    <label class="inline-flex items-center gap-2 text-xs font-medium text-brand-neutral">
+                      <input type="checkbox" formControlName="isVisibleOnPrescription"
+                        class="h-4 w-4 rounded border-brand-primary/20 text-brand-primary focus:ring-brand-primary" />
+                      Show on prescription
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button"
+              class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:border-brand-primary hover:bg-brand-primary/5"
+              (click)="addChamber()">
+              + Add Hospital/Chamber
+            </button>
+          </div>
+        </section>
+
+        <section *ngSwitchCase="3" class="space-y-6">
+          <div class="rounded-3xl border border-brand-primary/10 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-100 text-brand-primary">📅</span>
+                <div>
+                  <p class="text-sm font-semibold text-brand-neutral">Schedule info</p>
+                  <p class="text-xs text-brand-neutral/60">Set up your consultation schedules.</p>
+                </div>
+              </div>
+              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-brand-primary">
+                {{ schedulesArray.length }} schedule{{ schedulesArray.length > 1 ? 's' : '' }}
+              </span>
+            </div>
+
+            <div formArrayName="schedules" class="space-y-4">
+              <div *ngFor="let schedule of schedulesArray.controls; let idx = index" [formGroupName]="idx"
+                class="rounded-2xl border border-brand-primary/15 bg-brand-surface/60 p-5">
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex flex-1 items-center gap-3">
+                    <span
+                      class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary text-sm font-semibold">
+                      {{ idx + 1 }}
+                    </span>
+                    <div>
+                      <p class="text-sm font-semibold text-brand-neutral">Schedule {{ idx + 1 }}</p>
+                      <p class="text-xs text-brand-neutral/60">Configure consultation timing</p>
+                    </div>
+                  </div>
+                  <button type="button"
+                    class="text-xs font-semibold text-brand-neutral/60 transition hover:text-red-500"
+                    *ngIf="schedulesArray.length > 1" (click)="removeSchedule(idx)">
+                    Remove
+                  </button>
+                </div>
+
+                <div class="mt-4 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label
+                      class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Chamber/Hospital</label>
+                    <select formControlName="chamberIndex"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
+                      <option *ngFor="let chamber of chambersArray.controls; let i = index" [ngValue]="i">
+                        {{ chamber.get('chamberName')?.value || 'Location ' + (i + 1) }}
+                      </option>
+                    </select>
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="schedule.get('chamberIndex')?.touched && schedule.get('chamberIndex')?.invalid">
+                      Chamber selection is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Day of
+                      Week</label>
+                    <select formControlName="dayOfWeek"
+                      class="w-full rounded-xl border border-brand-primary/20 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20">
+                      <option value="" disabled>Select day</option>
+                      <option value="saturday">Saturday</option>
+                      <option value="sunday">Sunday</option>
+                      <option value="monday">Monday</option>
+                      <option value="tuesday">Tuesday</option>
+                      <option value="wednesday">Wednesday</option>
+                      <option value="thursday">Thursday</option>
+                      <option value="friday">Friday</option>
+                    </select>
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="schedule.get('dayOfWeek')?.touched && schedule.get('dayOfWeek')?.invalid">
+                      Day of week is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Start
+                      Time</label>
+                    <input type="time" formControlName="startTime"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="schedule.get('startTime')?.touched && schedule.get('startTime')?.invalid">
+                      Start time is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">End
+                      Time</label>
+                    <input type="time" formControlName="endTime"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="schedule.get('endTime')?.touched && schedule.get('endTime')?.invalid">
+                      End time is required.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Slot
+                      Duration (minutes)</label>
+                    <input type="number" placeholder="30" formControlName="slotDuration" min="5"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="schedule.get('slotDuration')?.touched && schedule.get('slotDuration')?.invalid">
+                      Slot duration must be at least 5 minutes.
+                    </p>
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-xs font-medium uppercase tracking-wide text-brand-neutral/60">Max
+                      Patients per Slot</label>
+                    <input type="number" placeholder="1" formControlName="maxPatients" min="1"
+                      class="w-full rounded-xl border border-brand-primary/20 px-4 py-3 text-sm outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20" />
+                    <p class="mt-1 text-xs text-red-500"
+                      *ngIf="schedule.get('maxPatients')?.touched && schedule.get('maxPatients')?.invalid">
+                      At least 1 patient per slot is required.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button"
+              class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-primary/40 px-4 py-3 text-sm font-semibold text-brand-primary transition hover:border-brand-primary hover:bg-brand-primary/5"
+              (click)="addSchedule()">
+              + Add Schedule
             </button>
           </div>
         </section>
@@ -345,29 +514,19 @@
         </p>
 
         <div class="flex gap-3">
-          <button
-            type="button"
+          <button type="button"
             class="rounded-xl border border-brand-neutral/30 px-5 py-2 text-sm font-medium text-brand-neutral transition hover:border-brand-neutral/60"
-            (click)="goToPreviousStep()"
-            [disabled]="currentStep === 0 || saving"
-          >
+            (click)="goToPreviousStep()" [disabled]="currentStep === 0 || saving">
             Back
           </button>
-          <button
-            *ngIf="currentStep < steps.length - 1"
-            type="button"
+          <button *ngIf="currentStep < steps.length - 1" type="button"
             class="rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
-            (click)="goToNextStep()"
-            [disabled]="saving"
-          >
+            (click)="goToNextStep()" [disabled]="saving">
             Continue
           </button>
-          <button
-            *ngIf="currentStep === steps.length - 1"
-            type="submit"
+          <button *ngIf="currentStep === steps.length - 1" type="submit"
             class="flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
-            [disabled]="saving"
-          >
+            [disabled]="saving">
             <ng-container *ngIf="!saving; else savingTpl">Save profile</ng-container>
           </button>
         </div>

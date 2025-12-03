@@ -1,17 +1,17 @@
-export const serviceBaseUrl = 'http://localhost:3000';
-export const USER_SECRATE = 'prescriba@@2024';
-const apiUrl = 'https://swapi.prescriptoobd.com';
-export const authenticationApi = 'https://authapi.prescriptoobd.com';
-export const prescriptionApi = 'https://prescriptionapi.prescriptoobd.com';
+export const serviceBaseUrl = (window as any).env.serviceBaseUrl;
+export const USER_SECRATE = (window as any).env.USER_SECRATE;
+const apiUrl = (window as any).env.apiUrl;
+export const authenticationApi = (window as any).env.authenticationApi;
+export const prescriptionApi = (window as any).env.prescriptionApi;
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgGxETAbT-oRu_RewaNHeoEJGqU49hMyU",
-  authDomain: "prescriptobd-dac94.firebaseapp.com",
-  projectId: "prescriptobd-dac94",
-  storageBucket: "prescriptobd-dac94.firebasestorage.app",
-  messagingSenderId: "302266124373",
-  appId: "1:302266124373:web:509f5caba085710b2cacdc",
-  measurementId: "G-DDGD4G0L2T"
+  apiKey: (window as any).env.firebaseApiKey,
+  authDomain: (window as any).env.firebaseAuthDomain,
+  projectId: (window as any).env.firebaseProjectId,
+  storageBucket: (window as any).env.firebaseStorageBucket,
+  messagingSenderId: (window as any).env.firebaseMessagingSenderId,
+  appId: (window as any).env.firebaseAppId,
+  measurementId: (window as any).env.firebaseMeasurementId
 };
 
 export const environment = {
@@ -39,5 +39,5 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
-  geminiApiKey: 'AIzaSyC6ncGtjROXQPHeGXNVY6WJps1hxGzJsHw',
+  geminiApiKey: (window as any).env.geminiApiKey,
 } as const;

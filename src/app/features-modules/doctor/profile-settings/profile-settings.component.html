@@ -14,28 +14,21 @@
   <div *ngIf="!loading && error" class="state state--error">{{ error }}</div>
 
   <ng-container *ngIf="doctorProfile && !loading">
-    <app-doctor-basic-info
-      [profile]="doctorProfile"
-      (updated)="handleProfileUpdated()"
-    ></app-doctor-basic-info>
+    <app-doctor-basic-info [profile]="doctorProfile" (updated)="handleProfileUpdated()"></app-doctor-basic-info>
 
-    <app-doctor-degree-details
-      [doctorId]="doctorProfile.id ?? null"
-      [degrees]="doctorProfile.degrees"
-      (updated)="handleProfileUpdated()"
-    ></app-doctor-degree-details>
+    <app-doctor-degree-details [doctorId]="doctorProfile.id ?? null" [degrees]="doctorProfile.degrees"
+      (updated)="handleProfileUpdated()"></app-doctor-degree-details>
 
-    <app-doctor-specializations
-      [doctorId]="doctorProfile.id ?? null"
+    <app-doctor-specializations [doctorId]="doctorProfile.id ?? null"
       [specializations]="doctorProfile.doctorSpecialization"
-      (updated)="handleProfileUpdated()"
-    ></app-doctor-specializations>
+      (updated)="handleProfileUpdated()"></app-doctor-specializations>
 
-    <app-doctor-documents
-      [doctorId]="doctorProfile.id ?? null"
-      (updated)="handleProfileUpdated()"
-    ></app-doctor-documents>
+    <app-doctor-documents [doctorId]="doctorProfile.id ?? null"
+      (updated)="handleProfileUpdated()"></app-doctor-documents>
 
-<app-experience (saveDoc)="saveExperience($event)" [getDocs]="experience"></app-experience>
+    <app-experience (saveDoc)="saveExperience($event)" [getDocs]="experience"></app-experience>
+
+    <app-hospital [embedded]="true"></app-hospital>
+    <app-schedule [embedded]="true"></app-schedule>
   </ng-container>
 </section>

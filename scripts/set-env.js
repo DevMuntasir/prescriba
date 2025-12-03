@@ -4,57 +4,32 @@ const dotenv = require('dotenv');
 // Load environment variables from .env file
 dotenv.config();
 
-const targetPath = './src/environments/environment.ts';
+const targetPath = './src/assets/env.js';
 
-const envConfigFile = `export const serviceBaseUrl = '${process.env.SERVICE_BASE_URL}';
-export const USER_SECRATE = '${process.env.USER_SECRATE}';
-const apiUrl = '${process.env.API_URL}';
-export const authenticationApi = '${process.env.AUTH_API_URL}';
-export const prescriptionApi = '${process.env.PRESCRIPTION_API_URL}';
+const envConfigFile = `(function(window) {
+  window.env = window.env || {};
 
-const firebaseConfig = {
-  apiKey: "${process.env.FIREBASE_API_KEY}",
-  authDomain: "${process.env.FIREBASE_AUTH_DOMAIN}",
-  projectId: "${process.env.FIREBASE_PROJECT_ID}",
-  storageBucket: "${process.env.FIREBASE_STORAGE_BUCKET}",
-  messagingSenderId: "${process.env.FIREBASE_MESSAGING_SENDER_ID}",
-  appId: "${process.env.FIREBASE_APP_ID}",
-  measurementId: "${process.env.FIREBASE_MEASUREMENT_ID}"
-};
-
-export const environment = {
-  production: false,
-  application: {
-    name: 'prescriba',
-    logoUrl: '',
-  },
-  apis: {
-    default: {
-      url: apiUrl,
-      rootNamespace: 'prescriba',
-    },
-  },
-  localization: {
-    defaultResourceName: 'prescriba',
-    languages: [
-      {
-        cultureName: 'en',
-        uiCultureName: 'en',
-        displayName: 'English',
-        flagIcon: 'famfamfam-flags gb',
-        isDefault: true,
-      },
-    ],
-  },
-  firebase: firebaseConfig,
-  geminiApiKey: '${process.env.GEMINI_API_KEY}',
-} as const;
+  // Environment variables
+  window["env"]["serviceBaseUrl"] = "${process.env.SERVICE_BASE_URL}";
+  window["env"]["USER_SECRATE"] = "${process.env.USER_SECRATE}";
+  window["env"]["apiUrl"] = "${process.env.API_URL}";
+  window["env"]["authenticationApi"] = "${process.env.AUTH_API_URL}";
+  window["env"]["prescriptionApi"] = "${process.env.PRESCRIPTION_API_URL}";
+  window["env"]["firebaseApiKey"] = "${process.env.FIREBASE_API_KEY}";
+  window["env"]["firebaseAuthDomain"] = "${process.env.FIREBASE_AUTH_DOMAIN}";
+  window["env"]["firebaseProjectId"] = "${process.env.FIREBASE_PROJECT_ID}";
+  window["env"]["firebaseStorageBucket"] = "${process.env.FIREBASE_STORAGE_BUCKET}";
+  window["env"]["firebaseMessagingSenderId"] = "${process.env.FIREBASE_MESSAGING_SENDER_ID}";
+  window["env"]["firebaseAppId"] = "${process.env.FIREBASE_APP_ID}";
+  window["env"]["firebaseMeasurementId"] = "${process.env.FIREBASE_MEASUREMENT_ID}";
+  window["env"]["geminiApiKey"] = "${process.env.GEMINI_API_KEY}";
+})(this);
 `;
 
 fs.writeFile(targetPath, envConfigFile, function (err) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log(`Output generated at ${targetPath}`);
-    }
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(`Output generated at ${targetPath}`);
+  }
 });

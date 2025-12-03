@@ -13,6 +13,8 @@ import {
   DoctorDegreeService,
   DoctorProfileService,
   DoctorSpecializationService,
+  DoctorChamberService,
+  DoctorScheduleService,
 } from 'src/app/api/services';
 import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { TosterService } from 'src/app/shared/services/toster.service';
@@ -28,12 +30,18 @@ export class DashboardComponent implements OnInit {
   private doctorProfileService = inject(DoctorProfileService);
   private doctorDegreeService = inject(DoctorDegreeService);
   private doctorSpecializationService = inject(DoctorSpecializationService);
+  private doctorChamberService = inject(DoctorChamberService);
+  private doctorScheduleService = inject(DoctorScheduleService);
   private toaster = inject(TosterService);
 
   authenticatedUserDetails: DoctorProfileDto = {} as DoctorProfileDto;
   showProfileOnboarding = false;
   savingProfile = false;
   isInitialLoading = true;
+
+  // Temporary storage for chambers and schedules from onboarding
+  private pendingChambers: any[] = [];
+  private pendingSchedules: any[] = [];
 
   ngOnInit(): void {
     this.userStateService.authenticateUserInfo.subscribe((res) => {
@@ -93,6 +101,29 @@ export class DashboardComponent implements OnInit {
             ),
           ]).pipe(map(() => updatedProfileId));
         }),
+        switchMap((id) => {
+          // Create chambers and schedules if they exist
+          const requests: Observable<unknown>[] = [];
+
+          if (this.pendingChambers.length > 0) {
+            this.pendingChambers.forEach(chamber => {
+              requests.push(this.doctorChamberService.create({
+                ...chamber,
+                doctorProfileId: id
+              }));
+            });
+          }
+
+          if (this.pendingSchedules.length > 0) {
+            // We need to wait for chambers to be created first to get their IDs
+            // For now, we'll skip schedule creation in onboarding
+            // Schedules require chamber IDs which we don't have yet
+          }
+
+          return requests.length > 0
+            ? forkJoin(requests).pipe(map(() => id))
+            : of(id);
+        }),
         switchMap((id) => this.doctorProfileService.get(id))
       )
       .subscribe({
@@ -103,6 +134,11 @@ export class DashboardComponent implements OnInit {
 
           this.authenticatedUserDetails = profile;
           this.userStateService.sendData(profile);
+
+          // Clear pending data
+          this.pendingChambers = [];
+          this.pendingSchedules = [];
+
           this.toaster.customToast('Profile updated successfully', 'success');
         },
         error: (error) => {
@@ -113,6 +149,14 @@ export class DashboardComponent implements OnInit {
           );
         },
       });
+  }
+
+  handleChambersCreation(chambers: any[]): void {
+    this.pendingChambers = chambers;
+  }
+
+  handleSchedulesCreation(schedules: any[]): void {
+    this.pendingSchedules = schedules;
   }
 
   private syncDegrees(
@@ -209,7 +253,7 @@ export class DashboardComponent implements OnInit {
       return true;
     }
 
-    const isProfileStepCompleted = profile.profileStep >= 3 ? true : false;
+    const isProfileStepCompleted = profile.profileStep >= 5 ? true : false;
 
     return !isProfileStepCompleted;
   }
