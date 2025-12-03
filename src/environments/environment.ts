@@ -39,5 +39,7 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
+  apiBaseUrl: apiUrl,
+  useBackendAi: false,
   geminiApiKey: 'AIzaSyC6ncGtjROXQPHeGXNVY6WJps1hxGzJsHw',
 } as const;

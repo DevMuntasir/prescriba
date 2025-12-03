@@ -40,4 +40,7 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
+  apiBaseUrl: apiUrl,
+  useBackendAi: true,
+  geminiApiKey: '',
 } as const;

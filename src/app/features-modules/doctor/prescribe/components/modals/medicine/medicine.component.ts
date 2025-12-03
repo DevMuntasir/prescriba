@@ -28,10 +28,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   debounceTime,
   distinctUntilChanged,
+  finalize,
   map,
   Observable,
+  of,
   startWith,
   switchMap,
+  BehaviorSubject,
+  combineLatest,
+  catchError,
 } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { MedicineService } from '../../../services/medicine.service';
@@ -41,6 +46,11 @@ import { BinComponent } from '../../shared/dynamic-modal/icons/bin/bin.component
 import { SkeltonComponent } from '../../others/skelton/skelton.component';
 import { TosterService } from 'src/app/shared/services/toster.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import {
+  AiSuggestionService,
+  AiSuggestedItem,
+} from '../../../services/ai-suggestion.service';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-medicine',
@@ -54,6 +64,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
     MatIconModule,
     MatTooltipModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatListModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
@@ -71,6 +82,7 @@ export class MedicineComponent {
   private PrescriptionService = inject(PrescriptionService);
   private TosterService = inject(TosterService);
   private NormalAuth = inject(AuthService);
+  private aiSuggestionService = inject(AiSuggestionService);
   mealCombinations = ['1+1+0', '1+0+1', '0+1+1'];
   searchControl = new FormControl('');
   selectedMedicines: Medicine[] = [];
@@ -89,12 +101,18 @@ export class MedicineComponent {
     isSkelton: false,
     noDataFound: false,
   };
+  suggestionMode: 'search' | 'context' = 'search';
+  private suggestionMode$ = new BehaviorSubject<'search' | 'context'>(
+    this.suggestionMode
+  );
   filteredMedicines$!: Observable<
     {
       label: string;
       value: number;
     }[]
   >;
+  aiSuggestions$!: Observable<AiSuggestedItem[]>;
+  aiLoading = false;
 
   constructor(public dialogRef: MatDialogRef<MedicineComponent>) {}
   ngOnInit(): void {
@@ -106,18 +124,57 @@ export class MedicineComponent {
     this.MedicineService.getAllMedicines().subscribe((res) => {
       console.log(res);
     });
-    this.filteredMedicines$ = this.searchControl.valueChanges.pipe(
-      startWith(''),
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((value) => {
+    this.filteredMedicines$ = combineLatest([
+      this.suggestionMode$,
+      this.searchControl.valueChanges.pipe(
+        startWith(''),
+        debounceTime(300),
+        distinctUntilChanged()
+      ),
+    ]).pipe(
+      switchMap(([mode, value]) => {
+        if (mode !== 'search') {
+          return of([]);
+        }
         return this.filter(value || '');
+      })
+    );
+
+    this.aiSuggestions$ = combineLatest([
+      this.suggestionMode$,
+      this.searchControl.valueChanges.pipe(
+        startWith(''),
+        debounceTime(300),
+        distinctUntilChanged()
+      ),
+    ]).pipe(
+      switchMap(([mode, query]) => {
+        if (mode !== 'context') {
+          this.aiLoading = false;
+          return of([]);
+        }
+
+        this.aiLoading = true;
+        return this.aiSuggestionService
+          .suggest({
+            query: query || '',
+            context: this.buildAiContext(),
+          })
+          .pipe(
+            catchError(() => of([])),
+            finalize(() => (this.aiLoading = false))
+          );
       })
     );
 
     this.selectedMedicines = JSON.parse(JSON.stringify(this.data));
   }
   @ViewChildren('durationInput') durationInput!: QueryList<ElementRef>;
+
+  setSuggestionMode(mode: 'search' | 'context') {
+    this.suggestionMode = mode;
+    this.suggestionMode$.next(mode);
+  }
   onselect(diagnosis: MatAutocompleteSelectedEvent) {
     setTimeout(() => {
       const lastInput = this.durationInput.last;
@@ -215,6 +272,34 @@ export class MedicineComponent {
     }
   }
 
+  addAiSuggestion(suggestion: AiSuggestedItem): void {
+    const hasId = suggestion.value
+      ? this.selectedMedicines.some((c) => c.id === suggestion.value)
+      : this.selectedMedicines.some(
+          (c) => c.name.toLowerCase() === suggestion.label.toLowerCase()
+        );
+
+    if (hasId) {
+      return;
+    }
+
+    this.selectedMedicines.push({
+      name: suggestion.label,
+      duration: suggestion.defaultDuration || '',
+      timming: suggestion.defaultDose || '',
+      notes: suggestion.reason || '',
+      mealTime: suggestion.defaultMeal || '',
+      id: suggestion.value || 0,
+    });
+
+    this.searchControl.setValue('');
+
+    setTimeout(() => {
+      const lastInput = this.durationInput.last;
+      lastInput?.nativeElement.focus();
+    }, 0);
+  }
+
   removeMedicine(medicine: Medicine): void {
     this.selectedMedicines = this.selectedMedicines.filter(
       (c) => c !== medicine
@@ -266,4 +351,36 @@ export class MedicineComponent {
   }
 
   showAutocomplete = false;
+
+  private buildAiContext(): Record<string, unknown> {
+    const form = this.PrescriptionService.prescribeForm();
+    const diagnosisForm = form.get('diagnosis') as FormArray;
+    const complaintsForm = form.get('chiefComplaints') as FormArray;
+
+    const diagnosis = (diagnosisForm?.value as any[] | undefined)?.map(
+      (item) => item?.name
+    );
+    const complaints = (complaintsForm?.value as any[] | undefined)?.map(
+      (item) => item?.name
+    );
+
+    const patientGroup = form.get('patient');
+    const patient = patientGroup?.value as {
+      patientAge?: string;
+      patientGender?: string;
+    };
+
+    return {
+      diagnosis: (diagnosis || []).filter(Boolean),
+      complaints: (complaints || []).filter(Boolean),
+      patient: {
+        age: patient?.patientAge,
+        gender: patient?.patientGender,
+      },
+      medications: this.selectedMedicines.map((med) => ({
+        id: med.id,
+        name: med.name,
+      })),
+    };
+  }
 }

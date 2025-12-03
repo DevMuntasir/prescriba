@@ -3,9 +3,13 @@
     <div class="space-y-2">
       <p class="prescripto-modal__pill">Medications</p>
       <h2 class="prescripto-modal__title">Medicine</h2>
-      
+
     </div>
-    
+    <mat-button-toggle-group class="mt-2" [value]="suggestionMode"
+      (change)="setSuggestionMode($event.value)" aria-label="Suggestion mode">
+      <mat-button-toggle value="search">Search based</mat-button-toggle>
+      <mat-button-toggle value="context">Context based (AI)</mat-button-toggle>
+    </mat-button-toggle-group>
   </header>
 
   <section class="prescripto-modal__search">
@@ -16,9 +20,10 @@
           <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
             d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4" />
         </svg>
-        <input #searchInput class="!pl-[40px]" type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
-          placeholder="Search medicine" />
-        <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete">
+        <input #searchInput class="!pl-[40px]" type="text" matInput [formControl]="searchControl"
+          [matAutocomplete]="auto" placeholder="Search medicine" />
+        <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete"
+          class="max-h-72">
           @for (medicine of filteredMedicines$| async; track medicine) {
           <mat-option (click)="addMedicine(medicine)" [value]="medicine">
             <span class="inline-flex items-center gap-2">
@@ -31,6 +36,38 @@
       </div>
       <button class="btn-secondary w-full min-w-[150px] md:w-auto" type="submit">Add medicine</button>
     </form>
+
+    @if (suggestionMode === 'context') {
+    <div class="mt-3 space-y-2">
+      <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">AI Suggested</div>
+      @if (aiLoading) {
+      <p class="text-sm text-brand-neutral/70">Loading suggestions...</p>
+      }@else {
+      @if (aiSuggestions$ | async; as aiSuggestions) {
+      @if (aiSuggestions.length > 0) {
+      <div class="max-h-72 space-y-2 overflow-auto rounded border border-brand-neutral/10 p-2">
+        @for (suggestion of aiSuggestions; track suggestion.label) {
+        <button type="button" class="flex w-full flex-col items-start gap-1 rounded-md bg-brand-primary/5 p-3 text-left transition hover:bg-brand-primary/10"
+          (click)="addAiSuggestion(suggestion)">
+          <div class="font-medium text-brand-primary">{{ suggestion.label }}</div>
+          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.generic || suggestion.strength">
+            {{ suggestion.generic }} {{ suggestion.strength }} {{ suggestion.form }}
+          </div>
+          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.reason">Reason: {{ suggestion.reason }}</div>
+          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.defaultDose">Dose: {{ suggestion.defaultDose }}</div>
+          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.defaultDuration">Duration:
+            {{ suggestion.defaultDuration }}</div>
+          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.defaultMeal">Meal: {{ suggestion.defaultMeal }}</div>
+        </button>
+        }
+      </div>
+      }@else {
+      <p class="text-sm text-brand-neutral/70">No AI suggestions</p>
+      }
+      }
+      }
+    </div>
+    }
   </section>
 
   <mat-dialog-content class="prescripto-modal__body">
