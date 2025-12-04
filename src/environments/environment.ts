@@ -1,17 +1,19 @@
-export const serviceBaseUrl = (window as any).env.serviceBaseUrl;
-export const USER_SECRATE = (window as any).env.USER_SECRATE;
-const apiUrl = (window as any).env.apiUrl;
-export const authenticationApi = (window as any).env.authenticationApi;
-export const prescriptionApi = (window as any).env.prescriptionApi;
+const env = (window as any).env || {};
+
+export const serviceBaseUrl = env.serviceBaseUrl || '';
+export const USER_SECRATE = env.USER_SECRATE || '';
+const apiUrl = env.apiUrl || '';
+export const authenticationApi = env.authenticationApi || '';
+export const prescriptionApi = env.prescriptionApi || '';
 
 const firebaseConfig = {
-  apiKey: (window as any).env.firebaseApiKey,
-  authDomain: (window as any).env.firebaseAuthDomain,
-  projectId: (window as any).env.firebaseProjectId,
-  storageBucket: (window as any).env.firebaseStorageBucket,
-  messagingSenderId: (window as any).env.firebaseMessagingSenderId,
-  appId: (window as any).env.firebaseAppId,
-  measurementId: (window as any).env.firebaseMeasurementId
+  apiKey: env.firebaseApiKey || '',
+  authDomain: env.firebaseAuthDomain || '',
+  projectId: env.firebaseProjectId || '',
+  storageBucket: env.firebaseStorageBucket || '',
+  messagingSenderId: env.firebaseMessagingSenderId || '',
+  appId: env.firebaseAppId || '',
+  measurementId: env.firebaseMeasurementId || ''
 };
 
 export const environment = {
@@ -39,5 +41,5 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
-  geminiApiKey: (window as any).env.geminiApiKey,
+  geminiApiKey: env.geminiApiKey || '',
 } as const;
