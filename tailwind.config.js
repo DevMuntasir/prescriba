@@ -2,7 +2,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 const brandPalette = {
-  primary: "#06b48b",
+  primary: " #06b48b",
   primaryAccent: "#00c2a8",
   highlight: "#4ade80",
   surface: "#f2fbf7",

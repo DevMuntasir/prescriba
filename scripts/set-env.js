@@ -47,6 +47,8 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
+  apiBaseUrl: apiUrl,
+  useBackendAi: ${process.env.USE_BACKEND_AI || false},
   geminiApiKey: '${process.env.GEMINI_API_KEY}',
 } as const;
 `;
