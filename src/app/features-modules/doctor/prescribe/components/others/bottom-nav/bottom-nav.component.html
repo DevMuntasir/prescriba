@@ -58,7 +58,7 @@
     <button class=" px-4 py-2 rounded-full bg-secondary text-white">Save as Tempalte</button> -->
 <div class="flex gap-4 w-full justify-end">
     <button [disabled]="isLoader" (click)="onClickSaveSubmit()"
-        class="disabled:bg-gray-400 disabled:text-gray-500 flex items-center gap-1 px-5 py-2 rounded-full bg-primary text-slate-900">
+        class="disabled:bg-gray-400 disabled:text-gray-500 flex items-center gap-1 px-5 py-2 rounded-full bg-primary text-white">
         <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 412.605 412.605"
             xml:space="preserve" stroke="#ffffff">
@@ -82,7 +82,7 @@
         </svg>
         {{isLoader ? 'Saving...' : 'Save & Send'}}
     </button>
-    <button (click)="saveAsTemplate()" class=" px-4 py-2 flex gap-1 items-center rounded-full bg-secondary text-white">
+    <button (click)="saveAsTemplate()" class=" px-4 py-2 flex gap-1 items-center rounded-full bg-yellow-500 text-white">
         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>

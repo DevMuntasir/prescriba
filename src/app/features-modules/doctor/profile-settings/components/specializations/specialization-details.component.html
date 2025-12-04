@@ -11,17 +11,14 @@
     <table class="profile-table">
       <thead class="profile-table__head">
         <tr>
-          <th class="profile-table__head-cell">Speciality</th>
           <th class="profile-table__head-cell">Specialization</th>
           <th class="profile-table__head-cell">Service Details</th>
           <th class="profile-table__head-cell"></th>
         </tr>
       </thead>
       <tbody>
-
         <tr *ngFor="let specialization of specializations">
-          <td class="profile-table__cell">{{ getSpecialityName(specialization.specialityId) }}</td>
-          <td class="profile-table__cell">{{ getSpecializationName(specialization.specializationId) }}</td>
+          <td class="profile-table__cell">{{ specialization.specializationName || specialization.specialityName || '-' }}</td>
           <td class="profile-table__cell">{{ specialization.serviceDetails || '-' }}</td>
           <td class="profile-table__cell profile-table__actions">
             <button type="button" class="profile-btn profile-btn--ghost" (click)="edit(specialization)">
@@ -40,19 +37,6 @@
   </ng-template>
 
   <form class="profile-form" [formGroup]="form" (ngSubmit)="submit()">
-    <label class="profile-field-group">
-      <span>Speciality</span>
-      <select class="profile-field" formControlName="specialityId">
-        <option value="" disabled>Select speciality</option>
-        <option *ngFor="let option of specialityOptions" [value]="option.id">
-          {{ option.specialityName }}
-        </option>
-      </select>
-      <small class="profile-field__error" *ngIf="form.get('specialityId')?.invalid && form.get('specialityId')?.touched">
-        Speciality is required.
-      </small>
-    </label>
-
     <label class="profile-field-group">
       <span>Specialization</span>
       <select class="profile-field" formControlName="specializationId">
@@ -82,7 +66,7 @@
     </label>
 
     <div class="profile-form__actions">
-      <button type="submit" class="profile-btn profile-btn--primary" [disabled]="saving || form.invalid || !doctorId">
+      <button type="submit" class="profile-btn profile-btn--primary" [disabled]="saving || form.invalid || !doctorId ">
         {{ form.value.id ? 'Update' : 'Add Specialization' }}
       </button>
       <button type="button" class="profile-btn profile-btn--ghost" (click)="resetForm()">Clear</button>

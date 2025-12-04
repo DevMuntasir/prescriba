@@ -19,16 +19,16 @@
     <app-doctor-degree-details [doctorId]="doctorProfile.id ?? null" [degrees]="doctorProfile.degrees"
       (updated)="handleProfileUpdated()"></app-doctor-degree-details>
 
-    <app-doctor-specializations [doctorId]="doctorProfile.id ?? null"
+    <app-doctor-specializations [doctorId]="doctorProfile.id ?? null" [specialityId]="doctorProfile?.specialityId ?? null"
       [specializations]="doctorProfile.doctorSpecialization"
       (updated)="handleProfileUpdated()"></app-doctor-specializations>
+<div class=" flex w-full gap-6">
 
-    <app-doctor-documents [doctorId]="doctorProfile.id ?? null"
-      (updated)="handleProfileUpdated()"></app-doctor-documents>
+  <app-doctor-documents class="flex-1" [doctorId]="doctorProfile.id ?? null"
+    (updated)="handleProfileUpdated()"></app-doctor-documents>
 
-    <app-experience (saveDoc)="saveExperience($event)" [getDocs]="experience"></app-experience>
+  <app-experience class="flex-1" (saveDoc)="saveExperience($event)" [getDocs]="experience"></app-experience>
+</div>
 
-    <app-hospital [embedded]="true"></app-hospital>
-    <app-schedule [embedded]="true"></app-schedule>
   </ng-container>
 </section>
