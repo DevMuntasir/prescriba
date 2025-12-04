@@ -348,7 +348,7 @@ export class PrescribeComponent implements OnInit, OnDestroy {
         degree: doctorDetails.degrees,
         qualification: doctorDetails.qualifications || null,
         areaOfExperties: doctorDetails.areaOfExperties || null,
-        expertise: doctorDetails.expertise || null,
+        areaOfExpertise: doctorDetails.expertise || null,
         bmdc: doctorDetails.bmdcRegNo || null,
         chamber: chambers || [],
         schedule: [],

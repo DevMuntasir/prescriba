@@ -37,6 +37,8 @@ import {
   BehaviorSubject,
   combineLatest,
   catchError,
+  delay,
+  shareReplay,
 } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { MedicineService } from '../../../services/medicine.service';
@@ -112,9 +114,10 @@ export class MedicineComponent {
     }[]
   >;
   aiSuggestions$!: Observable<AiSuggestedItem[]>;
-  aiLoading = false;
+  private aiLoadingSubject = new BehaviorSubject<boolean>(false);
+  aiLoading$ = this.aiLoadingSubject.asObservable();
 
-  constructor(public dialogRef: MatDialogRef<MedicineComponent>) {}
+  constructor(public dialogRef: MatDialogRef<MedicineComponent>) { }
   ngOnInit(): void {
     let id = this.NormalAuth.authInfo()?.id;
     if (id) {
@@ -140,31 +143,27 @@ export class MedicineComponent {
       })
     );
 
-    this.aiSuggestions$ = combineLatest([
-      this.suggestionMode$,
-      this.searchControl.valueChanges.pipe(
-        startWith(''),
-        debounceTime(300),
-        distinctUntilChanged()
-      ),
-    ]).pipe(
-      switchMap(([mode, query]) => {
+    this.aiSuggestions$ = this.suggestionMode$.pipe(
+      distinctUntilChanged(),
+      switchMap((mode) => {
         if (mode !== 'context') {
-          this.aiLoading = false;
+          this.aiLoadingSubject.next(false);
           return of([]);
         }
 
-        this.aiLoading = true;
+        this.aiLoadingSubject.next(true);
         return this.aiSuggestionService
           .suggest({
-            query: query || '',
+            query: '',
             context: this.buildAiContext(),
           })
           .pipe(
             catchError(() => of([])),
-            finalize(() => (this.aiLoading = false))
+            finalize(() => this.aiLoadingSubject.next(false))
           );
-      })
+      }),
+      delay(0),
+      shareReplay(1)
     );
 
     this.selectedMedicines = JSON.parse(JSON.stringify(this.data));
@@ -197,11 +196,11 @@ export class MedicineComponent {
       map((res) => {
         return res.results && res.results.length > 0
           ? res.results.map((item: any) => {
-              return {
-                label: item.medicationName,
-                value: item.medicationId,
-              };
-            })
+            return {
+              label: item.medicationName,
+              value: item.medicationId,
+            };
+          })
           : [];
       })
     );
@@ -276,8 +275,8 @@ export class MedicineComponent {
     const hasId = suggestion.value
       ? this.selectedMedicines.some((c) => c.id === suggestion.value)
       : this.selectedMedicines.some(
-          (c) => c.name.toLowerCase() === suggestion.label.toLowerCase()
-        );
+        (c) => c.name.toLowerCase() === suggestion.label.toLowerCase()
+      );
 
     if (hasId) {
       return;
@@ -384,3 +383,4 @@ export class MedicineComponent {
     };
   }
 }
+

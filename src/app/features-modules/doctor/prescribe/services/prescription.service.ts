@@ -45,13 +45,13 @@ export class PrescriptionService {
         specializationName: [''],
         doctorCode: [''],
         degree: [''],
-        areaOfExperties: [''],
+        // areaOfExperties: [''],
         qualification: [''],
         chamber: [''],
         schedule: [''],
         bmdc: [''],
         signature: [''],
-        expertise: [''],
+        areaOfExpertise: [''],
       }),
       chiefComplaints: this.fb.array([]),
       history: this.fb.array([]),
@@ -254,7 +254,7 @@ export class PrescriptionService {
     chamber?: any[];
     schedule?: any[];
     signature?: string | null;
-    expertise?: string | null;
+    areaOfExpertise?: string | null;
   }) {
     this.prescribeForm.update((form) => {
       form.patchValue({ doctor });

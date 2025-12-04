@@ -31,7 +31,7 @@ export class DoctorInfoComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['doctor']) {
       this.doctor = changes['doctor'].currentValue;
-      this.experience = this.toDangerousHtml(this.doctor?.expertise || '');
+      this.experience = this.toDangerousHtml(this.doctor?.areaOfExpertise || '');
     }
   }
 

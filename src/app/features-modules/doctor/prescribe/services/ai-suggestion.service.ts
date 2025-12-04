@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of } from 'rxjs';
+import { GoogleGenAI } from '@google/genai';
+import { Observable, catchError, from, map, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface AiSuggestedItem {
@@ -23,9 +24,9 @@ interface AiSuggestionResponse {
   providedIn: 'root',
 })
 export class AiSuggestionService {
-  private geminiUrl =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
   private backendUrl = `${environment.apiBaseUrl}/ai/medication-suggest`;
+  private googleGenAi = new GoogleGenAI({ apiKey: environment.geminiApiKey });
+  private geminiModel = 'gemini-2.5-flash';
 
   constructor(private http: HttpClient) {}
 
@@ -47,27 +48,23 @@ export class AiSuggestionService {
     context: Record<string, unknown>
   ): Observable<AiSuggestedItem[]> {
     const prompt = this.buildPrompt(query, context);
-    const body = {
+    const request = this.googleGenAi.models.generateContent({
+      model: this.geminiModel,
       contents: [
         {
-          parts: [
-            {
-              text: prompt,
-            },
-          ],
+          role: 'user',
+          parts: [{ text: prompt }],
         },
       ],
-      generationConfig: {
+      config: {
         responseMimeType: 'application/json',
       },
-    };
+    });
 
-    return this.http
-      .post<any>(`${this.geminiUrl}?key=${environment.geminiApiKey}`, body)
-      .pipe(
-        map((response) => this.extractSuggestions(response)),
-        catchError(() => of([]))
-      );
+    return from(request).pipe(
+      map((response) => this.extractSuggestions(response)),
+      catchError(() => of([]))
+    );
   }
 
   private buildPrompt(query: string, context: Record<string, unknown>): string {
