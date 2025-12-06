@@ -40,6 +40,7 @@ export const environment = {
   },
   firebase: firebaseConfig,
   apiBaseUrl: apiUrl,
+  locationApiBaseUrl: 'http://103.125.255.81:5002/api/2025-02',
   useBackendAi: true,
   geminiApiKey: '',
 } as const;
