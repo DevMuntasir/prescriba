@@ -253,7 +253,7 @@ export class DashboardComponent implements OnInit {
       return true;
     }
 
-    const isProfileStepCompleted = profile.profileStep >= 5 ? true : false;
+    const isProfileStepCompleted = profile.profileStep >= 3 ? true : false;
 
     return !isProfileStepCompleted;
   }
