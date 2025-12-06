@@ -37,11 +37,7 @@
   </section>
 
   <mat-dialog-content class="prescripto-modal__body">
-    @if (loading.isSkelton) {
-    <app-skelton />
-    }
-
-    @if (!loading.isSkelton && bookmarkedFollowup.length > 0) {
+    @if (bookmarkedFollowup.length > 0) {
     <section class="prescripto-modal__chip-set">
       <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">Quick picks</div>
       <mat-chip-listbox multiple>
@@ -51,6 +47,13 @@
         </mat-chip-option>
       </mat-chip-listbox>
     </section>
+    }
+
+    @if (bookmarkedFollowup.length == 0) {
+    <div class="prescripto-modal__empty">
+      <p class="text-lg font-semibold">No follow ups found</p>
+      <p class="text-sm text-brand-neutral/60">Try searching and bookmarking a follow up to reuse it quickly.</p>
+    </div>
     }
 
     <section *ngIf="selectedFollowUps.length > 0" class="space-y-3">
@@ -71,7 +74,7 @@
       </article>
     </section>
 
-    @if (selectedFollowUps.length == 0 && !loading.isSkelton) {
+    @if (selectedFollowUps.length == 0) {
     <div class="prescripto-modal__empty">
       <p class="text-lg font-semibold">No follow ups selected</p>
       <p class="text-sm text-brand-neutral/60">Add one now or pull from your saved list.</p>
@@ -84,4 +87,3 @@
     <button class="btn-secondary" (click)="save()">Save</button>
   </mat-dialog-actions>
 </div>
-

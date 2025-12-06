@@ -1,15 +1,17 @@
-<div class="min-h-screen bg-brand-surface py-10">
-  <div class="max-w-6xl mx-auto px-4 space-y-8">
-    <header class="flex flex-wrap items-start justify-between gap-4">
+<div [ngClass]="{'min-h-screen bg-brand-surface py-10': !embedded, 'profile-card': embedded}">
+  <div [ngClass]="{'max-w-6xl mx-auto px-4 space-y-8': !embedded, 'space-y-6': embedded}">
+    <header class="flex flex-wrap items-start justify-between gap-4" *ngIf="!embedded; else embeddedHeader">
       <div class="space-y-2">
         <p class="text-sm uppercase tracking-[0.3em] text-brand-primary font-semibold">Schedules</p>
         <h1 class="text-3xl font-bold text-slate-900">Your weekly availability</h1>
         <p class="text-slate-600 max-w-3xl text-base">
-          Review every chamber at a glance. Switch tabs to inspect saved sessions or create a new schedule whenever you need.
+          Review every chamber at a glance. Switch tabs to inspect saved sessions or create a new schedule whenever you
+          need.
         </p>
       </div>
       <div class="flex items-center gap-3">
-        <button type="button" class="px-4 py-2 rounded-xl bg-emerald-50 text-brand-primary font-semibold flex items-center gap-2"
+        <button type="button"
+          class="px-4 py-2 rounded-xl bg-emerald-50 text-brand-primary font-semibold flex items-center gap-2"
           (click)="refreshSchedules()" [disabled]="isLoadingSchedules">
           <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" fill="none"
@@ -17,43 +19,64 @@
           </svg>
           Refresh
         </button>
-        <button type="button" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
+        <button type="button"
+          class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold shadow-lg shadow-brand-primary/30"
           (click)="openBuilderSheet()" [disabled]="!doctorProfileId || chambers.length === 0">
           + New schedule
         </button>
       </div>
     </header>
 
-    <section class="bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50 p-8 space-y-6">
+    <ng-template #embeddedHeader>
+      <header class="profile-card__header">
+        <div>
+          <p class="profile-card__eyebrow">Availability</p>
+          <h2 class="profile-card__title">Weekly Schedule</h2>
+          <p class="profile-card__subtitle">Manage your weekly availability per location.</p>
+        </div>
+        <div class="profile-card__actions">
+          <button type="button" class="profile-btn profile-btn--primary" (click)="openBuilderSheet()"
+            [disabled]="!doctorProfileId || chambers.length === 0">
+            + Add Schedule
+          </button>
+        </div>
+      </header>
+    </ng-template>
+
+    <section
+      [ngClass]="{'bg-white rounded-3xl shadow-2xl shadow-emerald-200/40 border border-emerald-50 p-8 space-y-6': !embedded, 'space-y-6': embedded}">
       <div *ngIf="loadError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
         {{ loadError }}
       </div>
 
-      <div *ngIf="isLoadingChambers" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+      <div *ngIf="isLoadingChambers"
+        class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
         Loading chamber information...
       </div>
 
-      <div *ngIf="!isLoadingChambers && chambers.length === 0" class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+      <div *ngIf="!isLoadingChambers && chambers.length === 0"
+        class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
         Add a chamber or hospital first to start defining schedules.
       </div>
 
       <ng-container *ngIf="!isLoadingChambers && chambers.length > 0">
         <div class="flex flex-wrap gap-3" role="tablist">
-          <button type="button" class="px-4 py-2 rounded-full border text-left min-w-[160px] transition"
-            [ngClass]="isActiveChamber(chamber.id ?? null)
+          <button type="button" class="px-4 py-2 rounded-full border text-left min-w-[160px] transition" [ngClass]="isActiveChamber(chamber.id ?? null)
               ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'border-slate-200 text-slate-600'"
-            *ngFor="let chamber of chambers" (click)="setActiveChamber(chamber.id ?? null)">
+              : 'border-slate-200 text-slate-600'" *ngFor="let chamber of chambers"
+            (click)="setActiveChamber(chamber.id ?? null)">
             <span class="block font-semibold text-slate-900">{{ chamber.chamberName }}</span>
             <small class="text-xs text-slate-500">{{ getSchedulesByChamberId(chamber.id).length }} schedules</small>
           </button>
         </div>
 
-        <div *ngIf="isLoadingSchedules" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+        <div *ngIf="isLoadingSchedules"
+          class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
           Loading schedules...
         </div>
 
-        <div *ngIf="scheduleLoadError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div *ngIf="scheduleLoadError"
+          class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {{ scheduleLoadError }}
         </div>
 
@@ -63,7 +86,8 @@
         </div>
 
         <div *ngIf="!isLoadingSchedules && !scheduleLoadError && activeChamberSchedules.length > 0" class="space-y-4">
-          <article *ngFor="let schedule of activeChamberSchedules" class="border border-slate-200 rounded-2xl p-6 bg-slate-50">
+          <article *ngFor="let schedule of activeChamberSchedules"
+            class="border border-slate-200 rounded-2xl p-6 bg-slate-50">
             <header class="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h3 class="text-lg font-semibold text-slate-900">{{ schedule.scheduleName || 'Untitled schedule' }}</h3>
@@ -72,17 +96,18 @@
                   {{ schedule.consultancyTypeName || schedule.consultancyType }}
                 </p>
               </div>
-              <span
-                class="px-3 py-1 rounded-full text-xs font-semibold"
+              <span class="px-3 py-1 rounded-full text-xs font-semibold"
                 [ngClass]="schedule.isActive === false ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'">
                 {{ schedule.isActive === false ? 'Inactive' : 'Active' }}
               </span>
             </header>
 
             <ul class="mt-4 space-y-2">
-              <li *ngFor="let session of schedule.doctorScheduleDaySession" class="flex flex-wrap items-center gap-3 text-sm text-slate-700">
+              <li *ngFor="let session of schedule.doctorScheduleDaySession"
+                class="flex flex-wrap items-center gap-3 text-sm text-slate-700">
                 <span class="font-semibold text-brand-primary">{{ getDayLabel(session.scheduleDayofWeek || '') }}</span>
-                <strong class="text-slate-900">{{ formatTimeLabel(session.startTime) }} - {{ formatTimeLabel(session.endTime) }}</strong>
+                <strong class="text-slate-900">{{ formatTimeLabel(session.startTime) }} - {{
+                  formatTimeLabel(session.endTime) }}</strong>
                 <small *ngIf="session.noOfPatients" class="text-slate-500">{{ session.noOfPatients }} patients</small>
               </li>
             </ul>
@@ -96,15 +121,7 @@
     </section>
   </div>
 
-  <app-doctor-schedule-builder
-    [isOpen]="isBuilderOpen"
-    [doctorId]="doctorProfileId"
-    [chambers]="chambers"
-    [initialChamberId]="builderInitialChamberId"
-    [chambersLoading]="isLoadingChambers"
-    (closed)="handleBuilderClosed()"
+  <app-doctor-schedule-builder [isOpen]="isBuilderOpen" [doctorId]="doctorProfileId" [chambers]="chambers"
+    [initialChamberId]="builderInitialChamberId" [chambersLoading]="isLoadingChambers" (closed)="handleBuilderClosed()"
     (scheduleCreated)="handleScheduleCreated($event)"></app-doctor-schedule-builder>
 </div>
-
-
-

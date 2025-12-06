@@ -20,6 +20,7 @@ export interface PrescriptionPatient {
   phoneNumber: string;
   referenceUserId: number;
   totalCount: number;
+  patientName?:string
 }
 
 export interface PrescriptionPatientListResponse {

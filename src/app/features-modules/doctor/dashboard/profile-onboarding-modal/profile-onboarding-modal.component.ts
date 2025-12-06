@@ -37,10 +37,12 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
   @Input() profile: DoctorProfileDto | null = null;
   @Input() saving = false;
   @Output() completed = new EventEmitter<DoctorProfileInputDto>();
+  @Output() chambersCreated = new EventEmitter<any[]>();
+  @Output() schedulesCreated = new EventEmitter<any[]>();
 
   form: FormGroup;
   currentStep = 0;
-  readonly steps = ['Professional details', 'Education & specialization'];
+  readonly steps = ['Professional details', 'Education & specialization', 'Hospital/Chamber', 'Schedule'];
   readonly countries = ['Bangladesh', 'India', 'Pakistan', 'Sri Lanka'];
   specialityOptions: SpecialityDto[] = [];
   degreeOptions: DegreeDto[] = [];
@@ -73,6 +75,8 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
       }),
       degrees: this.fb.array([this.createDegreeGroup()]),
       specializations: this.fb.array([this.createSpecializationGroup()]),
+      chambers: this.fb.array([this.createChamberGroup()]),
+      schedules: this.fb.array([this.createScheduleGroup()]),
     });
   }
 
@@ -103,6 +107,14 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
     return this.form.get('specializations') as FormArray;
   }
 
+  get chambersArray(): FormArray {
+    return this.form.get('chambers') as FormArray;
+  }
+
+  get schedulesArray(): FormArray {
+    return this.form.get('schedules') as FormArray;
+  }
+
   addDegree(): void {
     this.degreesArray.push(this.createDegreeGroup());
   }
@@ -117,6 +129,22 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
 
   removeSpecialization(index: number): void {
     this.removeOrReset(this.specializationsArray, index, () => this.createSpecializationGroup());
+  }
+
+  addChamber(): void {
+    this.chambersArray.push(this.createChamberGroup());
+  }
+
+  removeChamber(index: number): void {
+    this.removeOrReset(this.chambersArray, index, () => this.createChamberGroup());
+  }
+
+  addSchedule(): void {
+    this.schedulesArray.push(this.createScheduleGroup());
+  }
+
+  removeSchedule(index: number): void {
+    this.removeOrReset(this.schedulesArray, index, () => this.createScheduleGroup());
   }
 
   onDegreeSelected(index: number): void {
@@ -186,15 +214,30 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
         };
       });
 
+    const formattedChambers = this.chambersArray.getRawValue();
+    const formattedSchedules = this.schedulesArray.getRawValue().map((schedule: any) => {
+      // Get the actual chamber data from the selected index
+      const chamberIndex = schedule.chamberIndex ?? 0;
+      const selectedChamber = formattedChambers[chamberIndex];
+
+      return {
+        ...schedule,
+        chamberName: selectedChamber?.chamberName,
+      };
+    });
+
     const updatedProfile: DoctorProfileInputDto = {
       ...baseProfile,
       ...basicInfo,
       degrees: formattedDegrees,
       doctorSpecialization: formattedSpecializations,
-      profileStep: 3,
+      profileStep: 5, // Updated to 5 since we now have 4 steps (0-3)
     };
 
+    // Emit all the data
     this.completed.emit(updatedProfile);
+    this.chambersCreated.emit(formattedChambers);
+    this.schedulesCreated.emit(formattedSchedules);
   }
 
   patchForm(profile: DoctorProfileDto): void {
@@ -251,6 +294,28 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
     this.applyDegreeMetadata(group);
 
     return group;
+  }
+
+  private createChamberGroup(): FormGroup {
+    return this.fb.group({
+      chamberName: ['', [Validators.required, Validators.maxLength(120)]],
+      address: ['', [Validators.required, Validators.maxLength(250)]],
+      city: ['', [Validators.required, Validators.maxLength(80)]],
+      zipCode: ['', [Validators.required, Validators.maxLength(10)]],
+      country: ['Bangladesh', [Validators.required, Validators.maxLength(80)]],
+      isVisibleOnPrescription: [true],
+    });
+  }
+
+  private createScheduleGroup(): FormGroup {
+    return this.fb.group({
+      chamberIndex: [0, Validators.required],
+      dayOfWeek: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      slotDuration: [30, [Validators.required, Validators.min(5)]],
+      maxPatients: [1, [Validators.required, Validators.min(1)]],
+    });
   }
   private createSpecializationGroup(
     data?: DoctorSpecializationDto
@@ -436,7 +501,7 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
   }
 
   private validateCurrentStep(includeFutureSteps = false): boolean {
-    const stepsToValidate = includeFutureSteps ? [0, 1] : [this.currentStep];
+    const stepsToValidate = includeFutureSteps ? [0, 1, 2, 3] : [this.currentStep];
     let valid = true;
 
     if (stepsToValidate.includes(0)) {
@@ -452,6 +517,24 @@ export class ProfileOnboardingModalComponent implements OnChanges, OnInit {
         }
       });
       this.specializationsArray.controls.forEach((group) => {
+        (group as FormGroup).markAllAsTouched();
+        if ((group as FormGroup).invalid) {
+          valid = false;
+        }
+      });
+    }
+
+    if (stepsToValidate.includes(2)) {
+      this.chambersArray.controls.forEach((group) => {
+        (group as FormGroup).markAllAsTouched();
+        if ((group as FormGroup).invalid) {
+          valid = false;
+        }
+      });
+    }
+
+    if (stepsToValidate.includes(3)) {
+      this.schedulesArray.controls.forEach((group) => {
         (group as FormGroup).markAllAsTouched();
         if ((group as FormGroup).invalid) {
           valid = false;

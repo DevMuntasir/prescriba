@@ -299,6 +299,10 @@ export interface DoctorChamberDto extends FullAuditedEntityDto<number> {
   city?: string;
   zipCode?: string;
   country?: string;
+  divisionId?: number;
+  divisionName?: string;
+  districtId?: number;
+  districtName?: string;
   isVisibleOnPrescription?: boolean;
 }
 
@@ -1058,3 +1062,4 @@ export interface UserSignUpResultDto {
   success?: boolean;
   message: string[];
 }
+

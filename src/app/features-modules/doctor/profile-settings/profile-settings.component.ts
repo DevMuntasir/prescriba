@@ -10,6 +10,8 @@ import { DoctorDegreeDetailsComponent } from './components/degrees/degree-detail
 import { DoctorSpecializationDetailsComponent } from './components/specializations/specialization-details.component';
 import { DoctorDocumentsComponent } from './components/documents/documents.component';
 import { ExperienceComponent } from './components/experience/experience.component';
+import { HospitalComponent } from '../hospital/hospital.component';
+import { ScheduleComponent } from '../schedule/schedule.component';
 
 @Component({
   selector: 'app-profile-settings',
@@ -22,7 +24,9 @@ import { ExperienceComponent } from './components/experience/experience.componen
     DoctorDegreeDetailsComponent,
     DoctorSpecializationDetailsComponent,
     DoctorDocumentsComponent,
-    ExperienceComponent
+    ExperienceComponent,
+    HospitalComponent,
+    ScheduleComponent
   ],
 })
 export class ProfileSettingsComponent implements OnInit {
@@ -80,25 +84,25 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
 
-  saveExperience(docString:string) {
+  saveExperience(docString: string) {
     if (!this.doctorProfile?.id) {
       return;
     }
-      this.doctorProfileService
-        .updateExpertiseByIdAndExpertise(this.doctorProfile?.id, docString)
-        .subscribe({
-          next: (res) => {
-            this.toaster.customToast(
-              'Successfully update your expertise!',
-              'success'
-            );
-          },
-          error: () => {
-            this.toaster.customToast('Something went wrong!', 'error');
-          },
-        });
-    } 
-  
+    this.doctorProfileService
+      .updateExpertiseByIdAndExpertise(this.doctorProfile?.id, docString)
+      .subscribe({
+        next: (res) => {
+          this.toaster.customToast(
+            'Successfully update your expertise!',
+            'success'
+          );
+        },
+        error: () => {
+          this.toaster.customToast('Something went wrong!', 'error');
+        },
+      });
+  }
+
   getDoctorExpertise(doctorId: number) {
     if (!doctorId) {
       return;

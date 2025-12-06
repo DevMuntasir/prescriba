@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
-  OnInit,
+  OnChanges,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -16,13 +17,11 @@ import {
 } from '@angular/forms';
 import {
   DoctorSpecializationDto,
-  SpecialityDto,
   SpecializationDto,
 } from 'src/app/api/dto-models';
 import { DoctorSpecializationInputDto } from 'src/app/api/input-dto';
 import {
   DoctorSpecializationService,
-  SpecialityService,
   SpecializationService,
 } from 'src/app/api/services';
 import { TosterService } from 'src/app/shared/services/toster.service';
@@ -35,53 +34,48 @@ import { TosterService } from 'src/app/shared/services/toster.service';
   styleUrls: ['./specialization-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DoctorSpecializationDetailsComponent implements OnInit {
+export class DoctorSpecializationDetailsComponent implements OnChanges {
   @Input() doctorId: number | null = null;
   @Input() specializations: DoctorSpecializationDto[] | null = [];
+  @Input() specialityId: number | null = 5;
+
   @Output() updated = new EventEmitter<void>();
 
-  specialityOptions: SpecialityDto[] = [];
   specializationOptions: SpecializationDto[] = [];
-  allSpecializations: SpecializationDto[] = [];
   saving = false;
+
   readonly form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private specialityService: SpecialityService,
     private specializationService: SpecializationService,
     private doctorSpecializationService: DoctorSpecializationService,
-    private toaster: TosterService
+    private toaster: TosterService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       id: [null],
-      specialityId: [null, Validators.required],
       specializationId: [null, Validators.required],
-      serviceDetails: ['', Validators.maxLength(500)],
+      serviceDetails: [''],
       documentName: [''],
     });
   }
 
-  ngOnInit(): void {
-    this.loadSpecialities();
-    this.loadAllSpecializations();
-    this.form
-      .get('specialityId')
-      ?.valueChanges.pipe(takeUntilDestroyed())
-      .subscribe((specialityId) => {
-        this.setSpecializationOptions(Number(specialityId));
-        this.form.get('specializationId')?.reset();
-      });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['specialityId']) {
+      this.form.get('specializationId')?.reset();
+      this.loadAllSpecializations(this.specialityId);
+    }
+console.log(this.specializations);
+
+    if (changes['specializations']) {
+      this.setInitialSpecializationSelection();
+    }
   }
 
   edit(specialization: DoctorSpecializationDto): void {
-    if (specialization.specialityId) {
-      this.setSpecializationOptions(specialization.specialityId);
-    }
-
     this.form.patchValue({
       id: specialization.id ?? null,
-      specialityId: specialization.specialityId ?? null,
       specializationId: specialization.specializationId ?? null,
       serviceDetails: specialization.serviceDetails ?? '',
       documentName: specialization.documentName ?? '',
@@ -117,6 +111,11 @@ export class DoctorSpecializationDetailsComponent implements OnInit {
       return;
     }
 
+    if (!this.specialityId) {
+      this.toaster.customToast('Speciality information is missing.', 'error');
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -126,7 +125,7 @@ export class DoctorSpecializationDetailsComponent implements OnInit {
     const payload: DoctorSpecializationInputDto = {
       id: value.id ?? undefined,
       doctorProfileId: this.doctorId,
-      specialityId: this.toNumber(value.specialityId),
+      specialityId: this.toNumber(this.specialityId),
       specializationId: this.toNumber(value.specializationId),
       serviceDetails: value.serviceDetails?.trim(),
       documentName: value.documentName?.trim(),
@@ -155,50 +154,24 @@ export class DoctorSpecializationDetailsComponent implements OnInit {
     });
   }
 
-  getSpecialityName(id?: number): string {
-    if (!id) {
-      return '�';
-    }
-    return (
-      this.specialityOptions.find((item) => item.id === id)?.specialityName ??
-      '�'
-    );
-  }
-
-  getSpecializationName(id?: number): string {
-    if (!id) {
-      return '�';
-    }
-    return (
-      this.allSpecializations.find((item) => item.id === id)?.specializationName ??
-      '�'
-    );
-  }
-
   resetForm(): void {
     this.form.reset();
-    this.specializationOptions = [];
+    this.setInitialSpecializationSelection();
   }
 
-  private loadSpecialities(): void {
-    this.specialityService.getList().subscribe({
-      next: (specialities) => (this.specialityOptions = specialities ?? []),
-      error: () =>
-        this.toaster.customToast(
-          'Unable to load specialties right now.',
-          'error'
-        ),
-    });
-  }
+  private loadAllSpecializations(specialityId?: number | null): void {
+    const id = this.toNumber(specialityId) ?? 4;
+    if (!id) {
+      this.specializationOptions = [];
+      return;
+    }
 
-  private loadAllSpecializations(): void {
-    this.specializationService.getList().subscribe({
+    this.specializationService.getListBySpecialtyId(id).subscribe({
       next: (list) => {
-        this.allSpecializations = list ?? [];
-        const specialityId = this.form.get('specialityId')?.value as number | null;
-        if (specialityId) {
-          this.setSpecializationOptions(specialityId);
-        }
+        this.specializationOptions = list ?? [];
+        this.form.get('specializationId')?.setValue(3);
+        this.setInitialSpecializationSelection();
+        this.cdr.markForCheck();
       },
       error: () =>
         this.toaster.customToast(
@@ -208,15 +181,24 @@ export class DoctorSpecializationDetailsComponent implements OnInit {
     });
   }
 
-  private setSpecializationOptions(specialityId?: number): void {
-    if (!specialityId) {
-      this.specializationOptions = [];
+  private setInitialSpecializationSelection(): void {
+    const specializationControl = this.form.get('specializationId');
+    if (!specializationControl || specializationControl.value) {
       return;
     }
 
-    this.specializationOptions = this.allSpecializations.filter(
-      (item) => item.specialityId === specialityId
+    if (this.form.get('id')?.value) {
+      return;
+    }
+
+    const initial = this.specializations?.find(
+      (item) => !!item?.specializationId
     );
+
+    if (initial?.specializationId) {
+      specializationControl.setValue(initial.specializationId);
+      this.cdr.markForCheck();
+    }
   }
 
   private toNumber(value: unknown): number | undefined {

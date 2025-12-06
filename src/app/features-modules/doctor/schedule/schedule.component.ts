@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Input } from '@angular/core';
 import type {
   DoctorChamberDto,
   DoctorScheduleDto,
@@ -17,6 +17,7 @@ import { DoctorScheduleBuilderComponent } from '../hospital/schedule-builder/doc
   styleUrls: ['./schedule.component.scss'],
 })
 export class ScheduleComponent implements OnInit {
+  @Input() embedded = false;
   private readonly doctorChamberService = inject(DoctorChamberService);
   private readonly doctorScheduleService = inject(DoctorScheduleService);
   private readonly authService = inject(AuthService);
