@@ -56,3 +56,5 @@ Thumbs.db
 dist.zip
 
 .env
+
+src/assets/env.js

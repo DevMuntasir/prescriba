@@ -1,17 +1,19 @@
-export const serviceBaseUrl = 'http://localhost:3000';
-export const USER_SECRATE = 'prescriba@@2024';
-const apiUrl = 'https://swapi.prescriptoobd.com';
-export const authenticationApi = 'https://authapi.prescriptoobd.com';
-export const prescriptionApi = 'https://prescriptionapi.prescriptoobd.com';
+const env = (window as any).env || {};
+
+export const serviceBaseUrl = env.serviceBaseUrl || '';
+export const USER_SECRATE = env.USER_SECRATE || '';
+const apiUrl = env.apiUrl || '';
+export const authenticationApi = env.authenticationApi || '';
+export const prescriptionApi = env.prescriptionApi || '';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgGxETAbT-oRu_RewaNHeoEJGqU49hMyU",
-  authDomain: "prescriptobd-dac94.firebaseapp.com",
-  projectId: "prescriptobd-dac94",
-  storageBucket: "prescriptobd-dac94.firebasestorage.app",
-  messagingSenderId: "302266124373",
-  appId: "1:302266124373:web:509f5caba085710b2cacdc",
-  measurementId: "G-DDGD4G0L2T"
+  apiKey: env.firebaseApiKey || '',
+  authDomain: env.firebaseAuthDomain || '',
+  projectId: env.firebaseProjectId || '',
+  storageBucket: env.firebaseStorageBucket || '',
+  messagingSenderId: env.firebaseMessagingSenderId || '',
+  appId: env.firebaseAppId || '',
+  measurementId: env.firebaseMeasurementId || ''
 };
 
 export const environment = {
@@ -39,5 +41,5 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
-  geminiApiKey: 'AIzaSyC6ncGtjROXQPHeGXNVY6WJps1hxGzJsHw',
+  geminiApiKey: env.geminiApiKey || '',
 } as const;

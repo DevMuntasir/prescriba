@@ -1,18 +1,17 @@
-export const serviceBaseUrl = 'http://localhost:3000';
-export const USER_SECRATE = 'prescriba@@2024';
-const apiUrl = 'https://steady-grateful-farms-temp.trycloudflare.com';
-export const authenticationApi =
-  'https://cheaper-enter-losing-copied.trycloudflare.com';
-export const prescriptionApi =
-  'https://outcomes-deaths-society-mozilla.trycloudflare.com';
+export const serviceBaseUrl = (window as any).env.serviceBaseUrl;
+export const USER_SECRATE = (window as any).env.USER_SECRATE;
+const apiUrl = (window as any).env.apiUrl;
+export const authenticationApi = (window as any).env.authenticationApi;
+export const prescriptionApi = (window as any).env.prescriptionApi;
 
 export const firebaseConfig = {
-  apiKey: 'YOUR_FIREBASE_API_KEY',
-  authDomain: 'YOUR_FIREBASE_AUTH_DOMAIN',
-  projectId: 'YOUR_FIREBASE_PROJECT_ID',
-  storageBucket: 'YOUR_FIREBASE_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_FIREBASE_MESSAGING_SENDER_ID',
-  appId: 'YOUR_FIREBASE_APP_ID',
+  apiKey: (window as any).env.firebaseApiKey,
+  authDomain: (window as any).env.firebaseAuthDomain,
+  projectId: (window as any).env.firebaseProjectId,
+  storageBucket: (window as any).env.firebaseStorageBucket,
+  messagingSenderId: (window as any).env.firebaseMessagingSenderId,
+  appId: (window as any).env.firebaseAppId,
+  measurementId: (window as any).env.firebaseMeasurementId
 };
 
 export const environment = {
@@ -40,4 +39,8 @@ export const environment = {
     ],
   },
   firebase: firebaseConfig,
+  apiBaseUrl: apiUrl,
+  locationApiBaseUrl: 'http://103.125.255.81:5002/api/2025-02',
+  useBackendAi: true,
+  geminiApiKey: '',
 } as const;

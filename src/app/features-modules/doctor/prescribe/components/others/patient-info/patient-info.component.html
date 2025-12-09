@@ -1,23 +1,14 @@
-<div
-  [formGroup]="patient"
-  class="mb-6  border-b-[1px] bg-white px-5 py-3 shadow-lg
+<div [formGroup]="patient" class="mb-6  border-b-[1px] bg-white px-5 py-3 shadow-lg
          flex flex-col gap-4
-         lg:grid lg:grid-cols-5 lg:gap-5 lg:items-end"
->
+         lg:grid lg:grid-cols-5 lg:gap-5 lg:items-end">
   <!-- Name -->
   <div class="flex flex-col gap-1">
     <label class="text-xs font-semibold text-slate-600 tracking-wide">
       Name
     </label>
-    <input
-      formControlName="patientName"
-      autocomplete="off"
-      type="text"
-      placeholder="Enter name"
-      class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
+    <input formControlName="patientName" autocomplete="off" type="text" placeholder="Enter name" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
              outline-none transition
-             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-    />
+             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
   </div>
 
   <!-- Age -->
@@ -25,15 +16,9 @@
     <label class="text-xs font-semibold text-slate-600 tracking-wide">
       Age
     </label>
-    <input
-      formControlName="patientAge"
-      autocomplete="off"
-      type="text"
-      placeholder="Age"
-      class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
+    <input formControlName="patientAge" autocomplete="off" type="text" placeholder="Age" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
              outline-none transition
-             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-    />
+             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
   </div>
 
   <!-- Gender -->
@@ -41,12 +26,9 @@
     <label class="text-xs font-semibold text-slate-600 tracking-wide">
       Gender
     </label>
-    <select
-      formControlName="patientGender"
-      class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
+    <select formControlName="patientGender" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
              outline-none transition
-             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-    >
+             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
       <option value="">Select gender</option>
       <option *ngFor="let gender of genderOptions" [value]="gender">
         {{ gender }}
@@ -59,15 +41,19 @@
     <label class="text-xs font-semibold text-slate-600 tracking-wide">
       Blood Group
     </label>
-    <input
-      formControlName="patientBloodGroup"
-      autocomplete="off"
-      type="text"
-      placeholder="e.g. O+"
-      class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
+    <select formControlName="patientBloodGroup" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
              outline-none transition
-             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-    />
+             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+      <option value="">Select blood group</option>
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="B+">B+</option>
+      <option value="B-">B-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+    </select>
   </div>
 
   <!-- Mobile -->
@@ -75,14 +61,14 @@
     <label class="text-xs font-semibold text-slate-600 tracking-wide">
       Mobile
     </label>
-    <input
-      formControlName="patientPhoneNo"
-      autocomplete="off"
-      type="tel"
-      placeholder="01XXXXXXXXX"
-      class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
+    <input formControlName="patientPhoneNo" autocomplete="off" type="tel" placeholder="01XXXXXXXXX" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700
              outline-none transition
-             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-    />
+             focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+    <span *ngIf="patientNotFound" class="text-xs text-red-500 mt-1">
+      There is no patient found with this number
+    </span>
+    <span *ngIf="isLoading" class="text-xs text-blue-500 mt-1">
+      Searching...
+    </span>
   </div>
 </div>

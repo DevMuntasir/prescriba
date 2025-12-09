@@ -14,3 +14,4 @@ export * from './speciality.service';
 export * from './specialization.service';
 export * from './user-accounts.service';
 export * from './user-manage-accounts.service';
+export * from './location.service';

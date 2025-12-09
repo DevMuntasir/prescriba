@@ -1,29 +1,33 @@
 <!-- ✅ Custom Color Picker -->
-<div class="color-row">
-  <!-- <button
-    class="color-btn"
-    [(colorPicker)]="pickedColor"
-    [cpOKButton]="true"
-    [cpCancelButton]="true"
-    (colorPickerChange)="applyTextColor($event)"
-    [style.background]="pickedColor"
-  >
-    Text Color
-  </button> -->
+ <div class="max-w-full w-full flex-1">
 
-  <button class="color-btn clear" (click)="clearTextColor()">
-    Clear
-  </button>
-</div>
-
-<!-- ngx-editor toolbar/menu -->
-<ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
-
-<!-- editor -->
-<ngx-editor
-  [editor]="editor"
-  [(ngModel)]="doc">
-</ngx-editor>
-
-<!-- save -->
-<button (click)="onSaveClick()" class="btn-primary bg-brand-primary text-white">Save</button>
+   <div class="color-row ">
+     <!-- <button
+       class="color-btn"
+       [(colorPicker)]="pickedColor"
+       [cpOKButton]="true"
+       [cpCancelButton]="true"
+       (colorPickerChange)="applyTextColor($event)"
+       [style.background]="pickedColor"
+     >
+       Text Color
+     </button> -->
+   
+     <button class="color-btn clear" (click)="clearTextColor()">
+       Clear
+     </button>
+   </div>
+   
+   <!-- ngx-editor toolbar/menu -->
+   <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+   
+   <!-- editor -->
+   <ngx-editor
+     [editor]="editor"
+     [(ngModel)]="doc">
+     
+   </ngx-editor>
+   
+   <!-- save -->
+   <button (click)="onSaveClick()" class=" mt-4 btn-primary bg-brand-primary text-white">Save</button>
+ </div>

@@ -145,6 +145,10 @@ export interface DoctorChamberInputDto extends FullAuditedEntityDto<number> {
   city?: string;
   zipCode?: string;
   country?: string;
+  divisionId?: number;
+  divisionName?: string;
+  districtId?: number;
+  districtName?: string;
   isVisibleOnPrescription?: boolean;
 }
 
@@ -471,3 +475,4 @@ export interface SendNotificationInputDto {
   targetUserName?: string;
   message?: string;
 }
+

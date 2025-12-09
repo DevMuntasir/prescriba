@@ -8,7 +8,7 @@
         <app-prescription-skelton />
       } @else {
       <div
-        class="rounded-[32px] border border-brand-border/70 bg-white  shadow-[0_34px_60px_rgba(6,180,139,0.15)]"
+        class=" border border-brand-border/70 bg-white  shadow-[0_34px_60px_rgba(6,180,139,0.15)]"
         [ngClass]="{ 'min-h-screen rounded-none shadow-none border-none': isFullScreen }"
       >
         <form [formGroup]="prescribeForm" class="">
@@ -26,7 +26,7 @@
           <app-patient-info [patient]="patient"  />
 
           <div class="space-y-4 px-2 md:px-6">
-            <div
+            <!-- <div
               class="flex flex-wrap items-center justify-between gap-4 rounded-[50px] border border-brand-border bg-brand-primary/5 px-2 py-1.5"
             >
               <div>
@@ -76,7 +76,7 @@
                   Advice
                 </button>
               </div>
-            </div>
+            </div> -->
 
             @if (uploadImage.isUploadImage && uploadImage.image !== '') {
             <div class="flex justify-center rounded-[28px] border border-brand-border bg-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
@@ -170,14 +170,14 @@
                   <div class="rounded-[28px] border border-brand-border bg-gradient-to-b from-brand-surface via-brand-surface-soft to-white p-6 shadow-[0_30px_80px_rgba(31,42,55,0.08)]">
                     <div class="mb-4 flex items-start justify-between gap-3">
                       <p class="text-lg font-semibold text-brand-neutral">Follow-up</p>
-                      <button
+                      <!-- <button
                         type="button"
                         class="inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/10 px-3 py-1.5 text-sm font-semibold text-brand-primary transition hover:bg-brand-primary/20"
                         (click)="openFollowUpDialog()"
                       >
                         Notes
                         <app-modal-icon />
-                      </button>
+                      </button> -->
                     </div>
                     <div class="relative flex items-center justify-between gap-4 rounded-[24px] border border-dashed border-brand-primary/40 px-5 py-4">
                       <div class="text-sm text-brand-neutral">
@@ -204,7 +204,7 @@
             }
           </div>
 
-          <div class="border-t border-brand-border/70 pt-6">
+          <div class="border-t border-brand-border/70 sticky bottom-0 bg-white/40 backdrop-blur-sm p-4 mt-5">
             <app-bottom-nav [isPreHand]="isPreHand" [appointmentCode]="appointmentCode ?? '0'" />
           </div>
         </form>
