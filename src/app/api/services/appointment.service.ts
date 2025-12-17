@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { API_BASE_URL, PRESCRIPTION_API_BASE_URL } from '../api-urls';
 import { ApiResponse } from '../core/generic-models';
-import type { AppointmentDto } from '../dto-models/models';
+import type { AppointmentDto, DoctorScheduleDaySessionDto } from '../dto-models/models';
 
 export interface AppointmentPatientQuery {
   searchTerm?: string;
@@ -80,6 +80,12 @@ export class AppointmentService {
   getAppointmentById(id: number): Observable<ApiResponse<AppointmentDto>> {
     return this.http.get<ApiResponse<AppointmentDto>>(
       `${this.prescriptionBaseUrl}/api/2025-20/appointment/get-by-id?id=${id}`
+    );
+  }
+  
+  getAppointmentSessionList(): Observable<ApiResponse<DoctorScheduleDaySessionDto[]>> {
+    return this.http.get<ApiResponse<DoctorScheduleDaySessionDto[]>>(
+      `${this.baseUrl}/api/app/doctor-schedule-day-session/session-list`
     );
   }
   getAppointments(

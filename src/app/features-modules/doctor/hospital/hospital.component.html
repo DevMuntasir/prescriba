@@ -4,8 +4,9 @@
       <div class="space-y-2">
         <p class="text-sm uppercase tracking-[0.3em] text-brand-primary font-semibold">Hospitals & chambers</p>
         <h1 class="text-3xl font-bold text-slate-900">Manage your locations</h1>
-        <p class="text-slate-600 max-w-2xl text-base">Organize every address where you consult patients. Keep details
-          accurate so patients know where to find you.</p>
+        <p class="text-slate-600 max-w-2xl text-base">
+          Organize every address where you consult patients. Keep details accurate so patients know where to find you.
+        </p>
       </div>
       <div class="flex items-center gap-3">
         <button type="button"
@@ -41,7 +42,7 @@
             d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
         </svg>
         <p class="mt-3 text-sm font-medium text-brand-neutral">No hospitals added yet</p>
-        <p class="mt-1 text-xs text-brand-neutralSoft">Use the “New hospital” button to capture your first location.</p>
+        <p class="mt-1 text-xs text-brand-neutralSoft">Use the "New hospital" button to capture your first location.</p>
       </div>
 
       <div *ngIf="!isLoadingList && !loadError && hasChambers" class="space-y-4">
@@ -86,98 +87,103 @@
           </div>
         </article>
       </div>
-
-      <div *ngIf="isFormOpen"
-        class="rounded-3xl border-2 border-dashed border-brand-border bg-brand-surface/70 px-6 py-6 space-y-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xl font-semibold text-slate-900">{{ editingChamberId ? 'Update hospital' : 'Add new hospital' }}</h2>
-            <p class="text-sm text-slate-500">Provide accurate information so patients can reach you easily.</p>
-          </div>
-          <button type="button" class="text-sm font-semibold text-brand-primary" (click)="closeForm()">Close</button>
-        </div>
-
-        <form [formGroup]="chamberForm" class="space-y-5" (ngSubmit)="onSubmit()">
-          <div class="grid gap-4 md:grid-cols-2">
-            <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
-              Hospital / Chamber name
-              <input type="text" formControlName="chamberName" placeholder="Enter hospital name"
-                class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
-                [class.border-red-400]="hasError('chamberName')" />
-              <span *ngIf="hasError('chamberName')" class="text-xs font-medium text-red-600">{{ getErrorMessage('chamberName') }}</span>
-            </label>
-
-            <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
-              Address
-              <input type="text" formControlName="address" placeholder="Full street address"
-                class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
-                [class.border-red-400]="hasError('address')" />
-              <span *ngIf="hasError('address')" class="text-xs font-medium text-red-600">{{ getErrorMessage('address') }}</span>
-            </label>
-          </div>
-
-          <div class="grid gap-4 md:grid-cols-2">
-            <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
-              Division
-              <select formControlName="divisionId"
-                class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900" [disabled]="isLoadingDivisions"
-                [class.border-red-400]="hasError('divisionId')">
-                <option value="">Select division</option>
-                <option *ngFor="let division of divisions" [value]="division.divisionID">
-                  {{ division.divisionName }}
-                </option>
-              </select>
-              <span *ngIf="hasError('divisionId')" class="text-xs font-medium text-red-600">{{ getErrorMessage('divisionId') }}</span>
-              <span *ngIf="isLoadingDivisions" class="text-xs font-medium text-slate-500">Loading divisions...</span>
-              <span *ngIf="divisionError" class="text-xs font-medium text-red-600">{{ divisionError }}</span>
-            </label>
-
-            <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
-              District
-              <select formControlName="districtId"
-                class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900"
-                [disabled]="!chamberForm.get('divisionId')?.value || isLoadingDistricts"
-                [class.border-red-400]="hasError('districtId')">
-                <option value="">Select district</option>
-                <option *ngFor="let district of districts" [value]="district.districtID">
-                  {{ district.districtName }}
-                </option>
-              </select>
-              <span *ngIf="hasError('districtId')" class="text-xs font-medium text-red-600">{{ getErrorMessage('districtId') }}</span>
-              <span *ngIf="isLoadingDistricts" class="text-xs font-medium text-slate-500">Loading districts...</span>
-              <span *ngIf="districtError" class="text-xs font-medium text-red-600">{{ districtError }}</span>
-              <span *ngIf="!chamberForm.get('divisionId')?.value" class="text-xs font-medium text-slate-500">Select a division first.</span>
-            </label>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="inline-flex items-center gap-3 text-sm font-semibold text-slate-900">
-              <input type="checkbox" formControlName="isVisibleOnPrescription" [disabled]="visibilityToggleDisabled"
-                class="h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary" />
-              Show on prescription header
-            </label>
-            <p *ngIf="visibilityLimitMessage" class="text-xs font-medium text-red-600">
-              {{ visibilityLimitMessage }}
-            </p>
-          </div>
-
-          <div class="flex justify-end">
-            <button type="submit"
-              class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold flex items-center gap-2"
-              [disabled]="isSaving || chamberForm.disabled">
-              <svg *ngIf="isSaving" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" fill="none" class="opacity-30" />
-                <path stroke-linecap="round" stroke="currentColor" stroke-width="4" d="M4 12a8 8 0 018-8" />
-              </svg>
-              Save location
-            </button>
-          </div>
-        </form>
-      </div>
     </section>
   </div>
 
   <app-doctor-schedule-builder [isOpen]="isScheduleBuilderOpen" [doctorId]="doctorProfileId" [chambers]="chambers"
     [initialChamberId]="selectedScheduleChamberId" [chambersLoading]="isLoadingList" (closed)="closeScheduleBuilder()"
     (scheduleCreated)="handleScheduleCreated($event)"></app-doctor-schedule-builder>
+</div>
+
+<div *ngIf="isFormOpen" class="fixed inset-0 z-50 flex">
+  <div class="flex-1 bg-slate-900/40 backdrop-blur-sm" (click)="closeForm()"></div>
+  <div class="w-full max-w-xl h-full bg-white shadow-2xl border-l border-slate-200 flex flex-col"
+    (click)="$event.stopPropagation()">
+    <header class="px-6 py-5 border-b border-slate-200 flex items-start justify-between">
+      <div>
+        <p class="text-xs uppercase tracking-[0.25em] text-brand-primary font-semibold">{{ editingChamberId ? 'Edit' : 'Add' }}</p>
+        <h2 class="text-2xl font-semibold text-slate-900">{{ editingChamberId ? 'Update hospital' : 'Add new hospital' }}</h2>
+        <p class="text-sm text-slate-500">Provide accurate information so patients can reach you easily.</p>
+      </div>
+      <button type="button" class="text-slate-400 hover:text-slate-600" (click)="closeForm()" aria-label="Close panel">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M6 18L18 6" />
+        </svg>
+      </button>
+    </header>
+
+    <form [formGroup]="chamberForm" class="flex-1 overflow-y-auto px-6 py-6 space-y-5" (ngSubmit)="onSubmit()">
+      <div class="grid gap-4 md:grid-cols-2">
+        <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+          Hospital / Chamber name
+          <input type="text" formControlName="chamberName" placeholder="Enter hospital name"
+            class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
+            [class.border-red-400]="hasError('chamberName')" />
+          <span *ngIf="hasError('chamberName')" class="text-xs font-medium text-red-600">{{ getErrorMessage('chamberName') }}</span>
+        </label>
+
+        <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+          Address
+          <input type="text" formControlName="address" placeholder="Full street address"
+            class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 placeholder-slate-400"
+            [class.border-red-400]="hasError('address')" />
+          <span *ngIf="hasError('address')" class="text-xs font-medium text-red-600">{{ getErrorMessage('address') }}</span>
+        </label>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+          Division
+          <select formControlName="divisionId" class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900"
+            [disabled]="isLoadingDivisions" [class.border-red-400]="hasError('divisionId')">
+            <option value="">Select division</option>
+            <option *ngFor="let division of divisions" [value]="division.divisionID">
+              {{ division.divisionName }}
+            </option>
+          </select>
+          <span *ngIf="hasError('divisionId')" class="text-xs font-medium text-red-600">{{ getErrorMessage('divisionId') }}</span>
+          <span *ngIf="isLoadingDivisions" class="text-xs font-medium text-slate-500">Loading divisions...</span>
+          <span *ngIf="divisionError" class="text-xs font-medium text-red-600">{{ divisionError }}</span>
+        </label>
+
+        <label class="flex flex-col gap-2 text-sm font-semibold text-slate-900">
+          District
+          <select formControlName="districtId" class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900"
+            [disabled]="!chamberForm.get('divisionId')?.value || isLoadingDistricts"
+            [class.border-red-400]="hasError('districtId')">
+            <option value="">Select district</option>
+            <option *ngFor="let district of districts" [value]="district.districtID">
+              {{ district.districtName }}
+            </option>
+          </select>
+          <span *ngIf="hasError('districtId')" class="text-xs font-medium text-red-600">{{ getErrorMessage('districtId') }}</span>
+          <span *ngIf="isLoadingDistricts" class="text-xs font-medium text-slate-500">Loading districts...</span>
+          <span *ngIf="districtError" class="text-xs font-medium text-red-600">{{ districtError }}</span>
+          <span *ngIf="!chamberForm.get('divisionId')?.value" class="text-xs font-medium text-slate-500">Select a division first.</span>
+        </label>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="inline-flex items-center gap-3 text-sm font-semibold text-slate-900">
+          <input type="checkbox" formControlName="isVisibleOnPrescription" [disabled]="visibilityToggleDisabled"
+            class="h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary" />
+          Show on prescription header
+        </label>
+        <p *ngIf="visibilityLimitMessage" class="text-xs font-medium text-red-600">
+          {{ visibilityLimitMessage }}
+        </p>
+      </div>
+
+      <div class="flex justify-end border-t border-slate-100 pt-4">
+        <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-primary text-white font-semibold flex items-center gap-2"
+          [disabled]="isSaving || chamberForm.disabled">
+          <svg *ngIf="isSaving" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" fill="none" class="opacity-30" />
+            <path stroke-linecap="round" stroke="currentColor" stroke-width="4" d="M4 12a8 8 0 018-8" />
+          </svg>
+          Save location
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

@@ -18,11 +18,10 @@ export class DoctorChamberService {
   }
 
   update(
-    id: number,
     input: DoctorChamberInputDto
   ): Observable<DoctorChamberDto> {
     return this.http.put<DoctorChamberDto>(
-      `${this.baseUrl}/api/app/doctor-chamber/${id}`,
+      `${this.baseUrl}/api/app/doctor-chamber`,
       input
     );
   }
