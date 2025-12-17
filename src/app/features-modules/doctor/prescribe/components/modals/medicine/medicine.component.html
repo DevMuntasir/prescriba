@@ -1,177 +1,365 @@
-<div class="prescripto-modal w-full max-w-[940px]">
+<div class="prescripto-modal w-full max-w-[940px] h-full">
   <header class="prescripto-modal__header">
     <div class="space-y-2">
       <p class="prescripto-modal__pill">Medications</p>
       <h2 class="prescripto-modal__title">Medicine</h2>
-
+      <p class="text-xs text-brand-neutral/60">
+        Enter to add • Ctrl+Enter to save • Esc to close • Alt+A to focus search
+      </p>
     </div>
-    <mat-button-toggle-group class="mt-2" [value]="suggestionMode" (change)="setSuggestionMode($event.value)"
-      aria-label="Suggestion mode">
+
+    <mat-button-toggle-group
+      class="mt-2"
+      [value]="suggestionMode"
+      (change)="setSuggestionMode($event.value)"
+      aria-label="Suggestion mode"
+    >
       <mat-button-toggle value="search">Search based</mat-button-toggle>
       <mat-button-toggle value="context">Context based (AI)</mat-button-toggle>
     </mat-button-toggle-group>
   </header>
 
   <section class="prescripto-modal__search">
-    <form (ngSubmit)="addMedicine({ label: searchControl.value || '', value: 0 })">
-      <div class="prescripto-modal__search-field">
-        <svg class="prescripto-modal__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-            d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4" />
+    <form (ngSubmit)="handleAddFromInput()">
+      <div class="prescripto-modal__search-field relative">
+        <svg
+          class="prescripto-modal__search-icon"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4"
+          />
         </svg>
-        <input #searchInput class="!pl-[40px]" type="text" matInput [formControl]="searchControl"
-          [matAutocomplete]="auto" placeholder="Search medicine" />
-        <mat-autocomplete (optionSelected)="onselect($event)" [displayWith]="displayWith" #auto="matAutocomplete"
-          class="max-h-72">
-          @for (medicine of filteredMedicines$| async; track medicine) {
-          <mat-option (click)="addMedicine(medicine)" [value]="medicine">
-            <span class="inline-flex items-center gap-2">
-              {{ medicine.label }}
 
-            </span>
-          </mat-option>
+        <input
+          #searchInput
+          class="!pl-[40px]"
+          type="text"
+          matInput
+          [formControl]="searchControl"
+          [matAutocomplete]="auto"
+          placeholder="Search medicine (min 2 chars)"
+          [disabled]="suggestionMode === 'context'"
+        />
+
+        <!-- small loading indicator on the right -->
+        @if (searchLoading$ | async) {
+          <div class="absolute right-3 top-1/2 -translate-y-1/2">
+            <mat-progress-spinner
+              mode="indeterminate"
+              [diameter]="18"
+              [strokeWidth]="3"
+            ></mat-progress-spinner>
+          </div>
+        }
+
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          class="max-h-72"
+          [displayWith]="displayWith"
+          (optionSelected)="onOptionSelected($event)"
+        >
+          <!-- @if ((searchHint$ | async) as hint) {
+            @if (hint) {
+              <mat-option disabled>
+                <span class="text-xs text-brand-neutral/70">{{ hint }}</span>
+              </mat-option>
+            }
+          } -->
+
+          @for (medicine of (filteredMedicines$ | async); track trackByOption) {
+            <mat-option [value]="medicine">
+              <div class="py-2">
+                <span class="inline-flex items-center gap-2">
+                  {{ medicine.label }}
+                </span>
+                <div class="ml-3">
+                  <p class="text-xs text-brand-neutral/80">{{ medicine.genericName || '' }}</p>
+                  <p class="text-xs text-brand-neutral/80">{{ medicine.manufacturer || '' }}</p>
+                </div>
+              </div>
+            </mat-option>
           }
         </mat-autocomplete>
       </div>
-      <button class="btn-secondary w-full min-w-[150px] md:w-auto" type="submit">Add medicine</button>
+
+      <button
+        class="btn-secondary w-full min-w-[150px] md:w-auto"
+        type="submit"
+        [disabled]="suggestionMode === 'context'"
+      >
+        Add medicine
+      </button>
     </form>
 
     @if (suggestionMode === 'context') {
-    <div class="mt-3 space-y-2">
-      <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">AI Suggested</div>
-      @if (aiLoading$ | async) {
-      <p class="text-sm text-brand-neutral/70">Loading suggestions...</p>
-      }
+      <div class="mt-3 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">
+            AI Suggested
+          </div>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="btn-secondary-light"
+              (click)="refreshAiSuggestions()"
+            >
+              Refresh
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="acceptAllAiSuggestions()"
+              [disabled]="(aiSuggestions$ | async)?.length === 0"
+            >
+              Accept all
+            </button>
+          </div>
+        </div>
 
-      @if (aiSuggestions$ | async; as aiSuggestions) {
-      @if (!(aiLoading$ | async)) {
-      @if (aiSuggestions.length > 0) {
-      <div class="max-h-72 space-y-2 overflow-auto rounded border border-brand-neutral/10 p-2">
-        @for (suggestion of aiSuggestions; track suggestion.label) {
-        <button type="button"
-          class="flex w-full flex-col items-start gap-1 rounded-md bg-brand-primary/5 p-3 text-left transition hover:bg-brand-primary/10"
-          (click)="addAiSuggestion(suggestion)">
-          <div class="font-medium text-brand-primary">{{ suggestion.label }}</div>
-          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.generic || suggestion.strength">
-            {{ suggestion.generic }} {{ suggestion.strength }} {{ suggestion.form }}
-          </div>
-          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.reason">Reason: {{ suggestion.reason }}</div>
-          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.defaultDose">Dose: {{ suggestion.defaultDose }}
-          </div>
-          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.defaultDuration">Duration:
-            {{ suggestion.defaultDuration }}</div>
-          <div class="text-xs text-brand-neutral/80" *ngIf="suggestion.defaultMeal">Meal: {{ suggestion.defaultMeal }}
-          </div>
-        </button>
+        @if (aiLoading$ | async) {
+          <p class="text-sm text-brand-neutral/70">Loading suggestions...</p>
+        }
+
+        @if (aiError$ | async) {
+          <p class="text-sm text-red-500">Failed to load AI suggestions. Try Refresh.</p>
+        }
+
+        @if (aiSuggestions$ | async; as aiSuggestions) {
+          @if (!(aiLoading$ | async)) {
+            @if (aiSuggestions.length > 0) {
+              <div class="max-h-72 space-y-2 overflow-auto rounded border border-brand-neutral/10 p-2">
+                @for (suggestion of aiSuggestions; track trackByAiSuggestion) {
+                  <button
+                    type="button"
+                    class="flex w-full flex-col items-start gap-1 rounded-md bg-brand-primary/5 p-3 text-left transition hover:bg-brand-primary/10"
+                    (click)="addAiSuggestion(suggestion)"
+                  >
+                    <div class="font-medium text-brand-primary">
+                      {{ suggestion.label }}
+                    </div>
+
+                    @if (suggestion.generic || suggestion.strength) {
+                      <div class="text-xs text-brand-neutral/80">
+                        {{ suggestion.generic }} {{ suggestion.strength }} {{ suggestion.form }}
+                      </div>
+                    }
+
+                    @if (suggestion.reason) {
+                      <div class="text-xs text-brand-neutral/80">
+                        Reason: {{ suggestion.reason }}
+                      </div>
+                    }
+
+                    @if (suggestion.defaultDose) {
+                      <div class="text-xs text-brand-neutral/80">
+                        Dose: {{ suggestion.defaultDose }}
+                      </div>
+                    }
+
+                    @if (suggestion.defaultDuration) {
+                      <div class="text-xs text-brand-neutral/80">
+                        Duration: {{ suggestion.defaultDuration }}
+                      </div>
+                    }
+
+                    @if (suggestion.defaultMeal) {
+                      <div class="text-xs text-brand-neutral/80">
+                        Meal: {{ suggestion.defaultMeal }}
+                      </div>
+                    }
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="text-sm text-brand-neutral/70">{{ aiEmptyMessage }}</p>
+            }
+          }
         }
       </div>
-      }@else {
-      <p class="text-sm text-brand-neutral/70">No AI suggestions</p>
-      }
-      }
-      }
-    </div>
     }
   </section>
 
   <mat-dialog-content class="prescripto-modal__body">
     @if (loading.isSkelton) {
-    <app-skelton />
-    }@else {
-    <section class="prescripto-modal__chip-set">
-      <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">Quick picks</div>
-      <mat-chip-listbox multiple>
-        @for (medicine of bookmarked; track medicine) {
-        <mat-chip-option class="prescripto-chip" [selected]="isMedicineSelected(medicine.label)"
-          (selectionChange)="toggleMedicine($event, medicine)">
-          {{ medicine.label }}
-        </mat-chip-option>
-        }
-      </mat-chip-listbox>
-    </section>
+      <app-skelton />
+    } @else {
+      <section class="prescripto-modal__chip-set">
+        <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">
+          Quick picks
+        </div>
+
+        <mat-chip-listbox multiple>
+          @for (medicine of bookmarked; track medicine.value) {
+            <mat-chip-option
+              class="prescripto-chip"
+              [selected]="isMedicineSelected(medicine.label)"
+              (selectionChange)="toggleMedicine($event, medicine)"
+            >
+              {{ medicine.label }}
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </section>
     }
 
-    @if (selectedMedicines.length > 0) {
-    <section class="prescripto-modal__selection overflow-x-auto">
-      <table class="prescripto-modal__table min-w-[760px]">
-        <thead>
-          <tr>
-            <th>Medicine</th>
-            <th>Duration</th>
-            <th>Timing</th>
-            <th>Meal</th>
-            <th>Notes</th>
-            <th class="text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (medicine of selectedMedicines; track $index) {
-          <tr>
-            <td class=" relative">
-              <input #medicineInput type="text" [(ngModel)]="medicine.name" readonly
-                class="prescripto-field prescripto-field--readonly w-[350px]"
-                (keydown.enter)="$event.preventDefault(); durationInput.focus()" />
-              <button matButton="elevated" #tooltip="matTooltip" class=" absolute  top-1/2 -translate-y-1/2 right-2"
-                matTooltip="Info about the action" [matTooltipPosition]="'above'">
+    @if (medicineFormArray.length > 0) {
+      <section class="prescripto-modal__selection">
+        <div class="rounded-3xl border border-brand-neutral/10 bg-white/80 shadow-[0_18px_35px_rgba(15,37,65,0.08)]">
+          <div
+            class="hidden grid-cols-[2.4fr_repeat(4,_1fr)_70px] gap-4 border-b border-brand-neutral/10 px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/50 md:grid"
+          >
+            <span>Medicine</span>
+            <span>Duration</span>
+            <span>Timing</span>
+            <span>Meal</span>
+            <span>Notes</span>
+            <span class="text-center">Action</span>
+          </div>
 
-                <svg class=" bg-brand-primary rounded-full" width="20" height="20" viewBox="0 0 24 24" fill="green"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8" />
-                  <path d="M12 8.5h.01" stroke="white" stroke-width="2" stroke-linecap="round" />
-                  <path d="M11 11.5h1v5h1" stroke="white" stroke-width="1.8" stroke-linecap="round" />
-                </svg>
-              </button>
-            </td>
-            <td>
-              <input #durationInput cdkFocusInitial type="text" [(ngModel)]="medicine.duration" placeholder="3 days"
-                class="prescripto-field prescripto-field--dense max-w-[120px]"
-                (keydown.enter)="$event.preventDefault(); timingInput.focus()" />
-            </td>
-            <td>
-              <div class="inline-flex items-center gap-2">
-                <input placeholder="Timing" #timingInput type="text" [(ngModel)]="medicine.timming"
-                  [matAutocomplete]="autoTiming" class="prescripto-field prescripto-field--dense max-w-[140px]"
-                  (keydown.enter)="$event.preventDefault(); mealSelect.focus()" />
+          <div class="space-y-3 px-4 py-4 md:px-6">
+            @for (row of medicineFormArray.controls; track trackByRowIndex; let i = $index) {
+              <div
+                [formGroup]="row"
+                class="grid grid-cols-1 gap-4 rounded-2xl border border-brand-neutral/10 bg-gradient-to-br from-white to-brand-primary/5 p-4 shadow-sm transition duration-150 hover:shadow-lg md:grid-cols-[2.4fr_repeat(4,_1fr)_70px] md:items-center"
+              >
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Medicine</span>
+                  <div class="relative flex items-center">
+                    <input
+                      type="text"
+                      formControlName="name"
+                      readonly
+                      class="prescripto-field prescripto-field--readonly w-full pr-12"
+                      (keydown.enter)="$event.preventDefault(); focusDuration(i)"
+                    />
 
+                    <button
+                      matButton="elevated"
+                      #tooltip="matTooltip"
+                      class="absolute right-1.5 top-1/2 -translate-y-1/2"
+                      matTooltip="Info: Use Ctrl+Enter to save, Esc to close"
+                      [matTooltipPosition]="'above'"
+                      type="button"
+                    >
+                      <svg class="bg-brand-primary rounded-full" width="20" height="20" viewBox="0 0 24 24" fill="green"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8" />
+                        <path d="M12 8.5h.01" stroke="white" stroke-width="2" stroke-linecap="round" />
+                        <path d="M11 11.5h1v5h1" stroke="white" stroke-width="1.8" stroke-linecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Duration</span>
+                  <input
+                    #durationInput
+                    cdkFocusInitial
+                    type="text"
+                    formControlName="duration"
+                    placeholder="Duration"
+                    [matAutocomplete]="autoDuration"
+                    class="prescripto-field prescripto-field--dense w-full"
+                    (keydown.enter)="$event.preventDefault(); focusTiming(i)"
+                  />
+
+                  <mat-autocomplete #autoDuration="matAutocomplete">
+                    <mat-option *ngFor="let option of durationOptions" [value]="option.value">
+                      {{ option.label }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Timing</span>
+                  <input
+                    #timingInput
+                    placeholder="Timing (e.g. 1+1+0)"
+                    type="text"
+                    formControlName="timming"
+                    [matAutocomplete]="autoTiming"
+                    class="prescripto-field prescripto-field--dense w-full"
+                    (keydown.enter)="$event.preventDefault(); focusMeal(i)"
+                  />
+
+                  <mat-autocomplete #autoTiming="matAutocomplete">
+                    <mat-option *ngFor="let combo of mealCombinations" [value]="combo">
+                      {{ combo }} {{ timingLabel(combo) }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Meal</span>
+                  <input
+                    #mealSelect
+                    placeholder="Meal"
+                    type="text"
+                    formControlName="mealTime"
+                    [matAutocomplete]="autoMeal"
+                    class="prescripto-field prescripto-field--dense w-full"
+                    (keydown.enter)="$event.preventDefault(); focusNotes(i)"
+                  />
+
+                  <mat-autocomplete #autoMeal="matAutocomplete">
+                    <mat-option class="text-[14px]" *ngFor="let time of mealTimes" [value]="time">
+                      {{ time }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Notes</span>
+                  <input
+                    #notesInput
+                    type="text"
+                    formControlName="notes"
+                    placeholder="Add notes"
+                    class="prescripto-field w-full"
+                    (keydown.enter)="$event.preventDefault(); saveBtn.focus()"
+                  />
+                </div>
+
+                <div class="flex flex-col gap-2 md:items-center">
+                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Action</span>
+                  <div class="flex justify-end md:justify-center">
+                    <button
+                      type="button"
+                      (click)="removeMedicineAt(i)"
+                      class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 transition hover:bg-red-100"
+                      aria-label="Remove medicine"
+                    >
+                      <app-bin></app-bin>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <mat-autocomplete #autoTiming="matAutocomplete">
-                <mat-option *ngFor="let combo of mealCombinations" [value]="combo">
-                  {{ combo }}
-                </mat-option>
-              </mat-autocomplete>
-            </td>
-            <td>
-              <input #mealSelect placeholder="Meal" type="text" [(ngModel)]="medicine.mealTime"
-                [matAutocomplete]="autoMeal" class="prescripto-field prescripto-field--dense max-w-[140px]"
-                (keydown.enter)="$event.preventDefault(); notesInput.focus()" />
-              <mat-autocomplete #autoMeal="matAutocomplete">
-                <mat-option class="text-[14px]" *ngFor="let time of mealTimes" [value]="time">
-                  {{ time }}
-                </mat-option>
-              </mat-autocomplete>
-            </td>
-            <td>
-              <input #notesInput type="text" [(ngModel)]="medicine.notes" placeholder="Add notes"
-                class="prescripto-field" (keydown.enter)="$event.preventDefault(); saveBtn.focus()" />
-            </td>
-            <td class="text-center">
-              <button #removeButton type="button" (click)="removeMedicine(medicine)"
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-500 transition hover:bg-red-100">
-                <app-bin></app-bin>
-              </button>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </section>
+            }
+          </div>
+        </div>
+      </section>
     }
   </mat-dialog-content>
 
-  <mat-dialog-actions class="prescripto-modal__actions">
-    <button class="btn-secondary-light" (click)="closeDialog()">Cancel</button>
-    <button class="btn-secondary" (click)="searchInput.focus()">Add more</button>
-    <button #saveBtn class="btn-secondary" (click)="save()">Save</button>
+  <mat-dialog-actions class="!sticky !bottom-0 gap-4">
+    <button class="btn-secondary-light" (click)="closeDialog()" type="button">
+      Cancel
+    </button>
+    <button class="btn-secondary" (click)="focusSearch()" type="button">
+      Add more
+    </button>
+    <button #saveBtn class="btn-secondary" (click)="save()" type="button">
+      Save
+    </button>
   </mat-dialog-actions>
 </div>

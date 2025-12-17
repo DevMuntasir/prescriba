@@ -1,7 +1,7 @@
-﻿import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GeminiService } from './gemini.service';
+import { GeminiService, GeminiContent } from './gemini.service';
 import { MarkdownPipe } from '../../pipes/markdown.pipe';
 
 interface Message {
@@ -59,17 +59,35 @@ export class ChatbotComponent implements AfterViewChecked {
     this.isTyping = false;
   }
 
+  private buildConversationPayload(): GeminiContent[] {
+    return this.messages
+      .filter((message) => {
+        if (!message.text?.trim()) return false;
+        if (message.sender === 'agent' && message.text === this.welcomeMessage) {
+          return false;
+        }
+
+        return true;
+      })
+      .map((message) => ({
+        role: message.sender === 'user' ? 'user' : 'model',
+        parts: [{ text: message.text }]
+      }));
+  }
+
   async sendMessage() {
     if (!this.userInput.trim()) return;
 
     const userMsg = this.userInput;
     this.messages.push({ text: userMsg, sender: 'user', timestamp: new Date() });
+    const payloadContents = this.buildConversationPayload();
+
     this.userInput = '';
     this.isTyping = true;
     this.messages.push({ text: '', sender: 'agent', timestamp: new Date() });
     const currentMessageIndex = this.messages.length - 1;
 
-    this.geminiService.generateStream(userMsg).subscribe({
+    this.geminiService.generateStream(payloadContents).subscribe({
       next: (chunk) => {
         this.isTyping = false;
         this.messages[currentMessageIndex].text += chunk;
@@ -87,6 +105,11 @@ export class ChatbotComponent implements AfterViewChecked {
       }
     });
   }
+
 }
+
+
+
+
 
 

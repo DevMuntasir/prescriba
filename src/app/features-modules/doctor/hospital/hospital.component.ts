@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -190,6 +190,7 @@ export class HospitalComponent {
       districtId,
       districtName: selectedDistrict?.districtName,
       isVisibleOnPrescription: rawValue.isVisibleOnPrescription,
+      id: this.editingChamberId as number,
     };
 
     if (
@@ -209,7 +210,7 @@ export class HospitalComponent {
 
     // Check if we're editing or creating
     const operation = this.editingChamberId
-      ? this.doctorChamberService.update(this.editingChamberId, payload)
+      ? this.doctorChamberService.update(payload)
       : this.doctorChamberService.create(payload);
 
     operation.subscribe({

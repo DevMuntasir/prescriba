@@ -19,11 +19,13 @@ import { DoctorChamberService } from 'src/app/api/services/doctor-chamber.servic
 import { DoctorScheduleService } from 'src/app/api/services/doctor-schedule.service';
 import { AppointmentService, AppointmentListQuery, CreateAppointmentPayload } from 'src/app/api/services/appointment.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Subject, Subscription, takeUntil } from 'rxjs';
 import {
   SessionBookingDialogComponent,
   SessionBookingDialogResult,
 } from './session-booking-dialog/session-booking-dialog.component';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // export interface AppointmentDto {
 //   id?: number | string;
@@ -66,6 +68,7 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly destroy$ = new Subject<void>();
+  private sessionOptionsSub?: Subscription;
 
   private readonly defaultPageNumber = 1;
   private readonly defaultPageSize = 10;
@@ -179,6 +182,7 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.sessionOptionsSub?.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -280,9 +284,11 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         const scheduleId = this.toPositiveNumber(value) ?? null;
-        const currentSessionId =
-          this.toPositiveNumber(this.appointmentFiltersForm.value.sessionId) ?? null;
-        this.rebuildSessionOptions(scheduleId, currentSessionId);
+        this.appointmentFiltersForm.patchValue(
+          { sessionId: null },
+          { emitEvent: false }
+        );
+        this.rebuildSessionOptions(scheduleId, null);
       });
   }
 
@@ -374,49 +380,99 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
     scheduleId: number | null,
     desiredSessionId: number | null
   ): void {
-    // Build new session options based on selected schedule
-    this.filterSessionOptions = this.buildSessionOptions(scheduleId);
-
-    // If no schedule is selected, clear the session selection
     if (!scheduleId) {
-      this.appointmentFiltersForm.patchValue({ sessionId: null }, { emitEvent: false });
+      this.sessionOptionsSub?.unsubscribe();
+      this.filterSessionOptions = [];
+      if (this.appointmentFiltersForm.value.sessionId !== null) {
+        this.appointmentFiltersForm.patchValue(
+          { sessionId: null },
+          { emitEvent: false }
+        );
+      }
       return;
     }
 
-    // If desired session is not in the new options, clear it
-    if (
-      desiredSessionId &&
-      !this.filterSessionOptions.some((option) => option.id === desiredSessionId)
-    ) {
-      this.appointmentFiltersForm.patchValue({ sessionId: null }, { emitEvent: false });
-    }
+    this.buildSessionOptions(scheduleId, desiredSessionId);
   }
 
   private buildSessionOptions(
-    scheduleId: number | null
-  ): { id: number; label: string }[] {
-    if (!scheduleId) {
+    scheduleId: number,
+    desiredSessionId: number | null
+  ): void {
+    this.sessionOptionsSub?.unsubscribe();
+    this.filterSessionOptions = [];
+
+    this.sessionOptionsSub = this.appointmentService
+      .getAppointmentSessionList()
+      .pipe(
+        takeUntil(this.destroy$),
+        map((response) =>
+          this.normalizeSessionResponse(response)
+            .filter((item) => item.doctorScheduleId === scheduleId)
+            .map((session) => ({
+              id: session.id as number,
+              label: this.buildSessionLabel(session),
+            }))
+        )
+      )
+      .subscribe({
+        next: (sessions) => {
+          this.filterSessionOptions = sessions;
+          if (
+            desiredSessionId &&
+            !sessions.some((option) => option.id === desiredSessionId)
+          ) {
+            this.appointmentFiltersForm.patchValue(
+              { sessionId: null },
+              { emitEvent: false }
+            );
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load sessions', err);
+          this.filterSessionOptions = [];
+          this.appointmentFiltersForm.patchValue(
+            { sessionId: null },
+            { emitEvent: false }
+          );
+        },
+      });
+  }
+
+  private normalizeSessionResponse(response: any): DoctorScheduleDaySessionDto[] {
+    if (!response) {
       return [];
     }
 
-    const schedule = this.filterSchedules.find((item) => item.id === scheduleId);
-    if (!schedule) {
-      return [];
+    if (Array.isArray(response)) {
+      return response;
     }
 
-    return (schedule.doctorScheduleDaySession ?? [])
-      .filter((session) => typeof session.id === 'number')
-      .map((session) => ({
-        id: session.id as number,
-        label: this.buildSessionLabel(session),
-      }));
+    if (Array.isArray(response.results)) {
+      return response.results;
+    }
+
+    if (Array.isArray(response.result)) {
+      return response.result;
+    }
+
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    if (Array.isArray(response.items)) {
+      return response.items;
+    }
+
+    return [];
   }
 
   private buildSessionLabel(session: DoctorScheduleDaySessionDto): string {
     const dayLabel = this.getDayLabel(session.scheduleDayofWeek) || 'Session';
     const start = this.formatTimeLabel(session.startTime);
     const end = this.formatTimeLabel(session.endTime);
-    return `${dayLabel} � ${start} - ${end}`.trim();
+    const timeLabel = start && end ? `${start} - ${end}` : start ?? end ?? '';
+    return `${dayLabel} ${timeLabel}`.trim();
   }
 
 
@@ -431,18 +487,25 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
   }
 
   get selectedChamber(): DoctorChamberDto | undefined {
+    debugger
     if (this.selectedChamberId === null) {
       return undefined;
     }
+    console.log(this.chambers.find((ch) => ch.id === this.selectedChamberId));
+
     return this.chambers.find((ch) => ch.id === this.selectedChamberId);
   }
 
   isChamberSelected(chamberId: number | null | undefined): boolean {
+    console.log(chamberId, this.selectedChamberId);
+    
     if (chamberId === undefined) return false;
     return (this.selectedChamberId ?? null) === (chamberId ?? null);
   }
 
   onChamberSelected(chamber: DoctorChamberDto): void {
+console.log(chamber);
+
     const chamberId = chamber.id ?? null;
     if (!chamberId || !this.doctorProfileId) return;
 
@@ -571,6 +634,130 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
     }
   }
 
+downloadPDF(): void {
+  const doc = new jsPDF();
+
+  const chamber =
+    this.selectedChamber ??
+    this.getChamberFromFilters();
+
+  const chamberName = chamber?.chamberName || 'All Chambers';
+  const address = chamber?.address || '';
+
+  // Determine session time label
+  let sessionTime = 'All Sessions';
+  if (this.appointmentFiltersForm.value.sessionId) {
+    const selectedSession = this.filterSessionOptions.find(
+      (s) => s.id === this.appointmentFiltersForm.value.sessionId
+    );
+    if (selectedSession) sessionTime = selectedSession.label;
+  }
+
+  const patientCount = this.appointments.length;
+  const date = this.selectedBookingDate
+    ? new Date(this.selectedBookingDate).toLocaleDateString()
+    : new Date().toLocaleDateString();
+
+  // ---------------- HEADER (UPDATED) ----------------
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const marginX = 14;
+
+  // Top band
+  doc.setFillColor(16, 185, 129); // emerald
+  doc.rect(0, 0, pageWidth, 22, 'F');
+
+  // Chamber name centered in white
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(255, 255, 255);
+  doc.text(chamberName, pageWidth / 2, 14, { align: 'center' });
+
+  // Address (centered, muted) below band
+  let headerY = 30;
+  if (address) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(90); // gray
+    doc.text(address, pageWidth / 2, headerY, { align: 'center' });
+    headerY += 6;
+  }
+
+  // Info block background (light tint)
+  const infoTop = headerY + 2;
+  const infoHeight = 22;
+  doc.setFillColor(240, 253, 244); // emerald-50
+  doc.roundedRect(marginX, infoTop, pageWidth - marginX * 2, infoHeight, 2, 2, 'F');
+
+  // Info rows
+  const labelX = marginX + 4;
+  const valueX = pageWidth - marginX - 4;
+
+  doc.setFontSize(11);
+  doc.setTextColor(40);
+
+  const row1Y = infoTop + 7;
+  const row2Y = infoTop + 14;
+  const row3Y = infoTop + 21;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Session:', labelX, row1Y);
+  doc.text('Date:', labelX, row2Y);
+  doc.text('Total Patients:', labelX, row3Y);
+
+  doc.setFont('helvetica', 'normal');
+  doc.text(sessionTime, valueX, row1Y, { align: 'right' });
+  doc.text(date, valueX, row2Y, { align: 'right' });
+  doc.text(String(patientCount), valueX, row3Y, { align: 'right' });
+
+  // Divider line before table
+  const tableStartY = infoTop + infoHeight + 8;
+  doc.setDrawColor(220);
+  doc.line(marginX, tableStartY - 4, pageWidth - marginX, tableStartY - 4);
+  // --------------------------------------------------
+
+  // --- Table Section ---
+  const columns = [
+    { header: 'Serial', dataKey: 'serial' },
+    { header: 'Patient Name', dataKey: 'name' },
+    { header: 'Age', dataKey: 'age' },
+    { header: 'Gender', dataKey: 'gender' },
+    { header: 'Contact', dataKey: 'contact' },
+    { header: 'Status', dataKey: 'status' },
+  ];
+
+  const data = this.appointments.map((apt) => ({
+    serial: apt.serialNo,
+    name: apt.patientName,
+    age: apt.patientAge,
+    gender: apt.gender,
+    contact: apt.phoneNumber,
+    status: apt.status,
+  }));
+
+  autoTable(doc, {
+    head: [columns.map(c => c.header)],
+    body: data.map(row => columns.map(c => row[c.dataKey as keyof typeof row])),
+    startY: tableStartY,
+    theme: 'grid',
+    headStyles: { fillColor: [16, 185, 129] },
+    styles: { fontSize: 10, cellPadding: 3 },
+    alternateRowStyles: { fillColor: [240, 253, 244] },
+  });
+
+  doc.save(`appointments_${new Date().getTime()}.pdf`);
+}
+
+private getChamberFromFilters(): DoctorChamberDto | undefined {
+  debugger
+  const scheduleId = this.currentAppointmentFilters.scheduleId;
+  if (!scheduleId) return undefined;
+
+  const schedule = this.filterSchedules.find(s => s.id === scheduleId);
+  const chamberId = this.toPositiveNumber(schedule?.doctorChamberId); // adjust field name
+  if (!chamberId) return undefined;
+
+  return this.chambers.find(c => this.toPositiveNumber(c.id) === chamberId);
+}
 
 
 
@@ -759,6 +946,7 @@ export class AppointmentsComponent implements OnInit, OnDestroy {
       const sessions = schedule.doctorScheduleDaySession ?? [];
       for (const session of sessions) {
         const normalized = this.normalizeDay(session.scheduleDayofWeek);
+        
         if (normalized) return normalized;
       }
     }

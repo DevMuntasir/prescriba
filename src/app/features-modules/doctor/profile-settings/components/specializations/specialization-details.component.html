@@ -3,7 +3,6 @@
     <div>
       <p class="profile-card__eyebrow">Expertise</p>
       <h2 class="profile-card__title">Specializations</h2>
-      <p class="profile-card__subtitle">Tell patients about the procedures or services you provide.</p>
     </div>
   </header>
 
@@ -50,20 +49,8 @@
       </small>
     </label>
 
-    <label class="profile-field-group profile-field-group--full">
-      <span>Service Details</span>
-      <textarea
-        class="profile-field"
-        formControlName="serviceDetails"
-        rows="3"
-        placeholder="Describe treatments, expertise, etc."
-      ></textarea>
-    </label>
 
-    <label class="profile-field-group">
-      <span>Document Name (optional)</span>
-      <input class="profile-field" type="text" formControlName="documentName" placeholder="Document name" />
-    </label>
+
 
     <div class="profile-form__actions">
       <button type="submit" class="profile-btn profile-btn--primary" [disabled]="saving || form.invalid || !doctorId ">

@@ -28,7 +28,7 @@ export class LocationService {
 
   getDivisions(): Observable<LocationApiResponse<DivisionModel>> {
     return this.http.get<LocationApiResponse<DivisionModel>>(
-      `${this.baseUrl}/gets-all-division_list`
+      `${this.baseUrl}/api/2025-02/gets-all-division_list`
     );
   }
 
@@ -36,7 +36,7 @@ export class LocationService {
     divisionId: number
   ): Observable<LocationApiResponse<DistrictModel>> {
     return this.http.get<LocationApiResponse<DistrictModel>>(
-      `${this.baseUrl}/gets_district_by_division_id?divisonId=${divisionId}`
+      `${this.baseUrl}/api/2025-02/gets_district_by_division_id?divisonId=${divisionId}`
     );
   }
 }
