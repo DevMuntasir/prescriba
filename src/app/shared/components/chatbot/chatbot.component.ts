@@ -89,6 +89,8 @@ export class ChatbotComponent implements AfterViewChecked {
 
     this.geminiService.generateStream(payloadContents).subscribe({
       next: (chunk) => {
+        console.log(chunk);
+        
         this.isTyping = false;
         this.messages[currentMessageIndex].text += chunk;
         // Force change detection or scroll if needed, though Angular usually handles this.
