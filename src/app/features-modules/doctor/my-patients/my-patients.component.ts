@@ -1,3 +1,4 @@
+import { AuthService } from 'src/app/shared/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ import {
 })
 export class MyPatientsComponent implements OnInit, OnDestroy {
   private readonly patientService = inject(PrescriptionPatientService);
+  private readonly AuthService = inject(AuthService)
   private readonly destroy$ = new Subject<void>();
   private patientRequestSub?: Subscription;
 
@@ -165,6 +167,7 @@ export class MyPatientsComponent implements OnInit, OnDestroy {
         pageNumber: this.pageNumber,
         pageSize: this.pageSize,
         searchTerm,
+        doctorId: this.AuthService.authInfo().id
       })
       .subscribe({
         next: (response) => {

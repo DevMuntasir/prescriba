@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -68,6 +69,7 @@ type MedicineOption = {
   value: number;
   genericName: string;
   manufacturer: string;
+  indication?: string;
 };
 
 type MedicineRow = {
@@ -77,6 +79,7 @@ type MedicineRow = {
   timming: string;
   mealTime: string;
   notes: string;
+  indication?: string;
 };
 
 @Component({
@@ -113,6 +116,7 @@ export class MedicineComponent {
   private toaster = inject(TosterService);
   private auth = inject(AuthService);
   private aiSuggestionService = inject(AiSuggestionService);
+  private cdr = inject(ChangeDetectorRef);
 
   constructor(public dialogRef: MatDialogRef<MedicineComponent>) {}
 
@@ -139,7 +143,7 @@ export class MedicineComponent {
     { value: '6 months', label: '6 Months' },
   ];
 
-  bookmarked: { label: string; value: number }[] = [];
+  bookmarked: { label: string; value: number; indication?: string }[] = [];
 
   loading = {
     isSpinner: false,
@@ -160,6 +164,7 @@ export class MedicineComponent {
   searchHint$ = this.searchHintSubject.asObservable();
 
   filteredMedicines$!: Observable<MedicineOption[]>;
+  canAddTypedMedicine = false;
 
   // AI
   private aiRefresh$ = new Subject<void>();
@@ -205,24 +210,37 @@ export class MedicineComponent {
         if (mode !== 'search') {
           this.searchLoadingSubject.next(false);
           this.searchHintSubject.next('');
+          this.updateCustomAddAvailability(false);
           return of([] as MedicineOption[]);
         }
 
         if (!query || query.length < 2) {
           this.searchLoadingSubject.next(false);
           this.searchHintSubject.next('Type at least 2 characters');
+          this.updateCustomAddAvailability(false);
           return of([] as MedicineOption[]);
         }
 
         this.searchHintSubject.next('');
         this.searchLoadingSubject.next(true);
+        this.updateCustomAddAvailability(false);
 
         return this.filter(query).pipe(
-          finalize(() => this.searchLoadingSubject.next(false)),
+          map((options) => {
+            if (!options.length) {
+              this.searchHintSubject.next('No matches found. Click Add to create a new medicine.');
+            } else {
+              this.searchHintSubject.next('');
+            }
+            this.updateCustomAddAvailability(options.length === 0);
+            return options;
+          }),
           catchError(() => {
             this.searchHintSubject.next('Search failed. Try again.');
+            this.updateCustomAddAvailability(false);
             return of([] as MedicineOption[]);
-          })
+          }),
+          finalize(() => this.searchLoadingSubject.next(false))
         );
       }),
       shareReplay({ bufferSize: 1, refCount: true })
@@ -289,6 +307,14 @@ export class MedicineComponent {
     const raw = (this.searchControl.value ?? '').trim();
     if (!raw) return;
 
+    if (!this.canAddTypedMedicine) {
+      this.toaster.customToast(
+        'Search the medicine first. You can only add when no matches are found.',
+        'warning'
+      );
+      return;
+    }
+
     // Doctor typed a brand-new name, create it
     // (same behavior as your old code)
     this.addTypedMedicine(raw);
@@ -309,6 +335,7 @@ export class MedicineComponent {
         timming: '',
         mealTime: '',
         notes: '',
+        indication: medicine.indication || '',
       })
     );
 
@@ -337,13 +364,14 @@ export class MedicineComponent {
             timming: '',
             mealTime: '',
             notes: '',
+            indication: '',
           })
         );
 
         // add to quick picks
         if (newId) {
           this.bookmarked = [
-            { label, value: newId },
+            { label, value: newId, indication: '' },
             ...this.bookmarked.filter((b) => b.value !== newId),
           ];
         }
@@ -370,13 +398,14 @@ export class MedicineComponent {
           value: item.medicationId,
           genericName: item.genericName || '',
           manufacturer: item.manufacturer || '',
+          indication: item.indication || '',
         })) as MedicineOption[];
       })
     );
   }
 
   // ---------- Quick picks ----------
-  toggleMedicine(event: any, medicine: { label: string; value: number }): void {
+  toggleMedicine(event: any, medicine: { label: string; value: number; indication?: string }): void {
     if (!event?.isUserInput) return;
 
     const existingIndex = this.findIndexByNameOrId(medicine.label, medicine.value);
@@ -390,6 +419,7 @@ export class MedicineComponent {
           timming: '',
           mealTime: '',
           notes: '',
+          indication: medicine.indication || '',
         })
       );
       this.focusDuration(this.medicineFormArray.length - 1);
@@ -418,6 +448,7 @@ export class MedicineComponent {
         timming: suggestion.defaultDose || '',
         notes: suggestion.reason || '',
         mealTime: suggestion.defaultMeal || '',
+        indication: suggestion.reason || '',
       })
     );
 
@@ -593,6 +624,7 @@ export class MedicineComponent {
       timming: new FormControl<string>(row.timming || ''),
       mealTime: new FormControl<string>(row.mealTime || ''),
       notes: new FormControl<string>(row.notes || ''),
+      indication: new FormControl<string>(row.indication || ''),
     });
   }
 
@@ -610,6 +642,7 @@ export class MedicineComponent {
           timming: String((m as any).timming || ''),
           mealTime: String((m as any).mealTime || ''),
           notes: String((m as any).notes || ''),
+          indication: String((m as any).indication || ''),
         })
       );
     });
@@ -625,16 +658,19 @@ export class MedicineComponent {
             (res?.results ?? []).map((r: any) => ({
               label: r.medicationName,
               value: r.medicationId,
+              indication: r.indication || '',
             })) || [];
           this.loading.isSkelton = false;
         } else {
           this.loading.isSkelton = false;
           this.loading.noDataFound = true;
         }
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loading.isSkelton = false;
         this.loading.noDataFound = true;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -670,6 +706,12 @@ export class MedicineComponent {
         name: med.name,
       })),
     };
+  }
+
+  private updateCustomAddAvailability(canAdd: boolean) {
+    if (this.canAddTypedMedicine === canAdd) return;
+    this.canAddTypedMedicine = canAdd;
+    this.cdr.markForCheck();
   }
 }
 

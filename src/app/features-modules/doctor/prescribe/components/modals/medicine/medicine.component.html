@@ -1,365 +1,352 @@
-<div class="prescripto-modal w-full max-w-[940px] h-full">
-  <header class="prescripto-modal__header">
-    <div class="space-y-2">
-      <p class="prescripto-modal__pill">Medications</p>
-      <h2 class="prescripto-modal__title">Medicine</h2>
-      <p class="text-xs text-brand-neutral/60">
-        Enter to add • Ctrl+Enter to save • Esc to close • Alt+A to focus search
-      </p>
-    </div>
-
-    <mat-button-toggle-group
-      class="mt-2"
-      [value]="suggestionMode"
-      (change)="setSuggestionMode($event.value)"
-      aria-label="Suggestion mode"
-    >
-      <mat-button-toggle value="search">Search based</mat-button-toggle>
-      <mat-button-toggle value="context">Context based (AI)</mat-button-toggle>
-    </mat-button-toggle-group>
-  </header>
-
-  <section class="prescripto-modal__search">
-    <form (ngSubmit)="handleAddFromInput()">
-      <div class="prescripto-modal__search-field relative">
-        <svg
-          class="prescripto-modal__search-icon"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm6-2 4 4"
-          />
-        </svg>
-
-        <input
-          #searchInput
-          class="!pl-[40px]"
-          type="text"
-          matInput
-          [formControl]="searchControl"
-          [matAutocomplete]="auto"
-          placeholder="Search medicine (min 2 chars)"
-          [disabled]="suggestionMode === 'context'"
-        />
-
-        <!-- small loading indicator on the right -->
-        @if (searchLoading$ | async) {
-          <div class="absolute right-3 top-1/2 -translate-y-1/2">
-            <mat-progress-spinner
-              mode="indeterminate"
-              [diameter]="18"
-              [strokeWidth]="3"
-            ></mat-progress-spinner>
+<div
+  class="prescripto-modal w-full max-w-[1000px] h-full flex flex-col bg-white overflow-hidden rounded-xl shadow-2xl">
+  <!-- Header -->
+  <header class="prescripto-modal__header shrink-0 border-b border-brand-neutral/10 bg-white px-8 py-6">
+    <div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between w-full">
+      <div class="space-y-1">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary">
+            <!-- medication icon -->
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.5 13.5 4 20a2.8 2.8 0 0 0 4 0l6.5-6.5" />
+              <path d="M16 8l-8 8" />
+              <path d="M14.5 3.5a4.95 4.95 0 0 1 7 7L17 15l-7-7 4.5-4.5z" />
+            </svg>
           </div>
-        }
-
-        <mat-autocomplete
-          #auto="matAutocomplete"
-          class="max-h-72"
-          [displayWith]="displayWith"
-          (optionSelected)="onOptionSelected($event)"
-        >
-          <!-- @if ((searchHint$ | async) as hint) {
-            @if (hint) {
-              <mat-option disabled>
-                <span class="text-xs text-brand-neutral/70">{{ hint }}</span>
-              </mat-option>
-            }
-          } -->
-
-          @for (medicine of (filteredMedicines$ | async); track trackByOption) {
-            <mat-option [value]="medicine">
-              <div class="py-2">
-                <span class="inline-flex items-center gap-2">
-                  {{ medicine.label }}
-                </span>
-                <div class="ml-3">
-                  <p class="text-xs text-brand-neutral/80">{{ medicine.genericName || '' }}</p>
-                  <p class="text-xs text-brand-neutral/80">{{ medicine.manufacturer || '' }}</p>
-                </div>
-              </div>
-            </mat-option>
-          }
-        </mat-autocomplete>
+          <div>
+            <h2 class="text-xl font-bold text-brand-neutral-dark">Medicine</h2>
+            <p class="text-xs font-medium uppercase tracking-wider text-brand-neutral/50">Manage Medications</p>
+          </div>
+        </div>
       </div>
 
-      <button
-        class="btn-secondary w-full min-w-[150px] md:w-auto"
-        type="submit"
-        [disabled]="suggestionMode === 'context'"
-      >
-        Add medicine
-      </button>
-    </form>
+      <div class="flex items-center gap-4">
+        <div class="text-right text-xs text-brand-neutral/50 hidden md:block">
+          <div><span class="font-bold text-brand-neutral/70">Enter</span> to add</div>
+          <div><span class="font-bold text-brand-neutral/70">Ctrl+Enter</span> to save</div>
+        </div>
 
-    @if (suggestionMode === 'context') {
-      <div class="mt-3 space-y-2">
-        <div class="flex items-center justify-between">
-          <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">
-            AI Suggested
+        <mat-button-toggle-group   [value]="suggestionMode" (change)="setSuggestionMode($event.value)"
+          class="shadow-sm items-center rounded-lg border border-brand-neutral/20 bg-brand-neutral/5 p-1 ">
+          <mat-button-toggle  value="search" class="px-4 text-sm">Search</mat-button-toggle>
+          <mat-button-toggle value="context" class="px-4 text-sm">AI Suggest</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="w-full">
+      <form (ngSubmit)="handleAddFromInput()" class="relative group">
+        <div class="relative flex items-center transition-transform duration-200 focus-within:scale-[1.01]">
+          <div class="absolute left-4 flex items-center justify-center text-brand-neutral/40">
+            <!-- search icon (already svg) -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
           </div>
-          <div class="flex gap-2">
+
+          <input #searchInput
+            class="h-14 w-full rounded-xl border border-brand-neutral/20 bg-brand-neutral/5 pl-12 pr-32 text-lg text-brand-neutral-dark placeholder:text-brand-neutral/40 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-sm"
+            type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
+            placeholder="Search for medicine (e.g. Napa)" [disabled]="suggestionMode === 'context'" />
+
+          <div class="absolute right-2 flex items-center gap-2">
+            @if (searchLoading$ | async) {
+            <mat-progress-spinner mode="indeterminate" [diameter]="20" [strokeWidth]="3"></mat-progress-spinner>
+            }
             <button
-              type="button"
-              class="btn-secondary-light"
-              (click)="refreshAiSuggestions()"
-            >
-              Refresh
+              class="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white shadow-md transition hover:bg-brand-primary-dark hover:shadow-lg disabled:opacity-50 disabled:shadow-none"
+              type="submit" [disabled]="suggestionMode === 'context' || !canAddTypedMedicine">
+              Add
             </button>
+          </div>
+        </div>
+
+        <mat-autocomplete #auto="matAutocomplete"
+          class="max-h-80 rounded-xl border border-brand-neutral/10 bg-white shadow-xl" [displayWith]="displayWith"
+          (optionSelected)="onOptionSelected($event)">
+          @for (medicine of (filteredMedicines$ | async); track trackByOption) {
+          <mat-option [value]="medicine"
+            class="!px-4 !py-3 !min-h-[auto] border-b border-brand-neutral/5 last:border-0 hover:bg-brand-neutral/5 transition-colors">
+            <div class="flex flex-col gap-0.5">
+              <span class="text-base font-semibold text-brand-neutral-dark">
+                {{ medicine.label }}
+              </span>
+              <div class="flex items-center gap-2 text-xs">
+                @if (medicine.genericName) {
+                <span class="rounded bg-blue-50 px-1.5 py-0.5 font-medium text-blue-600">{{ medicine.genericName
+                  }}</span>
+                }
+                @if (medicine.manufacturer) {
+                <span class="text-brand-neutral/60">{{ medicine.manufacturer }}</span>
+                }
+              </div>
+            </div>
+          </mat-option>
+          }
+        </mat-autocomplete>
+      </form>
+
+      <!-- AI Content -->
+      @if (suggestionMode === 'context') {
+      <div class="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary">AI Suggestions</h3>
+          <div class="flex gap-2">
+            <button class="text-xs font-medium text-brand-neutral/60 hover:text-brand-primary transition"
+              (click)="refreshAiSuggestions()">Refresh</button>
+            <span class="text-brand-neutral/20">|</span>
             <button
-              type="button"
-              class="btn-secondary"
-              (click)="acceptAllAiSuggestions()"
-              [disabled]="(aiSuggestions$ | async)?.length === 0"
-            >
-              Accept all
+              class="text-xs font-medium text-brand-primary hover:text-brand-primary-dark transition disabled:opacity-50"
+              (click)="acceptAllAiSuggestions()" [disabled]="(aiSuggestions$ | async)?.length === 0">
+              Accept All
             </button>
           </div>
         </div>
 
         @if (aiLoading$ | async) {
-          <p class="text-sm text-brand-neutral/70">Loading suggestions...</p>
-        }
-
-        @if (aiError$ | async) {
-          <p class="text-sm text-red-500">Failed to load AI suggestions. Try Refresh.</p>
-        }
-
+        <div class="flex justify-center p-8">
+          <mat-progress-spinner mode="indeterminate" [diameter]="30"></mat-progress-spinner>
+        </div>
+        } @else if (aiError$ | async) {
+        <div class="rounded-lg bg-red-50 p-4 text-center text-sm text-red-600">
+          Failed to load suggestions. <button class="underline font-bold" (click)="refreshAiSuggestions()">Try
+            again</button>
+        </div>
+        } @else {
         @if (aiSuggestions$ | async; as aiSuggestions) {
-          @if (!(aiLoading$ | async)) {
-            @if (aiSuggestions.length > 0) {
-              <div class="max-h-72 space-y-2 overflow-auto rounded border border-brand-neutral/10 p-2">
-                @for (suggestion of aiSuggestions; track trackByAiSuggestion) {
-                  <button
-                    type="button"
-                    class="flex w-full flex-col items-start gap-1 rounded-md bg-brand-primary/5 p-3 text-left transition hover:bg-brand-primary/10"
-                    (click)="addAiSuggestion(suggestion)"
-                  >
-                    <div class="font-medium text-brand-primary">
-                      {{ suggestion.label }}
-                    </div>
+        @if (aiSuggestions.length > 0) {
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+          @for (suggestion of aiSuggestions; track trackByAiSuggestion) {
+          <button type="button"
+            class="group flex flex-col items-start gap-1 rounded-xl border border-brand-neutral/10 bg-white p-3 text-left shadow-sm transition-all hover:border-brand-primary/30 hover:shadow-md hover:bg-brand-primary/5 active:scale-[0.98]"
+            (click)="addAiSuggestion(suggestion)">
+            <div class="w-full flex justify-between items-start">
+              <span class="font-semibold text-brand-primary group-hover:text-brand-primary-dark">{{ suggestion.label
+                }}</span>
 
-                    @if (suggestion.generic || suggestion.strength) {
-                      <div class="text-xs text-brand-neutral/80">
-                        {{ suggestion.generic }} {{ suggestion.strength }} {{ suggestion.form }}
-                      </div>
-                    }
-
-                    @if (suggestion.reason) {
-                      <div class="text-xs text-brand-neutral/80">
-                        Reason: {{ suggestion.reason }}
-                      </div>
-                    }
-
-                    @if (suggestion.defaultDose) {
-                      <div class="text-xs text-brand-neutral/80">
-                        Dose: {{ suggestion.defaultDose }}
-                      </div>
-                    }
-
-                    @if (suggestion.defaultDuration) {
-                      <div class="text-xs text-brand-neutral/80">
-                        Duration: {{ suggestion.defaultDuration }}
-                      </div>
-                    }
-
-                    @if (suggestion.defaultMeal) {
-                      <div class="text-xs text-brand-neutral/80">
-                        Meal: {{ suggestion.defaultMeal }}
-                      </div>
-                    }
-                  </button>
-                }
-              </div>
-            } @else {
-              <p class="text-sm text-brand-neutral/70">{{ aiEmptyMessage }}</p>
+              <!-- add_circle icon -->
+              <svg
+                class="h-4 w-4 text-brand-neutral/20 opacity-0 group-hover:opacity-100 transition-opacity"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v8M8 12h8" />
+              </svg>
+            </div>
+            @if (suggestion.reason) {
+            <p class="text-[10px] leading-tight text-brand-neutral/60 line-clamp-2">{{ suggestion.reason }}</p>
             }
+          </button>
           }
+        </div>
+        } @else {
+        <div
+          class="rounded-lg border border-dashed border-brand-neutral/20 p-6 text-center text-sm text-brand-neutral/50">
+          {{ aiEmptyMessage }}
+        </div>
+        }
+        }
         }
       </div>
-    }
-  </section>
+      }
+    </div>
+  </header>
 
-  <mat-dialog-content class="prescripto-modal__body">
-    @if (loading.isSkelton) {
-      <app-skelton />
-    } @else {
-      <section class="prescripto-modal__chip-set">
-        <div class="text-xs uppercase tracking-[0.35em] text-brand-neutral/50">
-          Quick picks
-        </div>
+  <!-- Body Content -->
+  <mat-dialog-content class="!p-0 flex-1 overflow-y-auto bg-gray-50/50">
+    <div class="px-8 py-6 space-y-8">
 
-        <mat-chip-listbox multiple>
+      <!-- Quick Picks -->
+      @if (!loading.isSkelton) {
+      <section>
+        <h3 class="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-wider text-brand-neutral/40">
+          <!-- bookmark icon -->
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          </svg>
+          Quick Picks
+        </h3>
+        <div class="flex flex-wrap gap-2">
           @for (medicine of bookmarked; track medicine.value) {
-            <mat-chip-option
-              class="prescripto-chip"
-              [selected]="isMedicineSelected(medicine.label)"
-              (selectionChange)="toggleMedicine($event, medicine)"
-            >
-              {{ medicine.label }}
-            </mat-chip-option>
+          <button type="button"
+            class="inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium transition-all"
+            [ngClass]="isMedicineSelected(medicine.label) 
+                  ? 'bg-brand-primary text-white border-brand-primary shadow-md' 
+                  : 'bg-white text-brand-neutral-dark border-brand-neutral/10 hover:border-brand-neutral/30 hover:bg-gray-50'"
+            (click)="toggleMedicine({isUserInput: true}, medicine)">
+            {{ medicine.label }}
+
+            @if (isMedicineSelected(medicine.label)) {
+            <!-- check icon -->
+            <svg class="ml-1 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+            }
+          </button>
           }
-        </mat-chip-listbox>
+        </div>
       </section>
-    }
+      }
 
-    @if (medicineFormArray.length > 0) {
-      <section class="prescripto-modal__selection">
-        <div class="rounded-3xl border border-brand-neutral/10 bg-white/80 shadow-[0_18px_35px_rgba(15,37,65,0.08)]">
-          <div
-            class="hidden grid-cols-[2.4fr_repeat(4,_1fr)_70px] gap-4 border-b border-brand-neutral/10 px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/50 md:grid"
-          >
-            <span>Medicine</span>
-            <span>Duration</span>
-            <span>Timing</span>
-            <span>Meal</span>
-            <span>Notes</span>
-            <span class="text-center">Action</span>
-          </div>
+      <!-- Medicine List -->
+      @if (medicineFormArray.length > 0) {
+      <section class="space-y-4">
+        <h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-neutral/40">
+          <!-- list icon -->
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 6h13M8 12h13M8 18h13" />
+            <path d="M3 6h.01M3 12h.01M3 18h.01" />
+          </svg>
+          Selected Medicines ({{medicineFormArray.length}})
+        </h3>
 
-          <div class="space-y-3 px-4 py-4 md:px-6">
-            @for (row of medicineFormArray.controls; track trackByRowIndex; let i = $index) {
-              <div
-                [formGroup]="row"
-                class="grid grid-cols-1 gap-4 rounded-2xl border border-brand-neutral/10 bg-gradient-to-br from-white to-brand-primary/5 p-4 shadow-sm transition duration-150 hover:shadow-lg md:grid-cols-[2.4fr_repeat(4,_1fr)_70px] md:items-center"
-              >
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Medicine</span>
-                  <div class="relative flex items-center">
-                    <input
-                      type="text"
-                      formControlName="name"
-                      readonly
-                      class="prescripto-field prescripto-field--readonly w-full pr-12"
-                      (keydown.enter)="$event.preventDefault(); focusDuration(i)"
-                    />
-
-                    <button
-                      matButton="elevated"
-                      #tooltip="matTooltip"
-                      class="absolute right-1.5 top-1/2 -translate-y-1/2"
-                      matTooltip="Info: Use Ctrl+Enter to save, Esc to close"
-                      [matTooltipPosition]="'above'"
-                      type="button"
-                    >
-                      <svg class="bg-brand-primary rounded-full" width="20" height="20" viewBox="0 0 24 24" fill="green"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8" />
-                        <path d="M12 8.5h.01" stroke="white" stroke-width="2" stroke-linecap="round" />
-                        <path d="M11 11.5h1v5h1" stroke="white" stroke-width="1.8" stroke-linecap="round" />
-                      </svg>
-                    </button>
-                  </div>
+        <div class="space-y-4">
+          @for (row of medicineFormArray.controls; track trackByRowIndex; let i = $index) {
+          <div [formGroup]="row"
+            class="group relative overflow-hidden rounded-2xl border border-brand-neutral/10 bg-white shadow-sm transition-all hover:shadow-md hover:border-brand-primary/20">
+            <!-- Card Header with Medicine Name -->
+            <div class="flex items-center justify-between border-b border-brand-neutral/5 bg-gray-50/50 px-5 py-3">
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-6 w-6 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary text-sm font-bold">
+                  {{ i + 1 }}
                 </div>
+                <input type="text" formControlName="name" readonly
+                  class="bg-transparent text-sm font-bold text-brand-neutral-dark focus:outline-none w-full"
+                  (keydown.enter)="$event.preventDefault(); focusDuration(i)" />
+              </div>
 
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Duration</span>
-                  <input
-                    #durationInput
-                    cdkFocusInitial
-                    type="text"
-                    formControlName="duration"
-                    placeholder="Duration"
+              <div class="flex items-center gap-2">
+                @if (row.get('indication')?.value) {
+                <div
+                  class="flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700"
+                  [matTooltip]="row.get('indication')?.value">
+                  <!-- info icon -->
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                  </svg>
+                  <span>Indication</span>
+                </div>
+                }
+                <button type="button" (click)="removeMedicineAt(i)"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-brand-neutral/40 hover:text-red-500 rounded-full hover:bg-red-50"
+                  matTooltip="Remove">
+                  <!-- trash icon -->
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4h8v2" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Grid for inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 px-5 pt-1 pb-4">
+              <!-- Duration -->
+              <div class="space-y-1">
+                <label
+                  class="text-[10px] uppercase font-bold text-brand-neutral/40 tracking-wider pl-1">Duration</label>
+                <div class="relative">
+                  <input #durationInput type="text" formControlName="duration" placeholder="e.g. 5 days"
                     [matAutocomplete]="autoDuration"
-                    class="prescripto-field prescripto-field--dense w-full"
-                    (keydown.enter)="$event.preventDefault(); focusTiming(i)"
-                  />
-
-                  <mat-autocomplete #autoDuration="matAutocomplete">
-                    <mat-option *ngFor="let option of durationOptions" [value]="option.value">
+                    class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
+                    (keydown.enter)="$event.preventDefault(); focusTiming(i)" />
+                  <mat-autocomplete #autoDuration="matAutocomplete" class="rounded-xl shadow-lg">
+                    <mat-option *ngFor="let option of durationOptions" [value]="option.value" class="!text-sm">
                       {{ option.label }}
                     </mat-option>
                   </mat-autocomplete>
                 </div>
+              </div>
 
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Timing</span>
-                  <input
-                    #timingInput
-                    placeholder="Timing (e.g. 1+1+0)"
-                    type="text"
-                    formControlName="timming"
+              <!-- Timing -->
+              <div class="space-y-1">
+                <label class="text-[10px] uppercase font-bold text-brand-neutral/40 tracking-wider pl-1">Timing</label>
+                <div class="relative">
+                  <input #timingInput type="text" formControlName="timming" placeholder="e.g. 1+0+1"
                     [matAutocomplete]="autoTiming"
-                    class="prescripto-field prescripto-field--dense w-full"
-                    (keydown.enter)="$event.preventDefault(); focusMeal(i)"
-                  />
-
-                  <mat-autocomplete #autoTiming="matAutocomplete">
-                    <mat-option *ngFor="let combo of mealCombinations" [value]="combo">
-                      {{ combo }} {{ timingLabel(combo) }}
+                    class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
+                    (keydown.enter)="$event.preventDefault(); focusMeal(i)" />
+                  <mat-autocomplete #autoTiming="matAutocomplete" class="rounded-xl shadow-lg">
+                    <mat-option *ngFor="let combo of mealCombinations" [value]="combo" class="!text-sm">
+                      <span class="font-mono font-bold text-brand-primary">{{ combo }}</span>
+                      <span class="text-xs text-brand-neutral/60 ml-2">{{ timingLabel(combo) }}</span>
                     </mat-option>
                   </mat-autocomplete>
                 </div>
+              </div>
 
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Meal</span>
-                  <input
-                    #mealSelect
-                    placeholder="Meal"
-                    type="text"
-                    formControlName="mealTime"
+              <!-- Meal -->
+              <div class="space-y-1">
+                <label class="text-[10px] uppercase font-bold text-brand-neutral/40 tracking-wider pl-1">Meal</label>
+                <div class="relative">
+                  <input #mealSelect type="text" formControlName="mealTime" placeholder="e.g. After Meal"
                     [matAutocomplete]="autoMeal"
-                    class="prescripto-field prescripto-field--dense w-full"
-                    (keydown.enter)="$event.preventDefault(); focusNotes(i)"
-                  />
-
-                  <mat-autocomplete #autoMeal="matAutocomplete">
-                    <mat-option class="text-[14px]" *ngFor="let time of mealTimes" [value]="time">
+                    class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
+                    (keydown.enter)="$event.preventDefault(); focusNotes(i)" />
+                  <mat-autocomplete #autoMeal="matAutocomplete" class="rounded-xl shadow-lg">
+                    <mat-option *ngFor="let time of mealTimes" [value]="time" class="!text-sm">
                       {{ time }}
                     </mat-option>
                   </mat-autocomplete>
                 </div>
-
-                <div class="flex flex-col gap-1">
-                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Notes</span>
-                  <input
-                    #notesInput
-                    type="text"
-                    formControlName="notes"
-                    placeholder="Add notes"
-                    class="prescripto-field w-full"
-                    (keydown.enter)="$event.preventDefault(); saveBtn.focus()"
-                  />
-                </div>
-
-                <div class="flex flex-col gap-2 md:items-center">
-                  <span class="text-[10px] font-semibold uppercase tracking-[0.35em] text-brand-neutral/60 md:hidden">Action</span>
-                  <div class="flex justify-end md:justify-center">
-                    <button
-                      type="button"
-                      (click)="removeMedicineAt(i)"
-                      class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 transition hover:bg-red-100"
-                      aria-label="Remove medicine"
-                    >
-                      <app-bin></app-bin>
-                    </button>
-                  </div>
-                </div>
               </div>
-            }
+
+              <!-- Notes -->
+              <div class="space-y-1">
+                <label class="text-[10px] uppercase font-bold text-brand-neutral/40 tracking-wider pl-1">Notes</label>
+                <input #notesInput type="text" formControlName="notes" placeholder="Any special instructions..."
+                  class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
+                  (keydown.enter)="$event.preventDefault(); saveBtn.focus()" />
+              </div>
+            </div>
           </div>
+          }
         </div>
       </section>
-    }
+      }
+    </div>
   </mat-dialog-content>
 
-  <mat-dialog-actions class="!sticky !bottom-0 gap-4">
-    <button class="btn-secondary-light" (click)="closeDialog()" type="button">
-      Cancel
-    </button>
-    <button class="btn-secondary" (click)="focusSearch()" type="button">
-      Add more
-    </button>
-    <button #saveBtn class="btn-secondary" (click)="save()" type="button">
-      Save
-    </button>
+  <!-- Footer -->
+  <mat-dialog-actions
+    class="!sticky !bottom-0 !p-6 !border-t border-brand-neutral/10 bg-white flex justify-between shrink-0 z-10">
+    <div class="hidden md:flex gap-4 text-xs font-medium text-brand-neutral/40">
+      <div class="flex items-center gap-1"><kbd class="bg-gray-100 px-1.5 py-0.5 rounded border">Esc</kbd> Close</div>
+      <div class="flex items-center gap-1"><kbd class="bg-gray-100 px-1.5 py-0.5 rounded border">Alt+A</kbd> Focus
+        Search</div>
+      <div class="flex items-center gap-1"><kbd class="bg-gray-100 px-1.5 py-0.5 rounded border">Ctrl+Z</kbd> Undo</div>
+    </div>
+
+    <div class="flex gap-3 ml-auto">
+      <button type="button" (click)="closeDialog()"
+        class="h-11 px-6 rounded-lg border border-brand-neutral/20 font-semibold text-brand-neutral-dark hover:bg-gray-50 transition">
+        Cancel
+      </button>
+
+      <button type="button" (click)="focusSearch()"
+        class="h-11 px-6 rounded-lg bg-brand-primary/10 font-semibold text-brand-primary hover:bg-brand-primary/20 transition">
+        Add Another
+      </button>
+
+      <button #saveBtn type="button" (click)="save()"
+        class="h-11 px-8 rounded-lg bg-brand-primary font-bold text-white shadow-lg shadow-brand-primary/30 hover:bg-brand-primary-dark hover:shadow-xl transition">
+        Save Prescriptions
+      </button>
+    </div>
   </mat-dialog-actions>
 </div>

@@ -44,12 +44,14 @@ export class PrescriptionPatientService {
     pageNumber?: number;
     pageSize?: number;
     searchTerm?: string;
+    doctorId?: number;
   } = {}): Observable<PrescriptionPatientListResponse> {
-    const { pageNumber = 1, pageSize = 10, searchTerm } = query;
+    const { pageNumber = 1, pageSize = 10, searchTerm,doctorId } = query;
 
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
-      .set('pageSize', pageSize.toString());
+      .set('pageSize', pageSize.toString())
+      .set('doctorId', doctorId?.toString() || '');
 
     const trimmedSearch = searchTerm?.trim();
     if (trimmedSearch) {

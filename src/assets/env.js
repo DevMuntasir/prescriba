@@ -14,5 +14,5 @@
   window["env"]["firebaseMessagingSenderId"] = "302266124373";
   window["env"]["firebaseAppId"] = "1:302266124373:web:509f5caba085710b2cacdc";
   window["env"]["firebaseMeasurementId"] = "G-DDGD4G0L2T";
-  window["env"]["geminiApiKey"] = "AIzaSyDUHZTp6zk6Mpx1vVgmM1sj9La72vZcvT4";
+  window["env"]["geminiApiKey"] = "AIzaSyAJvSblaY3tCJNnMV57uS2KMjQDNtTYzYo";
 })(this);
