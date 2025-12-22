@@ -6,6 +6,7 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnDestroy,
   QueryList,
   ViewChild,
   ViewChildren,
@@ -48,8 +49,8 @@ import {
   finalize,
   startWith,
   shareReplay,
-  filter as rxFilter,
   Subject,
+  takeUntil,
 } from 'rxjs';
 
 import { MedicineService } from '../../../services/medicine.service';
@@ -63,6 +64,7 @@ import {
   AiSuggestionService,
   AiSuggestedItem,
 } from '../../../services/ai-suggestion.service';
+import { VoiceCommandService } from 'src/app/shared/services/voice-command.service';
 
 type MedicineOption = {
   label: string;
@@ -81,6 +83,8 @@ type MedicineRow = {
   notes: string;
   indication?: string;
 };
+
+type VoiceStage = 'search' | 'duration' | 'timing' | 'meal' | 'notes' | null;
 
 @Component({
   selector: 'app-medicine',
@@ -108,7 +112,7 @@ type MedicineRow = {
     SkeltonComponent,
   ],
 })
-export class MedicineComponent {
+export class MedicineComponent implements OnDestroy {
   @Input() data: any;
 
   private medicineService = inject(MedicineService);
@@ -116,6 +120,7 @@ export class MedicineComponent {
   private toaster = inject(TosterService);
   private auth = inject(AuthService);
   private aiSuggestionService = inject(AiSuggestionService);
+  private voiceCommandService = inject(VoiceCommandService);
   private cdr = inject(ChangeDetectorRef);
 
   constructor(public dialogRef: MatDialogRef<MedicineComponent>) {}
@@ -129,12 +134,13 @@ export class MedicineComponent {
 
   // UI lists
   mealTimes = ['Before Meal', 'After Meal'];
-  mealCombinations = ['1+1+0', '1+0+1', '0+1+1'];
+  mealCombinations = ['1+0+0', '1+1+0', '1+0+1', '0+1+1'];
 
   durationOptions = [
     { value: '5 days', label: '5 Days' },
     { value: '7 days', label: '7 Days' },
     { value: '14 days', label: '14 Days' },
+    { value: '15 days', label: '15 Days' },
     { value: '21 days', label: '21 Days' },
     { value: '28 days', label: '28 Days' },
     { value: '1 month', label: '1 Month' },
@@ -187,6 +193,13 @@ export class MedicineComponent {
   // Focus scheduling
   private pendingFocusIndex: number | null = null;
 
+  // Voice control
+  voiceListening = false;
+  voiceUnsupported = false;
+  private voiceStage: VoiceStage = null;
+  private voiceActiveRowIndex: number | null = null;
+  private destroy$ = new Subject<void>();
+
   ngOnInit(): void {
     const id = this.auth.authInfo()?.id;
     if (id) this.getBookmarked(id);
@@ -195,6 +208,17 @@ export class MedicineComponent {
 
     // Focus reliability: whenever inputs re-render, apply pending focus.
     this.durationInputs?.changes?.subscribe(() => this.applyPendingFocus());
+
+    this.voiceUnsupported = !this.voiceCommandService.isSupported();
+    this.voiceCommandService.listening$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((listening) => {
+        this.voiceListening = listening;
+        this.cdr.markForCheck();
+      });
+    this.voiceCommandService.transcript$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((transcript) => this.handleVoiceCommand(transcript));
 
     // Search pipeline (only in search mode)
     this.filteredMedicines$ = combineLatest([
@@ -522,24 +546,29 @@ export class MedicineComponent {
 
   // ---------- Focus helpers ----------
   focusSearch() {
+    this.setVoiceStage('search');
     setTimeout(() => this.searchInput?.nativeElement?.focus(), 0);
   }
 
   focusDuration(index: number) {
+    this.setVoiceStage('duration', index);
     this.pendingFocusIndex = index;
     // the QueryList might not have updated yet; applyPendingFocus will try too.
     setTimeout(() => this.applyPendingFocus(), 0);
   }
 
   focusTiming(index: number) {
+    this.setVoiceStage('timing', index);
     setTimeout(() => this.timingInputs?.get(index)?.nativeElement?.focus(), 0);
   }
 
   focusMeal(index: number) {
+    this.setVoiceStage('meal', index);
     setTimeout(() => this.mealInputs?.get(index)?.nativeElement?.focus(), 0);
   }
 
   focusNotes(index: number) {
+    this.setVoiceStage('notes', index);
     setTimeout(() => this.notesInputs?.get(index)?.nativeElement?.focus(), 0);
   }
 
@@ -589,6 +618,8 @@ export class MedicineComponent {
   // ---------- Utilities ----------
   timingLabel(combo: string): string {
     switch (combo) {
+      case '1+0+0':
+        return '(Morning)';
       case '1+1+0':
         return '(Morning + Noon)';
       case '1+0+1':
@@ -712,6 +743,173 @@ export class MedicineComponent {
     if (this.canAddTypedMedicine === canAdd) return;
     this.canAddTypedMedicine = canAdd;
     this.cdr.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.voiceCommandService.stop();
+  }
+
+  // ---------- Voice controls ----------
+  toggleVoiceListening(): void {
+    if (this.voiceUnsupported) {
+      this.toaster.customToast('Voice recognition is not supported in this browser.', 'warning');
+      return;
+    }
+
+    if (this.voiceListening) {
+      this.voiceCommandService.stop();
+    } else {
+      this.voiceCommandService.start();
+    }
+  }
+
+  setVoiceStage(stage: VoiceStage, index?: number): void {
+    this.voiceStage = stage;
+    this.voiceActiveRowIndex = typeof index === 'number' ? index : null;
+  }
+
+  private handleVoiceCommand(phrase: string): void {
+    const raw = phrase?.trim();
+    if (!raw) return;
+    const normalized = this.normalizeVoice(raw);
+
+    if (normalized === 'medicine' || normalized === 'medicines' || normalized === 'medicine search') {
+      this.setSuggestionMode('search');
+      this.focusSearch();
+      return;
+    }
+
+    if (this.isSearchFocused()) {
+      this.applyMedicineVoice(raw);
+      return;
+    }
+
+    if (this.voiceStage === 'duration') {
+      if (this.applyDurationVoice(normalized)) {
+        const index = this.getActiveRowIndex();
+        if (index !== null) {
+          this.focusTiming(index);
+        }
+      }
+      return;
+    }
+
+    if (this.voiceStage === 'timing') {
+      if (this.applyTimingVoice(normalized)) {
+        const index = this.getActiveRowIndex();
+        if (index !== null) {
+          this.focusNotes(index);
+        }
+      }
+      return;
+    }
+
+    if (this.voiceStage === 'notes') {
+      this.applyNotesVoice(raw);
+    }
+  }
+
+  private applyMedicineVoice(phrase: string): void {
+    const trimmed = phrase.trim();
+    if (!trimmed) return;
+    this.searchControl.setValue(trimmed);
+    this.filter(trimmed)
+      .pipe(takeOne())
+      .subscribe((options) => {
+        const match = options.find(
+          (option) => this.normalizeVoice(option.label) === this.normalizeVoice(trimmed)
+        );
+        if (match) {
+          this.addMedicineOption(match);
+        }
+      });
+  }
+
+  private applyDurationVoice(normalized: string): boolean {
+    const row = this.getActiveRowGroup();
+    if (!row) return false;
+
+    const match = this.matchDurationOption(normalized);
+    if (!match) return false;
+
+    row.get('duration')?.setValue(match.value);
+    return true;
+  }
+
+  private applyTimingVoice(normalized: string): boolean {
+    const row = this.getActiveRowGroup();
+    if (!row) return false;
+
+    const match = this.matchTimingOption(normalized);
+    if (!match) return false;
+
+    row.get('timming')?.setValue(match);
+    return true;
+  }
+
+  private applyNotesVoice(phrase: string): void {
+    const row = this.getActiveRowGroup();
+    if (!row) return;
+    row.get('notes')?.setValue(phrase.trim());
+  }
+
+  private matchDurationOption(normalized: string): { value: string; label: string } | null {
+    const direct = this.durationOptions.find(
+      (option) =>
+        this.normalizeVoice(option.value) === normalized ||
+        this.normalizeVoice(option.label) === normalized
+    );
+    if (direct) return direct;
+
+    const numericMatch = normalized.match(/(\d+)\s*(day|days|month|months)/);
+    if (!numericMatch) return null;
+    const quantity = numericMatch[1];
+    const unit = numericMatch[2].startsWith('month') ? 'month' : 'day';
+    const value = `${quantity} ${Number(quantity) === 1 ? unit : `${unit}s`}`;
+    return (
+      this.durationOptions.find((option) => this.normalizeVoice(option.value) === value) ?? null
+    );
+  }
+
+  private matchTimingOption(normalized: string): string | null {
+    const timingMap: Record<string, string> = {
+      'once daily': '1+0+0',
+      'twice daily': '1+0+1',
+      'two times daily': '1+0+1',
+    };
+
+    if (timingMap[normalized]) {
+      return timingMap[normalized];
+    }
+
+    const direct = this.mealCombinations.find(
+      (combo) => this.normalizeVoice(combo) === normalized
+    );
+    return direct ?? null;
+  }
+
+  private getActiveRowGroup(): FormGroup | null {
+    const index = this.getActiveRowIndex();
+    if (index === null) return null;
+    return (this.medicineFormArray.at(index) as FormGroup) || null;
+  }
+
+  private getActiveRowIndex(): number | null {
+    if (this.medicineFormArray.length === 0) return null;
+    if (this.voiceActiveRowIndex === null) {
+      return this.medicineFormArray.length - 1;
+    }
+    return this.voiceActiveRowIndex;
+  }
+
+  private isSearchFocused(): boolean {
+    return document.activeElement === this.searchInput?.nativeElement;
+  }
+
+  private normalizeVoice(value: string): string {
+    return value.toLowerCase().replace(/\s+/g, ' ').trim();
   }
 }
 

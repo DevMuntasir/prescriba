@@ -49,13 +49,23 @@
           </div>
 
           <input #searchInput
-            class="h-14 w-full rounded-xl border border-brand-neutral/20 bg-brand-neutral/5 pl-12 pr-32 text-lg text-brand-neutral-dark placeholder:text-brand-neutral/40 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-sm"
+            class="h-14 w-full rounded-xl border border-brand-neutral/20 bg-brand-neutral/5 pl-12 pr-48 text-lg text-brand-neutral-dark placeholder:text-brand-neutral/40 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-sm"
             type="text" matInput [formControl]="searchControl" [matAutocomplete]="auto"
-            placeholder="Search for medicine (e.g. Napa)" [disabled]="suggestionMode === 'context'" />
+            placeholder="Search for medicine (e.g. Napa)" [disabled]="suggestionMode === 'context'"
+            (focus)="setVoiceStage('search')" />
 
           <div class="absolute right-2 flex items-center gap-2">
             @if (searchLoading$ | async) {
             <mat-progress-spinner mode="indeterminate" [diameter]="20" [strokeWidth]="3"></mat-progress-spinner>
+            }
+            <button type="button" (click)="toggleVoiceListening()" [disabled]="voiceUnsupported"
+              [attr.aria-pressed]="voiceListening"
+              [matTooltip]="voiceUnsupported ? 'Voice recognition is not supported in this browser.' : (voiceListening ? 'Stop listening' : 'Start voice input')"
+              class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-neutral/20 bg-white text-brand-neutral/60 shadow-sm transition hover:border-brand-primary/40 hover:text-brand-primary disabled:opacity-50 disabled:hover:border-brand-neutral/20">
+              <mat-icon>{{ voiceListening ? 'mic' : 'mic_none' }}</mat-icon>
+            </button>
+            @if (voiceListening) {
+            <span class="text-xs font-semibold text-brand-primary">Listening...</span>
             }
             <button
               class="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white shadow-md transition hover:bg-brand-primary-dark hover:shadow-lg disabled:opacity-50 disabled:shadow-none"
@@ -264,7 +274,7 @@
                   <input #durationInput type="text" formControlName="duration" placeholder="e.g. 5 days"
                     [matAutocomplete]="autoDuration"
                     class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
-                    (keydown.enter)="$event.preventDefault(); focusTiming(i)" />
+                    (keydown.enter)="$event.preventDefault(); focusTiming(i)" (focus)="setVoiceStage('duration', i)" />
                   <mat-autocomplete #autoDuration="matAutocomplete" class="rounded-xl shadow-lg">
                     <mat-option *ngFor="let option of durationOptions" [value]="option.value" class="!text-sm">
                       {{ option.label }}
@@ -280,7 +290,7 @@
                   <input #timingInput type="text" formControlName="timming" placeholder="e.g. 1+0+1"
                     [matAutocomplete]="autoTiming"
                     class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
-                    (keydown.enter)="$event.preventDefault(); focusMeal(i)" />
+                    (keydown.enter)="$event.preventDefault(); focusMeal(i)" (focus)="setVoiceStage('timing', i)" />
                   <mat-autocomplete #autoTiming="matAutocomplete" class="rounded-xl shadow-lg">
                     <mat-option *ngFor="let combo of mealCombinations" [value]="combo" class="!text-sm">
                       <span class="font-mono font-bold text-brand-primary">{{ combo }}</span>
@@ -297,7 +307,7 @@
                   <input #mealSelect type="text" formControlName="mealTime" placeholder="e.g. After Meal"
                     [matAutocomplete]="autoMeal"
                     class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
-                    (keydown.enter)="$event.preventDefault(); focusNotes(i)" />
+                    (keydown.enter)="$event.preventDefault(); focusNotes(i)" (focus)="setVoiceStage('meal', i)" />
                   <mat-autocomplete #autoMeal="matAutocomplete" class="rounded-xl shadow-lg">
                     <mat-option *ngFor="let time of mealTimes" [value]="time" class="!text-sm">
                       {{ time }}
@@ -311,7 +321,7 @@
                 <label class="text-[10px] uppercase font-bold text-brand-neutral/40 tracking-wider pl-1">Notes</label>
                 <input #notesInput type="text" formControlName="notes" placeholder="Any special instructions..."
                   class="w-full rounded-lg border border-brand-neutral/10 bg-gray-50 px-3 py-2.5 text-sm font-medium focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
-                  (keydown.enter)="$event.preventDefault(); saveBtn.focus()" />
+                  (keydown.enter)="$event.preventDefault(); saveBtn.focus()" (focus)="setVoiceStage('notes', i)" />
               </div>
             </div>
           </div>
